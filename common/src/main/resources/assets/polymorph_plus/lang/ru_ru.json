@@ -1,0 +1,5 @@
+{
+   "commands.polymorph.conflicts.starting": "Поиск конфликтов в рецептах…",
+   "commands.polymorph.conflicts.success": "Найдено %d потенциальных конфликтов. Проверьте logs/conflicts.log для более подробной информации.",
+   "polymorph.networking.failed": "Ошибка сети Polymorph: %s"
+}
