@@ -1,0 +1,53 @@
+plugins {
+    id 'multiloader-loader'
+    id 'net.neoforged.moddev'
+}
+
+neoForge {
+    version = neoforge_version
+
+    runs {
+        configureEach {
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+            ideName = "NeoForge ${it.name.capitalize()} (${project.path})"
+        }
+        client { client() }
+        server { server(); programArgument '--nogui' }
+        data {
+            data()
+            programArguments.addAll '--mod', project.mod_id,
+                    '--all',
+                    '--output', file('src/generated/resources/').getAbsolutePath(),
+                    '--existing', file('src/main/resources/').getAbsolutePath()
+        }
+    }
+
+    mods {
+        "${mod_id}" {
+            sourceSet sourceSets.main
+        }
+    }
+}
+
+sourceSets.main.resources { srcDir 'src/generated/resources' }
+
+// Integration sources for optional mods (FastBench, REI) that haven't published 26.1.2 jars
+// yet. Compile-excluded until upstream ships; re-include when wiring those compileOnly deps.
+sourceSets.main.java {
+    exclude 'com/illusivesoulworks/polymorph/common/integration/fastbench/**'
+    exclude 'com/illusivesoulworks/polymorph/mixin/integration/fastbench/**'
+    exclude 'com/illusivesoulworks/polymorph/mixin/integration/roughlyenoughitems/**'
+}
+
+// AccessTransformer auto-pickup (FML hardcodes this path).
+def at = file('src/main/resources/META-INF/accesstransformer.cfg')
+if (at.exists()) {
+    neoForge.accessTransformers.from at
+}
+
+dependencies {
+    // Integrations — uncomment when 26.1.2 builds are published.
+    // compileOnly "mezz.jei:jei-26.1-neoforge:${jei_version}"
+    // compileOnly "dev.emi:emi-neoforge:${emi_version}"
+    // compileOnly "me.shedaniel:RoughlyEnoughItems-neoforge:${rei_version}"
+}

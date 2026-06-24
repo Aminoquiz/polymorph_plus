@@ -1,0 +1,45 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        mavenCentral()
+        maven {
+            name = 'Fabric'
+            url = uri("https://maven.fabricmc.net/")
+        }
+        exclusiveContent {
+            forRepository {
+                maven {
+                    name = 'NeoForge'
+                    url = uri("https://maven.neoforged.net/releases")
+                }
+            }
+            filter {
+                includeGroupAndSubgroups("net.neoforged")
+                includeGroup("codechicken")
+            }
+        }
+        exclusiveContent {
+            forRepository {
+                maven {
+                    name = 'Sponge Snapshots'
+                    url = uri("https://repo.spongepowered.org/repository/maven-public")
+                }
+            }
+            filter {
+                includeGroupAndSubgroups("org.spongepowered")
+            }
+        }
+    }
+}
+
+plugins {
+    id 'org.gradle.toolchains.foojay-resolver-convention' version '1.0.0'
+}
+
+rootProject.name = "${mod_id}"
+include("common")
+include("neoforge")
+// fabric subproject parked: Mojang has not yet published official mappings for MC 26.1.2,
+// and Yarn maven has no 26.1.x build. Fabric Loom cannot decompile vanilla without them.
+// Re-enable `include("fabric")` once either ships.
+// include("fabric")

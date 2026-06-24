@@ -1,0 +1,137 @@
+plugins {
+    id 'multiloader-common'
+    id 'net.neoforged.moddev'
+}
+
+// Compile common against vanilla via NeoForm (the loader-agnostic mappings + sources).
+// On 26.1.2 the userdev (NeoForge) split has 'net.neoforged:neoform:<ver>' which exposes
+// Mojmap sources for the version.
+neoForge {
+    neoFormVersion = neoform_version
+}
+
+dependencies {
+    compileOnly group: 'org.spongepowered', name: 'mixin', version: '0.8.7'
+    compileOnly group: 'io.github.llamalad7', name: 'mixinextras-common', version: '0.4.1'
+    annotationProcessor group: 'io.github.llamalad7', name: 'mixinextras-common', version: '0.4.1'
+
+    compileOnly group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
+
+    // IntegratedMixinPlugin uses org.objectweb.asm.tree.ClassNode directly.
+    compileOnly group: 'org.ow2.asm', name: 'asm-tree', version: '9.7'
+
+    // JEI / EMI / REI compile references — uncomment when 26.1.2 builds are published.
+    // compileOnly "mezz.jei:jei-26.1-common:${jei_version}"
+    // compileOnly "dev.emi:emi-xplat-mojmap:${emi_version}"
+}
+
+// ── Source remap (1.21.1 → 26.1.2 vanilla renames) ────────────────────────────
+// MC 26.x renamed two vanilla classes used pervasively by the shared Polymorph sources:
+//   net.minecraft.resources.ResourceLocation        -> net.minecraft.resources.Identifier
+//   net.minecraft.client.gui.GuiGraphics            -> net.minecraft.client.gui.GuiGraphicsExtractor
+// Rather than fork every file, copy the shared sources into a build dir with those names
+// rewritten and compile the rewritten copy. Files whose 26.x changes are SEMANTIC (recipe
+// API rewrite, RecipeHolder.id() returning ResourceKey, two-phase GUI render) are
+// hand-forked under src/main/java261/ and excluded from the textual remap.
+
+def remappedCommonSrc = layout.buildDirectory.dir('remapped-common/java')
+
+// Files hand-forked for 26.x (relative to common/src/main/java). Populated on-demand as
+// compile errors surface — pre-forking is guess-work. Each fork lives at the SAME relative
+// path under src/main/java261/. The Copy task uses DuplicatesStrategy.FAIL so a fork
+// shadowing a remapped original is a build error (not silent override).
+def forkedFor261 = [
+        // ── 26.x Ingredient / Recipe / RecipeHolder rewrites ──
+        'com/illusivesoulworks/polymorph/server/wrapper/IngredientWrapper.java',
+        'com/illusivesoulworks/polymorph/server/wrapper/RecipeWrapper.java',
+        'com/illusivesoulworks/polymorph/server/wrapper/SmithingRecipeWrapper.java',
+        // RecipeHolder.id() -> ResourceKey<Recipe<?>>; Recipe.assemble single-arg;
+        // CompoundTag.getString returns Optional<String>; Level.getRecipeManager gone.
+        'com/illusivesoulworks/polymorph/common/capability/AbstractRecipeData.java',
+        'com/illusivesoulworks/polymorph/common/capability/PlayerRecipeData.java',
+        // RecipeHolder.id() unwrap in payload + integration helper
+        'com/illusivesoulworks/polymorph/common/network/client/CPacketBlockEntityListener.java',
+        'com/illusivesoulworks/polymorph/common/integration/util/RecipeTransfer.java',
+        // CommandSourceStack.hasPermission(int) gone -> Commands.hasPermission(Permissions.X);
+        // RecipeManager.getAllRecipesFor gone; ServerLevel.recipeAccess() replaces
+        // getRecipeManager().
+        'com/illusivesoulworks/polymorph/server/PolymorphCommands.java',
+        // Level constructor dropped Supplier<ProfilerFiller>; getRecipeManager moved to
+        // ServerLevel.recipeAccess()
+        'com/illusivesoulworks/polymorph/mixin/core/MixinServerLevel.java',
+        // ItemCombinerMenu constructor gained ItemCombinerMenuSlotDefinition; SmithingMenu
+        // recipe pipeline rewritten. Stub mixin until selection logic is reimplemented.
+        'com/illusivesoulworks/polymorph/mixin/core/MixinSmithingMenu.java',
+        // RecipeManager.getRecipesFor public overload gone; filter getRecipes() by type
+        'com/illusivesoulworks/polymorph/common/capability/RecipeCache.java',
+        // byKey now takes ResourceKey<Recipe<?>>; client has no full RecipeManager
+        'com/illusivesoulworks/polymorph/common/network/client/CPacketPersistentRecipeSelection.java',
+        'com/illusivesoulworks/polymorph/common/network/client/CPacketPlayerRecipeSelection.java',
+        'com/illusivesoulworks/polymorph/common/network/server/ClientPacketHandler.java',
+        // Server-side Level.getRecipeManager() routing via ServerLevel.recipeAccess()
+        'com/illusivesoulworks/polymorph/common/PolymorphRecipeManager.java',
+        'com/illusivesoulworks/polymorph/mixin/core/MixinCrafterMenu.java',
+        'com/illusivesoulworks/polymorph/mixin/core/MixinLevelChunk.java',
+        // @Redirect captured-locals ServerLevel; @Shadow signatures updated
+        'com/illusivesoulworks/polymorph/mixin/core/MixinCraftingMenu.java',
+        'com/illusivesoulworks/polymorph/mixin/core/MixinRecipeCache.java',
+        // Two-phase Renderable.extractRenderState / Matrix3x2fStack / blitSprite no-z
+        'com/illusivesoulworks/polymorph/api/client/base/AbstractRecipesWidget.java',
+        'com/illusivesoulworks/polymorph/api/client/widgets/PlayerRecipesWidget.java',
+        'com/illusivesoulworks/polymorph/api/client/widgets/children/OutputWidget.java',
+        'com/illusivesoulworks/polymorph/api/client/widgets/children/OpenSelectionButton.java',
+        'com/illusivesoulworks/polymorph/api/client/widgets/children/SelectionWidget.java',
+]
+
+// Integration mixins for optional mods (EMI / JEI) that we don't compile against in the
+// first 26.1.2 cut. They reference types from those mods; excluding their sources entirely
+// is simpler than wiring optional compileOnly deps before the upstream mods publish 26.1.2
+// builds. Add them back when JEI / EMI ship 26.1.2 jars and we want recipe-transfer.
+def integrationExcludes = [
+        'com/illusivesoulworks/polymorph/mixin/integration/**',
+]
+
+def remapCommonSources = tasks.register('remapCommonSources', Copy) {
+    // 1) Shared sources with simple Mojmap renames, minus the forks and the optional
+    //    integration mixins.
+    from('src/main/java') {
+        forkedFor261.each { exclude it }
+        integrationExcludes.each { exclude it }
+        filter { String line ->
+            line.replaceAll(/\bResourceLocation\b/, 'Identifier')
+                .replaceAll(/\bGuiGraphics\b/, 'GuiGraphicsExtractor')
+        }
+    }
+    // 2) 26.x hand-forks, copied verbatim.
+    from('src/main/java261')
+    into remappedCommonSrc
+    duplicatesStrategy = DuplicatesStrategy.FAIL
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = [remappedCommonSrc]
+        }
+    }
+}
+
+tasks.named('compileJava') {
+    dependsOn remapCommonSources
+}
+
+configurations {
+    commonJava {
+        canBeResolved = false
+        canBeConsumed = true
+    }
+    commonResources {
+        canBeResolved = false
+        canBeConsumed = true
+    }
+}
+
+artifacts {
+    commonJava(remappedCommonSrc) { builtBy remapCommonSources }
+    commonResources(file('src/main/resources')) { builtBy processResources }
+}

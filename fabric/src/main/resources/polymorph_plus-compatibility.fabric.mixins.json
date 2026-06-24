@@ -1,0 +1,13 @@
+{
+  "required": false,
+  "package": "com.illusivesoulworks.polymorph.mixin.integration",
+  "compatibilityLevel": "JAVA_16",
+  "mixins": [
+    "quickbench.MixinCraftingMenu",
+    "quickbench.MixinInventoryMenu",
+    "quickbench.MixinQuickBench",
+    "roughlyenoughitems.MixinInternalWidgets"
+  ],
+  "plugin": "com.illusivesoulworks.polymorph.mixin.IntegratedMixinPlugin",
+  "minVersion": "0.8"
+}

@@ -1,0 +1,5 @@
+{
+  "commands.polymorph.conflicts.starting": "Çelişen tarifler aranıyor...",
+  "commands.polymorph.conflicts.success": "%d potansiyel çelişki bulundu. Daha fazla detay için logs/conflicts.log dosyasına göz atın.",
+  "polymorph.networking.failed": "Polymorph Ağ Hatası: %s"
+}

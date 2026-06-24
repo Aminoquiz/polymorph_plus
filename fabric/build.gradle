@@ -1,0 +1,100 @@
+// Fabric port of Polymorph+ for Minecraft 26.1.2.
+//
+// Same multiloader-loader convention as the NeoForge side - common/ provides remapped
+// sources via DependsOn. Loom handles the Fabric-specific mappings + run config wiring.
+// Cardinal Components API (CCA) provides the player + block-entity attachment surface;
+// Fabric has no built-in equivalent of NeoForge attachments.
+
+plugins {
+    id 'multiloader-loader'
+    id 'fabric-loom'
+}
+
+repositories {
+    maven {
+        name = 'Ladysnake Mods'
+        url = 'https://maven.ladysnake.org/releases'
+    }
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${minecraft_version}"
+    mappings loom.officialMojangMappings()
+    modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
+
+    implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
+
+    modApi "org.ladysnake.cardinal-components-api:cardinal-components-base:${cca_version}"
+    modApi "org.ladysnake.cardinal-components-api:cardinal-components-entity:${cca_version}"
+    modApi "org.ladysnake.cardinal-components-api:cardinal-components-block:${cca_version}"
+
+    // Bundle CCA into the output jar so users don't need to install it separately.
+    include "org.ladysnake.cardinal-components-api:cardinal-components-base:${cca_version}"
+    include "org.ladysnake.cardinal-components-api:cardinal-components-entity:${cca_version}"
+    include "org.ladysnake.cardinal-components-api:cardinal-components-block:${cca_version}"
+
+    // Integration compileOnly deps (JEI / EMI / REI / QuickBench) intentionally omitted
+    // until those mods publish 26.1.2 Fabric builds. The integration sources are excluded
+    // below to keep the build green.
+}
+
+loom {
+    mixin {
+        defaultRefmapName.set("${mod_id}.refmap.json")
+    }
+    runs {
+        client {
+            client()
+            setConfigName("Fabric Client")
+            ideConfigGenerated(true)
+            runDir("runs/client")
+        }
+        server {
+            server()
+            setConfigName("Fabric Server")
+            ideConfigGenerated(true)
+            runDir("runs/server")
+        }
+    }
+}
+
+// Drop integration sources whose target mods have no 26.1.2 build yet. Same approach
+// the NeoForge subproject takes for FastBench / REI.
+sourceSets.main.java {
+    exclude 'com/illusivesoulworks/polymorph/common/integration/quickbench/**'
+    exclude 'com/illusivesoulworks/polymorph/mixin/integration/quickbench/**'
+    exclude 'com/illusivesoulworks/polymorph/mixin/integration/roughlyenoughitems/**'
+}
+
+base {
+    archivesName = "${mod_id}-fabric-${minecraft_version}"
+}
+
+processResources {
+    inputs.property "version", project.version
+    inputs.property "mod_id", project.mod_id
+    inputs.property "mod_name", project.mod_name
+    inputs.property "mod_author", project.mod_author
+    inputs.property "description", project.description
+    inputs.property "license", project.license
+    inputs.property "sources_url", project.sources_url
+    inputs.property "issues_url", project.issues_url
+    inputs.property "minecraft_version_range_alt", project.minecraft_version_range_alt
+    inputs.property "java_version", project.java_version
+
+    filesMatching("fabric.mod.json") {
+        expand([
+                "version"                    : project.version,
+                "mod_id"                     : project.mod_id,
+                "mod_name"                   : project.mod_name,
+                "mod_author"                 : project.mod_author,
+                "description"                : project.description,
+                "license"                    : project.license,
+                "sources_url"                : project.sources_url,
+                "issues_url"                 : project.issues_url,
+                "minecraft_version_range_alt": project.minecraft_version_range_alt,
+                "java_version"               : project.java_version,
+        ])
+    }
+}

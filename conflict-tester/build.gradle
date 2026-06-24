@@ -1,0 +1,37 @@
+// Minimal NeoForge mod that ships ONE shaped crafting recipe with the diamond
+// pickaxe pattern but outputs sticks. Loaded alongside Polymorph+ in dev/prod
+// to surface a real conflict — without something like this, Polymorph+ has no
+// UI to show on a vanilla crafting table.
+
+plugins {
+    id 'java'
+    id 'net.neoforged.moddev'
+}
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(java_version)
+}
+
+base {
+    archivesName = 'conflict_tester'
+}
+
+version = '1.0.0+26.1.2'
+group = 'com.illusivesoulworks.polymorph.tester'
+
+neoForge {
+    version = neoforge_version
+
+    runs {
+        configureEach {
+            ideName = "ConflictTester ${it.name.capitalize()}"
+        }
+        client { client() }
+    }
+
+    mods {
+        "conflict_tester" {
+            sourceSet sourceSets.main
+        }
+    }
+}

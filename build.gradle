@@ -1,0 +1,14 @@
+// NeoForge-only port of Polymorph for Minecraft 26.1.2.
+// The original upstream root build.gradle managed multi-loader (Forge / Fabric / NeoForge)
+// publishing + Discord webhooks; this port drops all of that. Per-subproject configuration
+// lives in common/build.gradle and neoforge/build.gradle, with shared conventions in
+// buildSrc/.
+
+plugins {
+    id 'net.neoforged.moddev' version '2.0.140' apply false
+    id 'fabric-loom' version '1.17.12' apply false
+}
+
+tasks.named('wrapper', Wrapper).configure {
+    distributionType = Wrapper.DistributionType.BIN
+}
