@@ -13,10 +13,10 @@ java {
 }
 
 base {
-    archivesName = 'conflict_tester'
+    archivesName = 'conflict_tester-neoforge'
 }
 
-version = '1.0.0+26.1.2'
+version = '1.0.0+26.2.0'
 group = 'com.illusivesoulworks.polymorph.tester'
 
 neoForge {
@@ -32,6 +32,15 @@ neoForge {
     mods {
         "conflict_tester" {
             sourceSet sourceSets.main
+        }
+    }
+}
+
+tasks.named('jar').configure {
+    doLast {
+        copy {
+            from archiveFile
+            into file('D:/CODE_PROJECTS/polymorph/polymorph-mod/new-jars')
         }
     }
 }

@@ -61,6 +61,28 @@ public class MixinRecipeManager implements IRecipeContext {
     }
   }
 
+  // MC 26.x CrafterBlock.getPotentialResults -> RecipeCache.compute -> 3-arg getRecipeFor.
+  // The crafting table uses the 4-arg overload (with lastRecipe), so for Crafter we also
+  // need to hook this one or no conflicts surface from the Crafter UI.
+  @Inject(
+      at = @At("HEAD"),
+      method = "getRecipeFor(Lnet/minecraft/world/item/crafting/RecipeType;Lnet/minecraft/world/item/crafting/RecipeInput;Lnet/minecraft/world/level/Level;)Ljava/util/Optional;",
+      cancellable = true)
+  private <I extends RecipeInput, T extends Recipe<I>> void polymorph$getRecipeBlock(
+      RecipeType<T> recipeType, I inventory, Level level,
+      CallbackInfoReturnable<Optional<RecipeHolder<T>>> cb) {
+
+    if (this.polymorph$getContext() instanceof BlockEntity blockEntity) {
+      IRecipeData<?> data = PolymorphApi.getInstance().getBlockEntityRecipeData(blockEntity);
+
+      if (data != null) {
+        PolymorphApi.getInstance().getRecipeManager()
+            .getBlockEntityRecipe(recipeType, inventory, level, blockEntity)
+            .ifPresent(recipe -> cb.setReturnValue(Optional.of(recipe)));
+      }
+    }
+  }
+
   @Nullable
   @Override
   public Object polymorph$getContext() {

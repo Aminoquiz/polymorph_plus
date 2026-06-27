@@ -18,30 +18,26 @@
 package com.illusivesoulworks.polymorph.mixin.core;
 
 import com.illusivesoulworks.polymorph.common.PolymorphCommonEvents;
-import com.mojang.authlib.GameProfile;
 import java.util.OptionalInt;
-import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+// Plain mixin (no `extends Player`) to avoid coupling to the Player constructor whose
+// signature shifted in 26.1. containerMenu is declared on Player (parent), so @Shadow
+// on a ServerPlayer mixin cannot resolve it. Access it directly through the cast ref.
 @Mixin(ServerPlayer.class)
-public abstract class MixinServerPlayer extends Player {
-
-  public MixinServerPlayer(Level level, BlockPos blockPos, float f, GameProfile gameProfile) {
-    super(level, blockPos, f, gameProfile);
-  }
+public abstract class MixinServerPlayer {
 
   @Inject(
       at = @At("RETURN"),
       method = "openMenu(Lnet/minecraft/world/MenuProvider;)Ljava/util/OptionalInt;")
   private void polymorph$openHandledScreen(CallbackInfoReturnable<OptionalInt> cir) {
-    cir.getReturnValue().ifPresent(
-        value -> PolymorphCommonEvents.openContainer((ServerPlayer) (Object) this,
-            this.containerMenu));
+    cir.getReturnValue().ifPresent(value -> {
+      ServerPlayer self = (ServerPlayer) (Object) this;
+      PolymorphCommonEvents.openContainer(self, self.containerMenu);
+    });
   }
 }

@@ -103,7 +103,7 @@ public class ClientPacketHandler {
   public static void handle(SPacketUpdatePreview unused) {
     Minecraft mc = Minecraft.getInstance();
 
-    if (mc.screen instanceof SmithingScreen smithingScreen) {
+    if (mc.gui.screen() instanceof SmithingScreen smithingScreen) {
       ((AccessorSmithingScreen) smithingScreen).callUpdateArmorStandPreview(
           smithingScreen.getMenu().getSlot(3).getItem());
     }

@@ -7,7 +7,7 @@
 
 plugins {
     id 'multiloader-loader'
-    id 'fabric-loom'
+    id 'dev.architectury.loom-no-remap'
 }
 
 repositories {
@@ -18,16 +18,16 @@ repositories {
 }
 
 dependencies {
+    // -no-remap variant: no mappings configuration; mod* prefixes replaced by plain ones.
     minecraft "com.mojang:minecraft:${minecraft_version}"
-    mappings loom.officialMojangMappings()
-    modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
+    implementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
+    implementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
 
     implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
 
-    modApi "org.ladysnake.cardinal-components-api:cardinal-components-base:${cca_version}"
-    modApi "org.ladysnake.cardinal-components-api:cardinal-components-entity:${cca_version}"
-    modApi "org.ladysnake.cardinal-components-api:cardinal-components-block:${cca_version}"
+    api "org.ladysnake.cardinal-components-api:cardinal-components-base:${cca_version}"
+    api "org.ladysnake.cardinal-components-api:cardinal-components-entity:${cca_version}"
+    api "org.ladysnake.cardinal-components-api:cardinal-components-block:${cca_version}"
 
     // Bundle CCA into the output jar so users don't need to install it separately.
     include "org.ladysnake.cardinal-components-api:cardinal-components-base:${cca_version}"
@@ -65,6 +65,20 @@ sourceSets.main.java {
     exclude 'com/illusivesoulworks/polymorph/common/integration/quickbench/**'
     exclude 'com/illusivesoulworks/polymorph/mixin/integration/quickbench/**'
     exclude 'com/illusivesoulworks/polymorph/mixin/integration/roughlyenoughitems/**'
+    exclude 'com/illusivesoulworks/polymorph/mixin/integration/jei/**'
+    exclude 'com/illusivesoulworks/polymorph/integration/jei/**'
+}
+
+// JEI / REI / QuickBench source files also arrive via the multiloader `commonJava`
+// configuration (added by multiloader-loader.gradle). Filter them out at task level
+// since sourceSets excludes don't apply to externally-sourced files.
+tasks.named('compileJava', JavaCompile).configure {
+    exclude 'com/illusivesoulworks/polymorph/mixin/integration/jei/**'
+    exclude 'com/illusivesoulworks/polymorph/integration/jei/**'
+    exclude 'com/illusivesoulworks/polymorph/mixin/integration/roughlyenoughitems/**'
+    exclude 'com/illusivesoulworks/polymorph/integration/roughlyenoughitems/**'
+    exclude 'com/illusivesoulworks/polymorph/common/integration/quickbench/**'
+    exclude 'com/illusivesoulworks/polymorph/mixin/integration/quickbench/**'
 }
 
 base {
@@ -97,4 +111,15 @@ processResources {
                 "java_version"               : project.java_version,
         ])
     }
+
+}
+
+// Common ships polymorph_plus-compatibility.mixins.json listing JEI mixins. Those classes
+// are excluded from the Fabric compile (no JEI Fabric dep on 26.1), so the mixin loader
+// crashes at startup trying to resolve them. After processResources finishes (which copied
+// common's resources in), overwrite the compat JSON with an empty mixin list.
+processResources.doLast {
+    def compat = new File("${processResources.destinationDir}/polymorph_plus-compatibility.mixins.json")
+    compat.parentFile.mkdirs()
+    compat.text = '{"required":false,"package":"com.illusivesoulworks.polymorph.mixin.integration","compatibilityLevel":"JAVA_16","mixins":[],"plugin":"com.illusivesoulworks.polymorph.mixin.IntegratedMixinPlugin","minVersion":"0.8"}'
 }
