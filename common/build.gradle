@@ -20,8 +20,9 @@ dependencies {
     // IntegratedMixinPlugin uses org.objectweb.asm.tree.ClassNode directly.
     compileOnly group: 'org.ow2.asm', name: 'asm-tree', version: '9.7'
 
-    // JEI / EMI / REI compile references — uncomment when 26.1.2 builds are published.
-    // compileOnly "mezz.jei:jei-26.1-common:${jei_version}"
+    // JEI compile reference — local jar from the user's mods folder (no maven repo yet).
+    compileOnly files("D:/CODE_PROJECTS/polymorph/mods_jars/forge/jei-26.1.2-neoforge-29.6.2.38.jar")
+    // EMI / REI 26.x builds not published yet — restore when available.
     // compileOnly "dev.emi:emi-xplat-mojmap:${emi_version}"
 }
 
@@ -52,6 +53,8 @@ def forkedFor261 = [
         // RecipeHolder.id() unwrap in payload + integration helper
         'com/illusivesoulworks/polymorph/common/network/client/CPacketBlockEntityListener.java',
         'com/illusivesoulworks/polymorph/common/integration/util/RecipeTransfer.java',
+        // RecipeHolder.id() unwrap in JEI mixin
+        'com/illusivesoulworks/polymorph/mixin/integration/jei/MixinRecipeTransferUtil.java',
         // CommandSourceStack.hasPermission(int) gone -> Commands.hasPermission(Permissions.X);
         // RecipeManager.getAllRecipesFor gone; ServerLevel.recipeAccess() replaces
         // getRecipeManager().
@@ -88,7 +91,7 @@ def forkedFor261 = [
 // is simpler than wiring optional compileOnly deps before the upstream mods publish 26.1.2
 // builds. Add them back when JEI / EMI ship 26.1.2 jars and we want recipe-transfer.
 def integrationExcludes = [
-        'com/illusivesoulworks/polymorph/mixin/integration/**',
+        'com/illusivesoulworks/polymorph/mixin/integration/emi/**',
 ]
 
 def remapCommonSources = tasks.register('remapCommonSources', Copy) {

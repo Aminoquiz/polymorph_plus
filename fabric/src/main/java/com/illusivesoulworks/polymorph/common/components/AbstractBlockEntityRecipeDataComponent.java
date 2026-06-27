@@ -18,10 +18,9 @@
 package com.illusivesoulworks.polymorph.common.components;
 
 import com.illusivesoulworks.polymorph.common.capability.AbstractBlockEntityRecipeData;
-import javax.annotation.Nonnull;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.ladysnake.cca.api.v3.component.Component;
 
 public abstract class AbstractBlockEntityRecipeDataComponent<M extends BlockEntity>
@@ -31,13 +30,14 @@ public abstract class AbstractBlockEntityRecipeDataComponent<M extends BlockEnti
     super(owner);
   }
 
+  // CCA 8.x switched from readFromNbt/writeToNbt(CompoundTag) to readData/writeData(ValueInput/Output).
+  // For first 26.1 Fabric ship, stubbed empty: selection state persists for the live session but
+  // is not serialized across world save. Tracked as KNOWN-ISSUE.
   @Override
-  public void readFromNbt(@Nonnull CompoundTag tag, @Nonnull HolderLookup.Provider provider) {
-    this.readNBT(provider, tag.getCompound("Data"));
+  public void readData(ValueInput readView) {
   }
 
   @Override
-  public void writeToNbt(@Nonnull CompoundTag tag, @Nonnull HolderLookup.Provider provider) {
-    tag.put("Data", this.writeNBT(provider));
+  public void writeData(ValueOutput writeView) {
   }
 }

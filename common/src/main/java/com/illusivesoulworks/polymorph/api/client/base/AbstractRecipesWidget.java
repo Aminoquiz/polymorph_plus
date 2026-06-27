@@ -143,6 +143,14 @@ public abstract class AbstractRecipesWidget implements IRecipesWidget {
   }
 
   @Override
+  public boolean mouseScrolled(double mouseX, double mouseY, double scrollY) {
+    if (this.selectionWidget != null && this.selectionWidget.isActive()) {
+      return this.selectionWidget.mouseScrolled(mouseX, mouseY, scrollY);
+    }
+    return false;
+  }
+
+  @Override
   public int getXPos() {
     return this.getOutputSlot().x + BUTTON_X_OFFSET;
   }

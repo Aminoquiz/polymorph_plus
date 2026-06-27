@@ -6,6 +6,7 @@
   "mixins": [
     "AccessorAbstractFurnaceBlockEntity",
     "AccessorCrafterMenu",
+    "AccessorRecipeManager",
     "MixinCrafterMenu",
     "MixinCraftingMenu",
     "MixinLevelChunk",

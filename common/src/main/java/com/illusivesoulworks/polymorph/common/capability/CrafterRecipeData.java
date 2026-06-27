@@ -23,6 +23,7 @@ public class CrafterRecipeData extends AbstractBlockEntityRecipeData<CrafterBloc
 
       if (listeningPlayer.containerMenu instanceof CrafterMenu crafterMenu) {
         ((AccessorCrafterMenu) crafterMenu).callRefreshRecipeResult();
+        crafterMenu.broadcastChanges();
       }
     }
   }

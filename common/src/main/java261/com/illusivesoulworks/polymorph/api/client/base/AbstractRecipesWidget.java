@@ -11,6 +11,8 @@ import com.illusivesoulworks.polymorph.api.PolymorphApi;
 import com.illusivesoulworks.polymorph.api.client.widgets.children.OpenSelectionButton;
 import com.illusivesoulworks.polymorph.api.client.widgets.children.SelectionWidget;
 import com.illusivesoulworks.polymorph.api.common.base.IRecipePair;
+import com.illusivesoulworks.polymorph.client.PolymorphClientConfig;
+import com.illusivesoulworks.polymorph.client.TutorialOverlay;
 import com.illusivesoulworks.polymorph.platform.Services;
 import com.mojang.datafixers.util.Pair;
 import java.util.Set;
@@ -69,6 +71,21 @@ public abstract class AbstractRecipesWidget implements IRecipesWidget {
         this.getSelectorSprites(),
         clickWidget -> this.selectionWidget.setActive(!this.selectionWidget.isActive()));
     this.openButton.visible = this.selectionWidget.getOutputWidgets().size() > 1;
+    this.applyPinState();
+  }
+
+  private void applyPinState() {
+    if (this.selectionWidget != null
+        && PolymorphClientConfig.isPinSelector()
+        && this.selectionWidget.getOutputWidgets().size() > 1) {
+      this.selectionWidget.setActive(true);
+    }
+  }
+
+  private boolean isOverOpenButton(double mouseX, double mouseY) {
+    return this.openButton != null && this.openButton.visible
+        && mouseX >= this.openButton.getX() && mouseX < this.openButton.getX() + 16
+        && mouseY >= this.openButton.getY() && mouseY < this.openButton.getY() + 16;
   }
 
   public WidgetSprites getSelectorSprites() {
@@ -108,6 +125,7 @@ public abstract class AbstractRecipesWidget implements IRecipesWidget {
     if (selected != null) {
       this.highlightRecipe(selected);
     }
+    this.applyPinState();
   }
 
   @Override
@@ -115,23 +133,73 @@ public abstract class AbstractRecipesWidget implements IRecipesWidget {
                      float renderPartialTicks) {
     this.selectionWidget.extractRenderState(guiGraphics, mouseX, mouseY, renderPartialTicks);
     this.openButton.extractRenderState(guiGraphics, mouseX, mouseY, renderPartialTicks);
+    if (PolymorphClientConfig.isPinSelector() && this.openButton.visible) {
+      int bx = this.openButton.getX();
+      int by = this.openButton.getY();
+      guiGraphics.fill(bx + 11, by, bx + 16, by + 5, 0xFF202020);
+      guiGraphics.fill(bx + 12, by + 1, bx + 15, by + 4, 0xFFFFD000);
+    }
+    TutorialOverlay.renderForOpenButton(guiGraphics, this.openButton.getX(),
+        this.openButton.getY(), this.openButton.visible);
+    TutorialOverlay.renderForSelector(guiGraphics,
+        Services.CLIENT_PLATFORM.getScreenLeft(this.containerScreen) + 16,
+        Services.CLIENT_PLATFORM.getScreenTop(this.containerScreen),
+        this.selectionWidget.isActive(), this.selectionWidget.canScroll());
   }
 
   @Override
   public boolean mouseClicked(double mouseX, double mouseY, int button) {
+    if (button == 1 && this.isOverOpenButton(mouseX, mouseY)) {
+      boolean next = !PolymorphClientConfig.isPinSelector();
+      PolymorphClientConfig.setPinSelector(next);
+      if (next) {
+        this.applyPinState();
+      }
+      TutorialOverlay.onPinToggled();
+      return true;
+    }
     MouseButtonEvent event = new MouseButtonEvent(mouseX, mouseY, new MouseButtonInfo(button, 0));
+    boolean pinned = PolymorphClientConfig.isPinSelector();
 
+    if (button == 0 && pinned && this.isOverOpenButton(mouseX, mouseY)) {
+      PolymorphClientConfig.setPinSelector(false);
+      this.selectionWidget.setActive(false);
+      return true;
+    }
     if (this.openButton.mouseClicked(event, false)) {
+      TutorialOverlay.onOpenButtonClicked();
       return true;
     } else if (this.selectionWidget.mouseClicked(event, false)) {
-      this.selectionWidget.setActive(false);
+      if (this.selectionWidget.wasLastClickArrow()) {
+        TutorialOverlay.onScrolledOrArrowClicked();
+      } else {
+        TutorialOverlay.onRecipePicked();
+      }
+      if (!pinned && !this.selectionWidget.wasLastClickArrow()) {
+        this.selectionWidget.setActive(false);
+      }
       return true;
     } else if (this.selectionWidget.isActive()) {
 
+      if (pinned) {
+        return false;
+      }
       if (!this.openButton.mouseClicked(event, false)) {
         this.selectionWidget.setActive(false);
       }
       return true;
+    }
+    return false;
+  }
+
+  @Override
+  public boolean mouseScrolled(double mouseX, double mouseY, double scrollY) {
+    if (this.selectionWidget != null && this.selectionWidget.isActive()) {
+      boolean consumed = this.selectionWidget.mouseScrolled(mouseX, mouseY, scrollY);
+      if (consumed) {
+        TutorialOverlay.onScrolledOrArrowClicked();
+      }
+      return consumed;
     }
     return false;
   }

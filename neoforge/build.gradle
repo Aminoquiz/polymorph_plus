@@ -31,12 +31,13 @@ neoForge {
 
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
-// Integration sources for optional mods (FastBench, REI) that haven't published 26.1.2 jars
-// yet. Compile-excluded until upstream ships; re-include when wiring those compileOnly deps.
+// FastWorkbench 10.x for 26.1.2 dropped the `dev.shadowsoffire.fastbench.util.FastBenchUtil`
+// utility class entirely (now mixes directly into vanilla AbstractCraftingMenu). Our legacy
+// MixinFastBenchUtil target no longer exists; sources stay excluded until the integration is
+// rewritten against the new mixin layout. REI now compiles (compileOnly above).
 sourceSets.main.java {
     exclude 'com/illusivesoulworks/polymorph/common/integration/fastbench/**'
     exclude 'com/illusivesoulworks/polymorph/mixin/integration/fastbench/**'
-    exclude 'com/illusivesoulworks/polymorph/mixin/integration/roughlyenoughitems/**'
 }
 
 // AccessTransformer auto-pickup (FML hardcodes this path).
@@ -45,9 +46,20 @@ if (at.exists()) {
     neoForge.accessTransformers.from at
 }
 
+tasks.named('jar').configure {
+    doLast {
+        copy {
+            from archiveFile
+            into file('D:/CODE_PROJECTS/polymorph/polymorph-mod/new-jars')
+        }
+    }
+}
+
 dependencies {
-    // Integrations — uncomment when 26.1.2 builds are published.
-    // compileOnly "mezz.jei:jei-26.1-neoforge:${jei_version}"
+    // JEI + REI compile references — local jars from the user's mods folder.
+    compileOnly files("D:/CODE_PROJECTS/polymorph/mods_jars/forge/jei-26.1.2-neoforge-29.6.2.38.jar")
+    compileOnly files("D:/CODE_PROJECTS/polymorph/mods_jars/forge/RoughlyEnoughItems-26.1.819.jar")
+    // EMI 26.x not yet published.
+    // FastWorkbench 10.x removed FastBenchUtil entirely; legacy mixin target gone, integration deferred.
     // compileOnly "dev.emi:emi-neoforge:${emi_version}"
-    // compileOnly "me.shedaniel:RoughlyEnoughItems-neoforge:${rei_version}"
 }

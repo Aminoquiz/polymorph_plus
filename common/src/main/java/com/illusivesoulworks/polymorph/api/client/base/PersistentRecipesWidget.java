@@ -29,6 +29,11 @@ public abstract class PersistentRecipesWidget extends AbstractRecipesWidget {
 
   @Override
   public void selectRecipe(ResourceLocation resourceLocation) {
+    // Eager local highlight so the selector reflects the click immediately. The C2S round
+    // trip updates the block entity, but server doesn't always echo back a SPacketRecipesList
+    // to refresh the highlight, leaving the old selection visually marked until the screen
+    // is closed and reopened.
+    this.highlightRecipe(resourceLocation);
     PolymorphApi.getInstance().getNetwork().sendPersistentRecipeSelectionC2S(resourceLocation);
   }
 }

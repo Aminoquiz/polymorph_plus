@@ -26,7 +26,7 @@ import net.minecraft.server.network.ServerGamePacketListenerImpl;
 public class CommonEventsListener {
 
   public static void setup() {
-    ServerTickEvents.END_WORLD_TICK.register(CommonEventsListener::levelTick);
+    ServerTickEvents.END_LEVEL_TICK.register(CommonEventsListener::levelTick);
     ServerPlayConnectionEvents.DISCONNECT.register(CommonEventsListener::disconnect);
   }
 
