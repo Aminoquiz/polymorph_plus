@@ -1,63 +1,88 @@
-# Polymorph
-[![](http://cf.way2muchnoise.eu/versions/polymorph.svg)](https://www.curseforge.com/minecraft/mc-mods/polymorph)
-[![](http://cf.way2muchnoise.eu/short_polymorph_downloads.svg)](https://www.curseforge.com/minecraft/mc-mods/polymorph/files)
+[![Wabbanode](https://cdn.modrinth.com/data/cached_images/101574d2252d501a181cc771473884e9d4b81a63.png)](https://wabbanode.com/affiliate/amine)
+
+# Polymorph+
+
 [![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg?&style=flat-square)](https://www.gnu.org/licenses/lgpl-3.0)
-[![ko-fi](https://img.shields.io/badge/Support%20Me-Ko--fi-%23FF5E5B?style=flat-square)](https://ko-fi.com/C0C1NL4O)
+[![Modrinth](https://img.shields.io/badge/Modrinth-polymorph__plus-00AF5C?style=flat-square&logo=modrinth&logoColor=white)](https://modrinth.com/mod/polymorph_plus)
+[![CurseForge](https://img.shields.io/badge/CurseForge-polymorph__plus-F16436?style=flat-square&logo=curseforge&logoColor=white)](https://www.curseforge.com/minecraft/mc-mods/polymorph-plus)
+[![Minecraft](https://img.shields.io/badge/Minecraft-1.21.11-62B47A?style=flat-square)](https://www.minecraft.net/)
+[![NeoForge](https://img.shields.io/badge/NeoForge-21.11.x-D7742F?style=flat-square)](https://neoforged.net/)
+[![Fabric](https://img.shields.io/badge/Fabric-1.21.11-1976D2?style=flat-square)](https://fabricmc.net/)
+[![ko-fi](https://img.shields.io/badge/Ko--fi-aminoquiz-FF5E5B?style=flat-square)](https://ko-fi.com/aminoquiz)
 
-Polymorph is a mod that solves recipe conflicts by letting players choose between all potential
-outputs shared by the same ingredients.
+Unofficial port of [Polymorph](https://github.com/illusivesoulworks/polymorph) by TheIllusiveC4 (Illusive Soulworks) to **Minecraft 1.21.11** on **NeoForge** and **Fabric**. Mod id is `polymorph_plus` (the original `polymorph` id is reserved for upstream).
 
-With a sufficiently large amount of mods, recipe conflicts are a common occurrence and the
-responsibility for resolving these usually falls on the user or modpack developer, using datapacks
-or other tools to ensure that each recipe is unique.
+Polymorph+ resolves recipe conflicts by letting the player pick which output a given set of ingredients should produce. Conflicting recipes stay co-installed, you choose the result.
 
-Polymorph offers an alternative solution, allowing all possible crafting and smelting recipes to
-co-exist regardless of conflicts.
-
-![](https://i.postimg.cc/prDcRzJ8/logo-final.png)
+> Beta. Back up your worlds before loading the mod. Bug reports go to the [issue tracker](https://github.com/Aminoquiz/polymorph_plus/issues).
 
 ## Features
 
-### Crafting
+### Crafting table
 
-![](https://i.ibb.co/TkWswkG/polymorph.gif)
+![](craft.gif)
 
-When a group of ingredients matches more than one recipe, a button will appear above the output
-slot. Pushing this button will show a list of all possible results and selecting one will change the
-crafting output to match. Polymorph will also remember the last selection as long as the ingredients
-don't change, so repeated crafting actions are possible on the same selection.
+A button appears above the output slot when ingredients match more than one recipe. Click it, pick the result. The selection persists as long as the input stays the same.
 
-### Smelting
+### Crafter (1.21+ block)
 
-![](https://i.ibb.co/QX9MNYM/polymorph-furnacedemo.gif)
+![](crafter.gif)
 
-When a valid input matches more than one output, a button will appear above the output slot. Pushing
-this button will show a list of all possible results with the currently selected result highlighted
-in green. Selecting one of the listed results will change the smelting output to match. This
-selection will be saved to the block itself and persist across world loading and unloading.
+Same selector inside the vanilla Crafter screen. The choice is saved on the block entity so redstone automation respects it across world reloads.
+
+### Smelting (furnace, blast furnace, smoker)
+
+![](furnace.gif)
+
+Same selector above the output slot. The choice is saved on the block.
+
+### Smithing
+
+![](smithing.gif)
+
+When a smithing transform input matches more than one recipe, the selector appears next to the result slot.
+
+### Quality of life
+
+![](scrollable_bar.gif)
+
+- **Scrollable selector** when there are more than seven conflicts. Mouse wheel or side arrows.
+- **Pinned panel.** Right click the open arrow to dock the selector for the session. Left click again to unpin. Pin state is saved to `config/polymorph_plus_client.json`.
+- **First-run tutorial.** Four hint bubbles, available in English and French, auto-dismiss after eight seconds.
+- **JEI and REI compatibility.** The "+" fill button (JEI) and auto-craft button (REI) work with Polymorph+ installed.
 
 ### Commands
 
-To assist identifying potential conflicts, there's a command `/polymorph conflicts` that will try to
-identify recipes that conflict with each other and outputs a list of them to your logs folder.
+`/polymorph conflicts` scans crafting, smelting, blasting, smoking, and smithing recipes and writes a list of detected conflicts to the logs folder.
 
 ## Downloads
 
-**CurseForge**
-- [Polymorph for Forge](https://www.curseforge.com/minecraft/mc-mods/polymorph/files)
-- [Polymorph for Fabric](https://www.curseforge.com/minecraft/mc-mods/polymorph-fabric/files)
+- Modrinth: [modrinth.com/mod/polymorph_plus](https://modrinth.com/mod/polymorph_plus)
+- CurseForge: [curseforge.com/minecraft/mc-mods/polymorph-plus](https://www.curseforge.com/minecraft/mc-mods/polymorph-plus)
 
-## Support
+## Addons
 
-Please report all bugs, issues, and feature requests to the
-[issue tracker](https://github.com/illusivesoulworks/polymorph/issues).
+[![Polymorphic Occultism](https://img.shields.io/badge/ADDON-POLYMORPHIC%20OCCULTISM-purple?style=for-the-badge)](https://modrinth.com/mod/polymorphic-occultism)
+[![Polymorphic Extended Crafting](https://img.shields.io/badge/ADDON-POLYMORPHIC%20EXTENDED%20CRAFTING-lightgreen?style=for-the-badge)](https://modrinth.com/mod/polymorphic-extended-crafting)
+[![Polymorphic Refined Storage](https://img.shields.io/badge/ADDON-POLYMORPHIC%20RS-lightblue?style=for-the-badge)](https://modrinth.com/mod/polymorphic-refined-storage)
 
-For non-technical support and questions, join the developer's [Discord](https://discord.gg/JWgrdwt).
+## Build
 
-## License
+```
+./gradlew :neoforge:build
+./gradlew :fabric:build
+```
 
-All source code and assets are licensed under LGPL 3.0.
+Jars land in `neoforge/build/libs/` and `fabric/build/libs/`. The Fabric variant bundles Cardinal Components API. The `conflict-tester/` subproject builds a small companion datapack mod that adds many conflicting recipes (useful for smoke testing the selector).
 
-## Donations
+## Partner
 
-Donations to the developer can be sent through [Ko-fi](https://ko-fi.com/C0C1NL4O).
+[![Wabbanode](https://cdn.modrinth.com/data/cached_images/101574d2252d501a181cc771473884e9d4b81a63.png)](https://wabbanode.com/affiliate/amine)
+
+Host your Minecraft server on [Wabbanode](https://wabbanode.com/affiliate/amine) (code `AMINE`, from 1.49 USD/month).
+
+## Credits and license
+
+Original mod by [TheIllusiveC4](https://github.com/illusivesoulworks). Port maintained by [Aminoquiz](https://github.com/Aminoquiz). Source and assets are LGPL-3.0-or-later, matching upstream. This port is unofficial and not endorsed by the original author.
+
+Support: [ko-fi.com/aminoquiz](https://ko-fi.com/aminoquiz).
