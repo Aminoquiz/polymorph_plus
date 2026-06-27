@@ -79,7 +79,7 @@ public class PolymorphFabricMod implements ModInitializer {
       BiConsumer<M, ServerPlayer> handler) {
     ServerPlayNetworking.registerGlobalReceiver(type, (payload, context) -> {
       ServerPlayer serverPlayer = context.player();
-      MinecraftServer server = serverPlayer.getServer();
+      MinecraftServer server = context.server();
 
       if (server != null) {
         server.execute(() -> handler.accept(payload, serverPlayer));

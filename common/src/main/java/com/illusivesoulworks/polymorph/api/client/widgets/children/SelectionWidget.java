@@ -36,6 +36,9 @@ import net.minecraft.resources.ResourceLocation;
 
 public class SelectionWidget implements Renderable, GuiEventListener {
 
+  public static final int BUTTON_SIZE = 25;
+  public static final int MAX_VISIBLE = 9;
+
   private final Consumer<ResourceLocation> onSelect;
   private final AbstractContainerScreen<?> containerScreen;
   private final List<OutputWidget> outputWidgets = new ArrayList<>();
@@ -49,6 +52,7 @@ public class SelectionWidget implements Renderable, GuiEventListener {
   private int y;
   private int lastX;
   private int lastY;
+  private int scrollOffset = 0;
 
   public SelectionWidget(int x, int y, int xOffset, int yOffset,
                          Pair<WidgetSprites, WidgetSprites> sprites,
@@ -78,18 +82,40 @@ public class SelectionWidget implements Renderable, GuiEventListener {
         widget -> widget.setHighlighted(widget.getResourceLocation().equals(resourceLocation)));
   }
 
-  private void updateButtonPositions() {
-    int size = this.outputWidgets.size();
-    int xOffset = (int) (-25 * Math.floor((size / 2.0F)));
+  private int maxScroll() {
+    return Math.max(0, this.outputWidgets.size() - MAX_VISIBLE);
+  }
 
-    if (size % 2 == 0) {
-      xOffset += 13;
+  private void clampScroll() {
+    int max = this.maxScroll();
+    if (this.scrollOffset > max) this.scrollOffset = max;
+    if (this.scrollOffset < 0) this.scrollOffset = 0;
+  }
+
+  private void updateButtonPositions() {
+    this.clampScroll();
+    int size = this.outputWidgets.size();
+    int visibleCount = Math.min(MAX_VISIBLE, size);
+    int firstVisible = this.scrollOffset;
+    int lastVisible = Math.min(size, firstVisible + MAX_VISIBLE) - 1;
+    int rowXOffset = (int) (-BUTTON_SIZE * Math.floor(visibleCount / 2.0F));
+    if (visibleCount % 2 == 0) rowXOffset += 13;
+
+    for (int i = 0; i < size; i++) {
+      OutputWidget widget = this.outputWidgets.get(i);
+      if (i < firstVisible || i > lastVisible) {
+        widget.visible = false;
+        widget.setPosition(Integer.MIN_VALUE / 2, Integer.MIN_VALUE / 2);
+        continue;
+      }
+      int relIdx = i - firstVisible;
+      int px = this.x + rowXOffset + relIdx * BUTTON_SIZE;
+      widget.visible = true;
+      widget.setPosition(px, this.y);
     }
-    int[] pos = {this.x + xOffset, this.y};
-    this.outputWidgets.forEach(widget -> {
-      widget.setPosition(pos[0], pos[1]);
-      pos[0] += 25;
-    });
+  }
+  public boolean canScroll() {
+    return this.maxScroll() > 0;
   }
 
   public List<OutputWidget> getOutputWidgets() {
@@ -103,7 +129,26 @@ public class SelectionWidget implements Renderable, GuiEventListener {
         this.outputWidgets.add(new OutputWidget(this.sprites, data));
       }
     });
+    this.scrollOffset = 0;
     this.updateButtonPositions();
+  }
+
+  public boolean mouseScrolled(double mouseX, double mouseY, double scrollY) {
+    if (!this.isActive() || !this.canScroll()) {
+      return false;
+    }
+    int delta = scrollY > 0 ? 1 : (scrollY < 0 ? -1 : 0);
+    if (delta == 0) {
+      return false;
+    }
+    int previous = this.scrollOffset;
+    this.scrollOffset += delta;
+    this.clampScroll();
+    if (this.scrollOffset != previous) {
+      this.updateButtonPositions();
+      return true;
+    }
+    return false;
   }
 
   public void setActive(boolean active) {
@@ -157,7 +202,7 @@ public class SelectionWidget implements Renderable, GuiEventListener {
 
       for (OutputWidget widget : this.outputWidgets) {
 
-        if (widget.mouseClicked(mouseX, mouseY, button)) {
+        if (widget.visible && widget.mouseClicked(mouseX, mouseY, button)) {
           onSelect.accept(widget.getResourceLocation());
           return true;
         }

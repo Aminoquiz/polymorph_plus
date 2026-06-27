@@ -18,10 +18,9 @@
 package com.illusivesoulworks.polymorph.common.components;
 
 import com.illusivesoulworks.polymorph.common.capability.PlayerRecipeData;
-import javax.annotation.Nonnull;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.ladysnake.cca.api.v3.component.Component;
 
 public class PlayerRecipeDataComponent extends PlayerRecipeData implements Component {
@@ -31,12 +30,10 @@ public class PlayerRecipeDataComponent extends PlayerRecipeData implements Compo
   }
 
   @Override
-  public void readFromNbt(@Nonnull CompoundTag tag, @Nonnull HolderLookup.Provider provider) {
-    this.readNBT(provider, tag.getCompound("Data"));
+  public void readData(ValueInput readView) {
   }
 
   @Override
-  public void writeToNbt(@Nonnull CompoundTag tag, @Nonnull HolderLookup.Provider provider) {
-    tag.put("Data", this.writeNBT(provider));
+  public void writeData(ValueOutput writeView) {
   }
 }

@@ -34,9 +34,9 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 // Integration sources for optional mods (FastBench, REI) that haven't published 1.21.11 jars
 // yet. Compile-excluded until upstream ships; re-include when wiring those compileOnly deps.
 sourceSets.main.java {
+    // FastWorkbench 1.21.11 not yet published / legacy mixin target gone.
     exclude 'com/illusivesoulworks/polymorph/common/integration/fastbench/**'
     exclude 'com/illusivesoulworks/polymorph/mixin/integration/fastbench/**'
-    exclude 'com/illusivesoulworks/polymorph/mixin/integration/roughlyenoughitems/**'
 }
 
 def at = file('src/main/resources/META-INF/accesstransformer.cfg')
@@ -44,11 +44,20 @@ if (at.exists()) {
     neoForge.accessTransformers.from at
 }
 
+tasks.named('jar').configure {
+    doLast {
+        copy {
+            from archiveFile
+            into file('D:/CODE_PROJECTS/polymorph/polymorph-mod/new-jars')
+        }
+    }
+}
+
 dependencies {
-    // Optional integrations. Re-enable when 1.21.11 builds ship.
+    // JEI + REI compile references — local jars from the user's mods folder.
+    compileOnly files("D:/CODE_PROJECTS/polymorph/mods_jars/forge/jei-1.21.11-neoforge-27.4.0.24.jar")
+    compileOnly files("D:/CODE_PROJECTS/polymorph/mods_jars/forge/RoughlyEnoughItems-21.11.816-neoforge.jar")
+    // EMI 1.21.11 / FastWorkbench 1.21.11 not yet wired.
     // compileOnly "dev.shadowsoffire:FastWorkbench:${fastworkbench_version}"
-    // compileOnly "dev.shadowsoffire:Placebo:${placebo_version}"
     // compileOnly "dev.emi:emi-xplat-mojmap:${emi_version}"
-    // compileOnly "mezz.jei:jei-1.21-common:${jei_version}"
-    // compileOnly "me.shedaniel:RoughlyEnoughItems-neoforge:${rei_version}"
 }

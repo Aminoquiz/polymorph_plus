@@ -2,17 +2,13 @@ pluginManagement {
     repositories {
         gradlePluginPortal()
         mavenCentral()
-        exclusiveContent {
-            forRepository {
-                maven {
-                    name = 'Fabric'
-                    url = uri("https://maven.fabricmc.net")
-                }
-            }
-            filter {
-                includeGroupAndSubgroups("net.fabricmc")
-                includeGroup("fabric-loom")
-            }
+        maven {
+            name = 'Fabric'
+            url = uri("https://maven.fabricmc.net/")
+        }
+        maven {
+            name = 'Architectury'
+            url = uri("https://maven.architectury.dev/")
         }
         exclusiveContent {
             forRepository {
@@ -52,7 +48,5 @@ plugins {
 rootProject.name = "${mod_id}"
 include("common")
 include("neoforge")
-// fabric subproject parked: Loom 1.13 has a Groovy STC incompatibility with Gradle 9
-// (getDisablePropertyName is Groovy 4), and Loom 1.12 refuses Fabric API 0.141 (built with
-// Loom 1.13). Revisit when Loom ships a fix or Gradle bundles Groovy 4.
-// include("fabric")
+include("conflict-tester")
+include("fabric")

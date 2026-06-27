@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:blasting",
+  "category": "misc",
+  "ingredient": "minecraft:iron_ore",
+  "result": { "id": "minecraft:diamond" },
+  "experience": 0.7,
+  "cookingtime": 100
+}

@@ -48,4 +48,13 @@ public class ClientEventsListener {
       evt.setCanceled(true);
     }
   }
+
+  @SubscribeEvent
+  public void mouseScroll(ScreenEvent.MouseScrolled.Pre evt) {
+
+    if (PolymorphClientEvents.mouseScroll(evt.getScreen(), evt.getMouseX(), evt.getMouseY(),
+        evt.getScrollDeltaY())) {
+      evt.setCanceled(true);
+    }
+  }
 }

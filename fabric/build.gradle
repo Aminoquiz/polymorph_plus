@@ -1,6 +1,6 @@
 plugins {
     id 'multiloader-loader'
-    id 'fabric-loom' version '1.13.3'
+    id 'dev.architectury.loom' version '1.13.469'
 }
 
 repositories {
@@ -12,10 +12,7 @@ repositories {
 
 dependencies {
     minecraft "com.mojang:minecraft:${minecraft_version}"
-    mappings loom.layered() {
-        officialMojangMappings()
-        parchment("org.parchmentmc.data:parchment-${parchment_mc}:${parchment_version}@zip")
-    }
+    mappings loom.officialMojangMappings()
     modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
 
@@ -34,6 +31,35 @@ dependencies {
     // compileOnly "mezz.jei:jei-1.21-common:${jei_version}"
     // modCompileOnly "me.shedaniel:RoughlyEnoughItems-fabric:${rei_version}"
     // modCompileOnly "curse.maven:quickbench-914551:5075002"
+}
+
+sourceSets.main.java {
+    exclude 'com/illusivesoulworks/polymorph/common/integration/quickbench/**'
+    exclude 'com/illusivesoulworks/polymorph/mixin/integration/quickbench/**'
+    exclude 'com/illusivesoulworks/polymorph/mixin/integration/roughlyenoughitems/**'
+    exclude 'com/illusivesoulworks/polymorph/mixin/integration/jei/**'
+    exclude 'com/illusivesoulworks/polymorph/integration/jei/**'
+}
+
+tasks.named('javadoc', Javadoc).configure {
+    exclude '**/mixin/integration/jei/**'
+    exclude '**/integration/jei/**'
+    exclude '**/mixin/integration/roughlyenoughitems/**'
+    exclude '**/integration/roughlyenoughitems/**'
+    exclude '**/integration/quickbench/**'
+    exclude '**/mixin/integration/quickbench/**'
+    exclude '**/mixin/integration/emi/**'
+    failOnError = false
+}
+
+tasks.named('compileJava', JavaCompile).configure {
+    exclude '**/mixin/integration/jei/**'
+    exclude '**/integration/jei/**'
+    exclude '**/mixin/integration/roughlyenoughitems/**'
+    exclude '**/integration/roughlyenoughitems/**'
+    exclude '**/integration/quickbench/**'
+    exclude '**/mixin/integration/quickbench/**'
+    exclude '**/mixin/integration/emi/**'
 }
 
 loom {
@@ -59,3 +85,15 @@ loom {
         }
     }
 }
+
+
+processResources {
+    inputs.property 'mod_id', project.mod_id
+}
+
+processResources.doLast {
+    def compat = new File("${processResources.destinationDir}/polymorph_plus-compatibility.mixins.json")
+    compat.parentFile.mkdirs()
+    compat.text = '{"required":false,"package":"com.illusivesoulworks.polymorph.mixin.integration","compatibilityLevel":"JAVA_16","mixins":[],"plugin":"com.illusivesoulworks.polymorph.mixin.IntegratedMixinPlugin","minVersion":"0.8"}'
+}
+

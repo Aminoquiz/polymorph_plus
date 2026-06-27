@@ -49,12 +49,24 @@ public class NeoForgePlatform implements IPlatform {
 
   @Override
   public boolean isModLoaded(String id) {
-    return ModList.get().isLoaded(id);
+    ModList list = ModList.get();
+    if (list != null) {
+      return list.isLoaded(id);
+    }
+    // Dedicated server boot path: IntegratedMixinPlugin can be queried before ModList is
+    // constructed. Fall back to LoadingModList which is populated earlier.
+    net.neoforged.fml.loading.LoadingModList loading = net.neoforged.fml.loading.LoadingModList.get();
+    return loading != null && loading.getModFileById(id) != null;
   }
 
   @Override
   public boolean isModFileLoaded(String id) {
-    return ModList.get().getModFileById(id) != null;
+    ModList list = ModList.get();
+    if (list != null) {
+      return list.getModFileById(id) != null;
+    }
+    net.neoforged.fml.loading.LoadingModList loading = net.neoforged.fml.loading.LoadingModList.get();
+    return loading != null && loading.getModFileById(id) != null;
   }
 
   @Override
