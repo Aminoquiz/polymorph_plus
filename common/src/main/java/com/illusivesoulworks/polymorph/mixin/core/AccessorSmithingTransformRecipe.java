@@ -1,5 +1,6 @@
 package com.illusivesoulworks.polymorph.mixin.core;
 
+import java.util.Optional;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.SmithingTransformRecipe;
 import org.spongepowered.asm.mixin.Mixin;
@@ -12,8 +13,8 @@ public interface AccessorSmithingTransformRecipe {
   Ingredient getBase();
 
   @Accessor
-  Ingredient getAddition();
+  Optional<Ingredient> getAddition();
 
   @Accessor
-  Ingredient getTemplate();
+  Optional<Ingredient> getTemplate();
 }

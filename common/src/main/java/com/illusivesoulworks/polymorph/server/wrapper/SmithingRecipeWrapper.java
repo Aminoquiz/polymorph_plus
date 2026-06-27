@@ -33,9 +33,9 @@ public class SmithingRecipeWrapper extends RecipeWrapper {
     } else if (recipe instanceof SmithingTransformRecipe) {
       AccessorSmithingTransformRecipe accessorSmithingRecipe =
           (AccessorSmithingTransformRecipe) recipe;
-      template = accessorSmithingRecipe.getTemplate();
+      template = accessorSmithingRecipe.getTemplate().orElse(Ingredient.EMPTY);
       base = accessorSmithingRecipe.getBase();
-      addition = accessorSmithingRecipe.getAddition();
+      addition = accessorSmithingRecipe.getAddition().orElse(Ingredient.EMPTY);
     }
 
     if (otherRecipe instanceof SmithingTrimRecipe) {
@@ -47,9 +47,9 @@ public class SmithingRecipeWrapper extends RecipeWrapper {
     } else if (otherRecipe instanceof SmithingTransformRecipe) {
       AccessorSmithingTransformRecipe accessorSmithingRecipe =
           (AccessorSmithingTransformRecipe) otherRecipe;
-      otherTemplate = accessorSmithingRecipe.getTemplate();
+      otherTemplate = accessorSmithingRecipe.getTemplate().orElse(Ingredient.EMPTY);
       otherBase = accessorSmithingRecipe.getBase();
-      otherAddition = accessorSmithingRecipe.getAddition();
+      otherAddition = accessorSmithingRecipe.getAddition().orElse(Ingredient.EMPTY);
     }
     IngredientWrapper baseWrapper = new IngredientWrapper(base);
     IngredientWrapper otherBaseWrapper = new IngredientWrapper(otherBase);

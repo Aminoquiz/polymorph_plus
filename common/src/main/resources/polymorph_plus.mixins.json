@@ -7,7 +7,7 @@
     "AccessorAbstractFurnaceBlockEntity",
     "AccessorCrafterMenu",
     "AccessorCraftingMenu",
-    "AccessorInventoryMenu",
+    "AccessorRecipeManager",
     "AccessorSmithingTransformRecipe",
     "AccessorSmithingTrimRecipe",
     "MixinCrafterMenu",

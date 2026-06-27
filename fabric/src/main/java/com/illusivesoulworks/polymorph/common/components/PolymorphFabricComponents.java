@@ -22,10 +22,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 import javax.annotation.Nonnull;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import com.illusivesoulworks.polymorph.common.capability.CrafterRecipeData;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.CrafterBlockEntity;
 import org.ladysnake.cca.api.v3.block.BlockComponentFactoryRegistry;
 import org.ladysnake.cca.api.v3.block.BlockComponentInitializer;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
@@ -38,11 +40,11 @@ public class PolymorphFabricComponents implements BlockComponentInitializer,
 
   public static final ComponentKey<PlayerRecipeDataComponent> PLAYER_RECIPE_DATA =
       ComponentRegistry.getOrCreate(
-          ResourceLocation.fromNamespaceAndPath(PolymorphApi.MOD_ID, "player_recipe_data"),
+          Identifier.fromNamespaceAndPath(PolymorphApi.MOD_ID, "player_recipe_data"),
           PlayerRecipeDataComponent.class);
   public static final ComponentKey<AbstractBlockEntityRecipeDataComponent>
       BLOCK_ENTITY_RECIPE_DATA = ComponentRegistry.getOrCreate(
-      ResourceLocation.fromNamespaceAndPath(PolymorphApi.MOD_ID, "block_entity_recipe_data"),
+      Identifier.fromNamespaceAndPath(PolymorphApi.MOD_ID, "block_entity_recipe_data"),
       AbstractBlockEntityRecipeDataComponent.class);
 
   private static final Map<Class<? extends BlockEntity>, Function<BlockEntity, AbstractBlockEntityRecipeDataComponent<?>>>
@@ -62,6 +64,9 @@ public class PolymorphFabricComponents implements BlockComponentInitializer,
     registerBlockEntity(AbstractFurnaceBlockEntity.class,
                         blockEntity -> new FurnaceRecipeDataComponent(
                             (AbstractFurnaceBlockEntity) blockEntity));
+    registerBlockEntity(CrafterBlockEntity.class,
+                        blockEntity -> new WrappedRecipeDataComponent<>(
+                            new CrafterRecipeData((CrafterBlockEntity) blockEntity)));
 
     for (Map.Entry<Class<? extends BlockEntity>, Function<BlockEntity, AbstractBlockEntityRecipeDataComponent<?>>> entry : BLOCK_ENTITY_2_RECIPE_DATA.entrySet()) {
       registry.registerFor(entry.getKey(), BLOCK_ENTITY_RECIPE_DATA,

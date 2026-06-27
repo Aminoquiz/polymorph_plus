@@ -28,7 +28,13 @@ public class ClientEventsListener {
     ScreenEvents.AFTER_INIT.register((client, screen, scaledWidth, scaledHeight) -> {
       PolymorphClientEvents.initScreen(screen);
       ScreenEvents.afterRender(screen).register(PolymorphClientEvents::render);
-      ScreenMouseEvents.beforeMouseClick(screen).register(PolymorphClientEvents::mouseClick);
+      // allowMouseClick returns true to ALLOW the click, false to BLOCK. Our mouseClick
+      // returns true when our overlay CONSUMED the click (vanilla should be blocked).
+      // Invert: block vanilla only when consumed; otherwise let the click through.
+      ScreenMouseEvents.allowMouseClick(screen).register((s, event) ->
+          !PolymorphClientEvents.mouseClick(s, event.x(), event.y(), event.button()));
+      ScreenMouseEvents.allowMouseScroll(screen).register((s, mouseX, mouseY, hAmt, vAmt) ->
+          !PolymorphClientEvents.mouseScroll(s, mouseX, mouseY, vAmt));
     });
   }
 }

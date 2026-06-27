@@ -1,4 +1,8 @@
 {
   "commands.polymorph.conflicts.starting": "Recherche des conflits de recette...",
-  "commands.polymorph.conflicts.success": "%d conflits potentiels trouvés. Regardez logs/conflicts.log pour plus de détails."
+  "commands.polymorph.conflicts.success": "%d conflits potentiels trouvés. Regardez logs/conflicts.log pour plus de détails.",
+  "polymorph_plus.tutorial.conflict": "Conflit de craft détecté ! Cliquez sur la flèche pour choisir.",
+  "polymorph_plus.tutorial.select": "Cliquez sur un résultat pour changer la recette.",
+  "polymorph_plus.tutorial.pin": "Astuce : clic droit sur la flèche pour épingler le panneau.",
+  "polymorph_plus.tutorial.scroll": "Plus de 7 conflits ! Faites défiler ou cliquez sur les flèches latérales."
 }
