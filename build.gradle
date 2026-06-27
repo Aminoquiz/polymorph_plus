@@ -6,7 +6,10 @@
 
 plugins {
     id 'net.neoforged.moddev' version '2.0.140' apply false
-    id 'fabric-loom' version '1.17.12' apply false
+    // 26.1 ships unobfuscated, no mojmap artifact published. Follow shedaniel's gist
+    // https://gist.github.com/shedaniel/18d4eebf940e9c3296e87d994ebb2838 : use the
+    // -no-remap Architectury Loom variant and skip the mappings configuration entirely.
+    id 'dev.architectury.loom-no-remap' version '1.17-SNAPSHOT' apply false
 }
 
 tasks.named('wrapper', Wrapper).configure {

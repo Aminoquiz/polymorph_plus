@@ -36,6 +36,14 @@ import net.minecraft.resources.ResourceLocation;
 
 public class SelectionWidget implements Renderable, GuiEventListener {
 
+  public static final int BUTTON_SIZE = 25;
+  public static final int MAX_VISIBLE = 9;
+  public static final int ARROW_WIDTH = 5;
+  public static final int ARROW_GAP = 1;
+  private static final int ARROW_BG = 0xCC000000;
+  private static final int ARROW_FG_ON = 0xFFFFFFFF;
+  private static final int ARROW_FG_OFF = 0x66FFFFFF;
+
   private final Consumer<ResourceLocation> onSelect;
   private final AbstractContainerScreen<?> containerScreen;
   private final List<OutputWidget> outputWidgets = new ArrayList<>();
@@ -49,6 +57,9 @@ public class SelectionWidget implements Renderable, GuiEventListener {
   private int y;
   private int lastX;
   private int lastY;
+  private int scrollOffset = 0;
+  private int leftArrowX;
+  private int rightArrowX;
 
   public SelectionWidget(int x, int y, int xOffset, int yOffset,
                          Pair<WidgetSprites, WidgetSprites> sprites,
@@ -78,18 +89,69 @@ public class SelectionWidget implements Renderable, GuiEventListener {
         widget -> widget.setHighlighted(widget.getResourceLocation().equals(resourceLocation)));
   }
 
-  private void updateButtonPositions() {
-    int size = this.outputWidgets.size();
-    int xOffset = (int) (-25 * Math.floor((size / 2.0F)));
+  private int maxScroll() {
+    return Math.max(0, this.outputWidgets.size() - MAX_VISIBLE);
+  }
 
-    if (size % 2 == 0) {
-      xOffset += 13;
+  private void clampScroll() {
+    int max = this.maxScroll();
+    if (this.scrollOffset > max) this.scrollOffset = max;
+    if (this.scrollOffset < 0) this.scrollOffset = 0;
+  }
+
+  private void updateButtonPositions() {
+    this.clampScroll();
+    int size = this.outputWidgets.size();
+    int visibleCount = Math.min(MAX_VISIBLE, size);
+    int firstVisible = this.scrollOffset;
+    int lastVisible = Math.min(size, firstVisible + MAX_VISIBLE) - 1;
+    int rowXOffset = (int) (-BUTTON_SIZE * Math.floor(visibleCount / 2.0F));
+    if (visibleCount % 2 == 0) rowXOffset += 13;
+
+    for (int i = 0; i < size; i++) {
+      OutputWidget widget = this.outputWidgets.get(i);
+      if (i < firstVisible || i > lastVisible) {
+        widget.visible = false;
+        widget.setPosition(Integer.MIN_VALUE / 2, Integer.MIN_VALUE / 2);
+        continue;
+      }
+      int relIdx = i - firstVisible;
+      int px = this.x + rowXOffset + relIdx * BUTTON_SIZE;
+      widget.visible = true;
+      widget.setPosition(px, this.y);
     }
-    int[] pos = {this.x + xOffset, this.y};
-    this.outputWidgets.forEach(widget -> {
-      widget.setPosition(pos[0], pos[1]);
-      pos[0] += 25;
-    });
+    this.leftArrowX = this.x + rowXOffset - ARROW_GAP - ARROW_WIDTH;
+    this.rightArrowX = this.x + rowXOffset + visibleCount * BUTTON_SIZE + ARROW_GAP;
+  }
+
+  private static void drawArrow(GuiGraphics gg, int x, int y, boolean rightFacing,
+                                boolean enabled) {
+    gg.fill(x, y, x + ARROW_WIDTH, y + BUTTON_SIZE, ARROW_BG);
+    int fg = enabled ? ARROW_FG_ON : ARROW_FG_OFF;
+    int cy = y + BUTTON_SIZE / 2;
+    int[] dy = {-4, -3, -2, -1, 0, 1, 2, 3, 4};
+    int[] tipsRight = {0, 1, 2, 3, 4, 3, 2, 1, 0};
+    int[] tipsLeft = {4, 3, 2, 1, 0, 1, 2, 3, 4};
+    int[] tips = rightFacing ? tipsRight : tipsLeft;
+    for (int i = 0; i < dy.length; i++) {
+      int px = x + tips[i];
+      int py = cy + dy[i];
+      gg.fill(px, py, px + 1, py + 1, fg);
+    }
+  }
+
+  private boolean isOverLeftArrow(double mouseX, double mouseY) {
+    return mouseX >= this.leftArrowX && mouseX < this.leftArrowX + ARROW_WIDTH
+        && mouseY >= this.y && mouseY < this.y + BUTTON_SIZE;
+  }
+
+  private boolean isOverRightArrow(double mouseX, double mouseY) {
+    return mouseX >= this.rightArrowX && mouseX < this.rightArrowX + ARROW_WIDTH
+        && mouseY >= this.y && mouseY < this.y + BUTTON_SIZE;
+  }
+
+  public boolean canScroll() {
+    return this.maxScroll() > 0;
   }
 
   public List<OutputWidget> getOutputWidgets() {
@@ -103,7 +165,26 @@ public class SelectionWidget implements Renderable, GuiEventListener {
         this.outputWidgets.add(new OutputWidget(this.sprites, data));
       }
     });
+    this.scrollOffset = 0;
     this.updateButtonPositions();
+  }
+
+  public boolean mouseScrolled(double mouseX, double mouseY, double scrollY) {
+    if (!this.isActive() || !this.canScroll()) {
+      return false;
+    }
+    int delta = scrollY > 0 ? 1 : (scrollY < 0 ? -1 : 0);
+    if (delta == 0) {
+      return false;
+    }
+    int previous = this.scrollOffset;
+    this.scrollOffset += delta;
+    this.clampScroll();
+    if (this.scrollOffset != previous) {
+      this.updateButtonPositions();
+      return true;
+    }
+    return false;
   }
 
   public void setActive(boolean active) {
@@ -146,6 +227,11 @@ public class SelectionWidget implements Renderable, GuiEventListener {
           this.hoveredButton = button;
         }
       });
+      if (this.canScroll()) {
+        drawArrow(guiGraphics, this.leftArrowX, this.y, false, this.scrollOffset > 0);
+        drawArrow(guiGraphics, this.rightArrowX, this.y, true,
+            this.scrollOffset < this.maxScroll());
+      }
       this.renderTooltip(guiGraphics, mouseX, mouseY);
     }
   }
@@ -154,10 +240,26 @@ public class SelectionWidget implements Renderable, GuiEventListener {
   public boolean mouseClicked(double mouseX, double mouseY, int button) {
 
     if (this.isActive()) {
+      if (this.canScroll()) {
+        if (this.isOverLeftArrow(mouseX, mouseY)) {
+          if (this.scrollOffset > 0) {
+            this.scrollOffset--;
+            this.updateButtonPositions();
+          }
+          return true;
+        }
+        if (this.isOverRightArrow(mouseX, mouseY)) {
+          if (this.scrollOffset < this.maxScroll()) {
+            this.scrollOffset++;
+            this.updateButtonPositions();
+          }
+          return true;
+        }
+      }
 
       for (OutputWidget widget : this.outputWidgets) {
 
-        if (widget.mouseClicked(mouseX, mouseY, button)) {
+        if (widget.visible && widget.mouseClicked(mouseX, mouseY, button)) {
           onSelect.accept(widget.getResourceLocation());
           return true;
         }

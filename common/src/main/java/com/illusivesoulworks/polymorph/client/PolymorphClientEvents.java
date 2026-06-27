@@ -61,4 +61,14 @@ public class PolymorphClientEvents {
     }
     return false;
   }
+
+  public static boolean mouseScroll(Screen screen, double mouseX, double mouseY, double scrollY) {
+
+    if (screen instanceof AbstractContainerScreen) {
+      return RecipesWidget.get()
+          .map(recipeController -> recipeController.mouseScrolled(mouseX, mouseY, scrollY))
+          .orElse(false);
+    }
+    return false;
+  }
 }

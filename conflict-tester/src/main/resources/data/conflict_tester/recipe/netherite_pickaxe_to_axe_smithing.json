@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smithing_transform",
+  "template": "minecraft:netherite_upgrade_smithing_template",
+  "base": "minecraft:diamond_pickaxe",
+  "addition": "minecraft:netherite_ingot",
+  "result": {
+    "id": "minecraft:netherite_axe"
+  }
+}
