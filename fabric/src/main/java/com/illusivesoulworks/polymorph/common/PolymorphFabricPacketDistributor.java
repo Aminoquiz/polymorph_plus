@@ -31,18 +31,18 @@ import java.util.Optional;
 import java.util.SortedSet;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 
 public class PolymorphFabricPacketDistributor implements IPolymorphNetwork {
 
   @Override
-  public void sendPlayerRecipeSelectionC2S(ResourceLocation resourceLocation) {
+  public void sendPlayerRecipeSelectionC2S(Identifier resourceLocation) {
     ClientPlayNetworking.send(new CPacketPlayerRecipeSelection(resourceLocation));
   }
 
   @Override
-  public void sendPersistentRecipeSelectionC2S(ResourceLocation resourceLocation) {
+  public void sendPersistentRecipeSelectionC2S(Identifier resourceLocation) {
     ClientPlayNetworking.send(new CPacketPersistentRecipeSelection(resourceLocation));
   }
 
@@ -58,7 +58,7 @@ public class PolymorphFabricPacketDistributor implements IPolymorphNetwork {
 
   @Override
   public void sendRecipesListS2C(ServerPlayer player, SortedSet<IRecipePair> recipesList,
-                                 ResourceLocation selected) {
+                                 Identifier selected) {
     HashSet<IRecipePair> set = null;
 
     if (recipesList != null) {
@@ -70,7 +70,7 @@ public class PolymorphFabricPacketDistributor implements IPolymorphNetwork {
 
   @Override
   public void sendPlayerSyncS2C(ServerPlayer player, SortedSet<IRecipePair> recipesList,
-                                ResourceLocation selected) {
+                                Identifier selected) {
     HashSet<IRecipePair> set = null;
 
     if (recipesList != null) {

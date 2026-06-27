@@ -18,18 +18,18 @@
 package com.illusivesoulworks.polymorph.platform;
 
 import com.illusivesoulworks.polymorph.common.integration.AbstractCompatibilityModule;
-import com.illusivesoulworks.polymorph.common.integration.quickbench.QuickBenchModule;
 import com.illusivesoulworks.polymorph.platform.services.IIntegrationPlatform;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.Map;
 import java.util.function.Supplier;
 
+// No active integrations on Fabric 26.1.2 (QuickBench/REI/JEI not yet on Fabric 26.1).
+// Returning an empty map keeps the ServiceLoader contract satisfied without referencing
+// integration classes that were excluded from compilation.
 public class FabricIntegrationPlatform implements IIntegrationPlatform {
 
   @Override
   public Map<String, Supplier<Supplier<AbstractCompatibilityModule>>> createCompatibilityModules() {
-    Map<String, Supplier<Supplier<AbstractCompatibilityModule>>> result = new HashMap<>();
-    result.put("quickbench", () -> QuickBenchModule::new);
-    return result;
+    return Collections.emptyMap();
   }
 }

@@ -28,7 +28,7 @@ public class PolymorphClientEvents {
   public static void tick() {
     Minecraft mc = Minecraft.getInstance();
     RecipesWidget.get().ifPresent(widget -> {
-      if (mc.player == null || mc.screen == null) {
+      if (mc.player == null || mc.gui.screen() == null) {
         RecipesWidget.clear();
       } else if (widget instanceof ITickingRecipesWidget) {
         ((ITickingRecipesWidget) widget).tick();
@@ -57,6 +57,16 @@ public class PolymorphClientEvents {
     if (screen instanceof AbstractContainerScreen) {
       return RecipesWidget.get()
           .map(recipeController -> recipeController.mouseClicked(mouseX, mouseY, button))
+          .orElse(false);
+    }
+    return false;
+  }
+
+  public static boolean mouseScroll(Screen screen, double mouseX, double mouseY, double scrollY) {
+
+    if (screen instanceof AbstractContainerScreen) {
+      return RecipesWidget.get()
+          .map(recipeController -> recipeController.mouseScrolled(mouseX, mouseY, scrollY))
           .orElse(false);
     }
     return false;

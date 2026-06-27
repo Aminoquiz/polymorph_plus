@@ -51,21 +51,21 @@ public class PolymorphFabricMod implements ModInitializer {
   }
 
   public static void registerPayloads() {
-    PayloadTypeRegistry.playC2S()
+    PayloadTypeRegistry.serverboundPlay()
         .register(CPacketPlayerRecipeSelection.TYPE, CPacketPlayerRecipeSelection.STREAM_CODEC);
-    PayloadTypeRegistry.playC2S().register(CPacketPersistentRecipeSelection.TYPE,
+    PayloadTypeRegistry.serverboundPlay().register(CPacketPersistentRecipeSelection.TYPE,
         CPacketPersistentRecipeSelection.STREAM_CODEC);
-    PayloadTypeRegistry.playC2S()
+    PayloadTypeRegistry.serverboundPlay()
         .register(CPacketBlockEntityListener.TYPE, CPacketBlockEntityListener.STREAM_CODEC);
-    PayloadTypeRegistry.playS2C()
+    PayloadTypeRegistry.clientboundPlay()
         .register(SPacketHighlightRecipe.TYPE, SPacketHighlightRecipe.STREAM_CODEC);
-    PayloadTypeRegistry.playS2C()
+    PayloadTypeRegistry.clientboundPlay()
         .register(SPacketPlayerRecipeSync.TYPE, SPacketPlayerRecipeSync.STREAM_CODEC);
-    PayloadTypeRegistry.playS2C()
+    PayloadTypeRegistry.clientboundPlay()
         .register(SPacketRecipesList.TYPE, SPacketRecipesList.STREAM_CODEC);
-    PayloadTypeRegistry.playS2C()
+    PayloadTypeRegistry.clientboundPlay()
         .register(SPacketUpdatePreview.TYPE, SPacketUpdatePreview.STREAM_CODEC);
-    PayloadTypeRegistry.playS2C()
+    PayloadTypeRegistry.clientboundPlay()
         .register(SPacketRecipeHandshake.TYPE, SPacketRecipeHandshake.STREAM_CODEC);
 
     registerServerReceiver(CPacketPlayerRecipeSelection.TYPE, CPacketPlayerRecipeSelection::handle);
@@ -79,7 +79,7 @@ public class PolymorphFabricMod implements ModInitializer {
       BiConsumer<M, ServerPlayer> handler) {
     ServerPlayNetworking.registerGlobalReceiver(type, (payload, context) -> {
       ServerPlayer serverPlayer = context.player();
-      MinecraftServer server = serverPlayer.getServer();
+      MinecraftServer server = context.server();
 
       if (server != null) {
         server.execute(() -> handler.accept(payload, serverPlayer));

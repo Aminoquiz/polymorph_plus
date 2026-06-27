@@ -5,16 +5,16 @@ license = "LGPL-3.0-or-later"
     modId = "conflict_tester"
     version = "1.0.0"
     displayName = "Conflict Tester"
-    description = '''Drops in a single shaped crafting recipe that conflicts with the vanilla diamond pickaxe (same pattern, outputs sticks). Used to verify Polymorph+ surfaces its recipe-selection UI. Test only.'''
+    description = '''Ships conflicting crafting, smelting, and smithing recipes to verify Polymorph+ surfaces its selection UI. Test only.'''
 [[dependencies.conflict_tester]]
     modId = "neoforge"
     type = "required"
-    versionRange = "[26.1.2,)"
+    versionRange = "[26.2,)"
     ordering = "NONE"
     side = "BOTH"
 [[dependencies.conflict_tester]]
     modId = "minecraft"
     type = "required"
-    versionRange = "[26.1.2, 26.2)"
+    versionRange = "[26.2, 26.3)"
     ordering = "NONE"
     side = "BOTH"
