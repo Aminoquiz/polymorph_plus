@@ -8,3 +8,7 @@ build/
 .vscode/
 run/
 */run/
+
+# Mod page descriptions live at polymorph-mod/ root, not per-port
+DESCRIPTION_modrinth.md
+DESCRIPTION_curseforge.md
