@@ -1,85 +1,88 @@
-[![Support me by hosting a minecraft server on Wabbanode ! (prices start as low as 1.49$USD / month)](https://cdn.modrinth.com/data/cached_images/101574d2252d501a181cc771473884e9d4b81a63.png)](https://wabbanode.com/affiliate/amine)
+[![Wabbanode](https://cdn.modrinth.com/data/cached_images/101574d2252d501a181cc771473884e9d4b81a63.png)](https://wabbanode.com/affiliate/amine)
 
 # Polymorph+
 
 [![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg?&style=flat-square)](https://www.gnu.org/licenses/lgpl-3.0)
 [![Modrinth](https://img.shields.io/badge/Modrinth-polymorph__plus-00AF5C?style=flat-square&logo=modrinth&logoColor=white)](https://modrinth.com/mod/polymorph_plus)
 [![CurseForge](https://img.shields.io/badge/CurseForge-polymorph__plus-F16436?style=flat-square&logo=curseforge&logoColor=white)](https://www.curseforge.com/minecraft/mc-mods/polymorph-plus)
-[![Minecraft](https://img.shields.io/badge/Minecraft-26.1.2-62B47A?style=flat-square)](https://neoforged.net/)
-[![NeoForge](https://img.shields.io/badge/NeoForge-26.1.2.x-D7742F?style=flat-square)](https://neoforged.net/)
-[![ko-fi](https://img.shields.io/badge/Support%20Me-Ko--fi-%23FF5E5B?style=flat-square)](https://ko-fi.com/aminoquiz)
+[![Minecraft](https://img.shields.io/badge/Minecraft-26.2-62B47A?style=flat-square)](https://www.minecraft.net/)
+[![NeoForge](https://img.shields.io/badge/NeoForge-26.2.x-D7742F?style=flat-square)](https://neoforged.net/)
+[![Fabric](https://img.shields.io/badge/Fabric-26.2-1976D2?style=flat-square)](https://fabricmc.net/)
+[![ko-fi](https://img.shields.io/badge/Ko--fi-aminoquiz-FF5E5B?style=flat-square)](https://ko-fi.com/aminoquiz)
 
-An **unofficial port of [Polymorph](https://github.com/illusivesoulworks/polymorph)** by TheIllusiveC4 (Illusive Soulworks) to **Minecraft 26.1.2 / NeoForge 26.1.2.x**, the new year-based versioning line that replaces the old `1.22` scheme. Mod id is `polymorph_plus` since `polymorph` is reserved for upstream. Same behavior, just compiled for the new MC line.
+Unofficial port of [Polymorph](https://github.com/illusivesoulworks/polymorph) by TheIllusiveC4 (Illusive Soulworks) to **Minecraft 26.2** on **NeoForge** and **Fabric**. Mod id is `polymorph_plus` (the original `polymorph` id is reserved for upstream).
 
-> ⚠️ **Beta.** NeoForge 26.1.2 itself is in beta and so is this port. Back up your worlds before loading it. Bug reports and logs are welcome on the [issue tracker](https://github.com/Aminoquiz/polymorph_plus/issues).
+Polymorph+ resolves recipe conflicts by letting the player pick which output a given set of ingredients should produce. Conflicting recipes stay co-installed, you choose the result.
 
-Polymorph+ solves recipe conflicts by letting players choose between all potential outputs that share the same ingredients. Instead of forcing modpack authors to datapack them away one by one, every conflicting recipe co-exists and the player makes the final pick.
+> Beta. Back up your worlds before loading the mod. Bug reports go to the [issue tracker](https://github.com/Aminoquiz/polymorph_plus/issues).
 
 ## Features
 
-### Crafting
+### Crafting table
 
-![](https://i.ibb.co/TkWswkG/polymorph.gif)
+![](craft.gif)
 
-When a group of ingredients matches more than one recipe, a button appears above the output slot. Clicking it shows the list of all possible results. Select one and the crafting output switches to match. The last selection is remembered as long as the ingredients don't change, so repeated crafts on the same selection keep working.
+A button appears above the output slot when ingredients match more than one recipe. Click it, pick the result. The selection persists as long as the input stays the same.
 
-### Smelting
+### Crafter (1.21+ block)
 
-![](https://i.ibb.co/QX9MNYM/polymorph-furnacedemo.gif)
+![](crafter.gif)
 
-When a valid input matches more than one output, a button appears above the output slot. Clicking it shows the possible results with the current selection highlighted. The choice is saved to the block itself and persists across world load / unload.
+Same selector inside the vanilla Crafter screen. The choice is saved on the block entity so redstone automation respects it across world reloads.
+
+### Smelting (furnace, blast furnace, smoker)
+
+![](furnace.gif)
+
+Same selector above the output slot. The choice is saved on the block.
 
 ### Smithing
 
-> 🚧 Stubbed in this beta. The vanilla `SmithingMenu` / `ItemCombinerMenu` pipeline was rewritten in 26.1 and the selection UI will return in a follow-up release.
+![](smithing.gif)
+
+When a smithing transform input matches more than one recipe, the selector appears next to the result slot.
+
+### Quality of life
+
+![](scrollable_bar.gif)
+
+- **Scrollable selector** when there are more than seven conflicts. Mouse wheel or side arrows.
+- **Pinned panel.** Right click the open arrow to dock the selector for the session. Left click again to unpin. Pin state is saved to `config/polymorph_plus_client.json`.
+- **First-run tutorial.** Four hint bubbles, available in English and French, auto-dismiss after eight seconds.
+- **JEI and REI compatibility.** The "+" fill button (JEI) and auto-craft button (REI) work with Polymorph+ installed.
 
 ### Commands
 
-`/polymorph conflicts` scans crafting, smelting, blasting, smoking, and smithing recipes and dumps a list of detected conflicts to the logs folder.
+`/polymorph conflicts` scans crafting, smelting, blasting, smoking, and smithing recipes and writes a list of detected conflicts to the logs folder.
 
 ## Downloads
 
-- **Modrinth**: [modrinth.com/mod/polymorph_plus](https://modrinth.com/mod/polymorph_plus)
-- **CurseForge**: [curseforge.com/minecraft/mc-mods/polymorph-plus](https://www.curseforge.com/minecraft/mc-mods/polymorph-plus)
+- Modrinth: [modrinth.com/mod/polymorph_plus](https://modrinth.com/mod/polymorph_plus)
+- CurseForge: [curseforge.com/minecraft/mc-mods/polymorph-plus](https://www.curseforge.com/minecraft/mc-mods/polymorph-plus)
 
 ## Addons
-
-Companion mods that bring Polymorph compatibility to mods with their own crafting menus.
 
 [![Polymorphic Occultism](https://img.shields.io/badge/ADDON-POLYMORPHIC%20OCCULTISM-purple?style=for-the-badge)](https://modrinth.com/mod/polymorphic-occultism)
 [![Polymorphic Extended Crafting](https://img.shields.io/badge/ADDON-POLYMORPHIC%20EXTENDED%20CRAFTING-lightgreen?style=for-the-badge)](https://modrinth.com/mod/polymorphic-extended-crafting)
 [![Polymorphic Refined Storage](https://img.shields.io/badge/ADDON-POLYMORPHIC%20RS-lightblue?style=for-the-badge)](https://modrinth.com/mod/polymorphic-refined-storage)
 
-## Partners
-
-[![Host your Minecraft server on Wabbanode (from 1.49 USD/month), use code AMINE](https://cdn.modrinth.com/data/cached_images/101574d2252d501a181cc771473884e9d4b81a63.png)](https://wabbanode.com/affiliate/amine)
-
-Hosting your server with [Wabbanode](https://wabbanode.com/affiliate/amine) (code `AMINE`, from 1.49 USD/month) helps keep these mods going.
-
-## Building from source
+## Build
 
 ```
-./gradlew :neoforge:jar
+./gradlew :neoforge:build
+./gradlew :fabric:build
 ```
 
-Produces `neoforge/build/libs/polymorph_plus-neoforge-26.1.2-<version>.jar`. A `:fabric:` subproject is checked in but parked in `settings.gradle`; re-enable once Mojang publishes official Mojmaps for 26.1.2 (Yarn doesn't ship 26.1.x yet either, so Loom can't decompile vanilla without them).
+Jars land in `neoforge/build/libs/` and `fabric/build/libs/`. The Fabric variant bundles Cardinal Components API. The `conflict-tester/` subproject builds a small companion datapack mod that adds many conflicting recipes (useful for smoke testing the selector).
 
-`conflict-tester/` is a tiny companion mod that duplicates the diamond-pickaxe recipe, useful for verifying the selection UI surfaces.
+## Partner
 
-## Support
+[![Wabbanode](https://cdn.modrinth.com/data/cached_images/101574d2252d501a181cc771473884e9d4b81a63.png)](https://wabbanode.com/affiliate/amine)
 
-- Issues: [github.com/Aminoquiz/polymorph_plus/issues](https://github.com/Aminoquiz/polymorph_plus/issues)
-- Original mod issues (upstream): [illusivesoulworks/polymorph/issues](https://github.com/illusivesoulworks/polymorph/issues)
+Host your Minecraft server on [Wabbanode](https://wabbanode.com/affiliate/amine) (code `AMINE`, from 1.49 USD/month).
 
-## License
+## Credits and license
 
-All source code and assets are licensed under **LGPL-3.0-or-later**, matching upstream. This port is unofficial and not endorsed by the original author.
+Original mod by [TheIllusiveC4](https://github.com/illusivesoulworks). Port maintained by [Aminoquiz](https://github.com/Aminoquiz). Source and assets are LGPL-3.0-or-later, matching upstream. This port is unofficial and not endorsed by the original author.
 
-## Credits
-
-- Original mod by [TheIllusiveC4](https://github.com/illusivesoulworks). [Upstream repo](https://github.com/illusivesoulworks/polymorph).
-- 26.1.2 port by [Aminoquiz](https://github.com/Aminoquiz).
-
-## Donations
-
-Help keep these mods going via [ko-fi.com/aminoquiz](https://ko-fi.com/aminoquiz).
+Support: [ko-fi.com/aminoquiz](https://ko-fi.com/aminoquiz).
