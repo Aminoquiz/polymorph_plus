@@ -9,6 +9,7 @@ package com.illusivesoulworks.polymorph.api.client.widgets.children;
 
 import com.illusivesoulworks.polymorph.platform.Services;
 import javax.annotation.Nonnull;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.WidgetSprites;
@@ -36,8 +37,15 @@ public class OpenSelectionButton extends ImageButton {
   @Override
   public void extractContents(@Nonnull GuiGraphicsExtractor graphics, int mouseX, int mouseY,
                               float partialTicks) {
-    this.setX(Services.CLIENT_PLATFORM.getScreenLeft(this.containerScreen) + this.xOffset);
-    this.setY(Services.CLIENT_PLATFORM.getScreenTop(this.containerScreen) + this.yOffset);
+    // Clamped so a GUI anchored near a window edge cannot push the button out of reach.
+    this.setX(clamp(Services.CLIENT_PLATFORM.getScreenLeft(this.containerScreen) + this.xOffset,
+        Minecraft.getInstance().getWindow().getGuiScaledWidth() - this.width));
+    this.setY(clamp(Services.CLIENT_PLATFORM.getScreenTop(this.containerScreen) + this.yOffset,
+        Minecraft.getInstance().getWindow().getGuiScaledHeight() - this.height));
     super.extractContents(graphics, mouseX, mouseY, partialTicks);
+  }
+
+  private static int clamp(int value, int max) {
+    return max < 0 ? 0 : Math.max(0, Math.min(max, value));
   }
 }

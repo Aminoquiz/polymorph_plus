@@ -78,9 +78,9 @@ public class PolymorphCommands {
           Files.write(Paths.get(Services.PLATFORM.getGameDir() + "/logs/polymorph-conflicts.log"),
               output, StandardCharsets.UTF_8);
         } catch (IOException e) {
-          PolymorphConstants.LOG.error(
-              "Whoops! Something went wrong writing down your conflicts :(");
-          e.printStackTrace();
+          // Through the logger, not stdout: a stack trace on stdout does not make it into the
+          // log file players attach to bug reports.
+          PolymorphConstants.LOG.error("Failed to write the recipe conflict report", e);
         }
       }
       int finalCount = count;

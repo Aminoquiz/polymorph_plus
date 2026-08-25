@@ -13,14 +13,9 @@ import com.illusivesoulworks.polymorph.api.PolymorphApi;
 import com.illusivesoulworks.polymorph.api.client.base.AbstractRecipesWidget;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeManager;
 
 public class PlayerRecipesWidget extends AbstractRecipesWidget {
 
@@ -37,13 +32,9 @@ public class PlayerRecipesWidget extends AbstractRecipesWidget {
     Player player = Minecraft.getInstance().player;
 
     if (player != null) {
-      MinecraftServer server = player.level().getServer();
-
-      if (server != null) {
-        RecipeManager rm = server.getRecipeManager();
-        ResourceKey<Recipe<?>> key = ResourceKey.create(Registries.RECIPE, resourceLocation);
-        rm.byKey(key).ifPresent(recipe -> api.getPlayerRecipeData(player).selectRecipe(recipe));
-      }
+      // Stored by id: the client has no recipe manager to turn this into a holder, and
+      // resolution only ever needs to compare it against the candidates it already holds.
+      api.getPlayerRecipeData(player).chooseRecipe(resourceLocation);
     }
     api.getNetwork().sendPlayerRecipeSelectionC2S(resourceLocation);
   }

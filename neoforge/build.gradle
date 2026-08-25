@@ -46,19 +46,30 @@ if (at.exists()) {
     neoForge.accessTransformers.from at
 }
 
+// Convenience copy of the built jar into a local staging folder. Opt-in: set jar_output_dir
+// in gradle.properties or on the command line. Absent, the task simply does nothing, so the
+// build works on a machine that is not the author's.
 tasks.named('jar').configure {
     doLast {
-        copy {
-            from archiveFile
-            into file('<local>/polymorph/polymorph-mod/new-jars')
+        def outDir = project.findProperty('jar_output_dir')
+
+        if (outDir) {
+            copy {
+                from archiveFile
+                into file(outDir)
+            }
         }
     }
 }
 
 dependencies {
-    // JEI + REI compile references — local jars from the user's mods folder.
-    compileOnly files("<local>/polymorph/mods_jars/forge/jei-26.1.2-neoforge-29.6.2.38.jar")
-    compileOnly files("<local>/polymorph/mods_jars/forge/RoughlyEnoughItems-26.1.819.jar")
+    // JEI + REI compile references. No 26.x maven publication yet, so they come from the
+    // folder local_mod_jars points at and are skipped when absent.
+    def localJars = file(project.findProperty('local_mod_jars') ?: 'local-mod-jars')
+
+    if (localJars.isDirectory()) {
+        compileOnly fileTree(dir: localJars, include: ['jei-*.jar', 'RoughlyEnoughItems-*.jar'])
+    }
     // EMI 26.x not yet published.
     // FastWorkbench 10.x removed FastBenchUtil entirely; legacy mixin target gone, integration deferred.
     // compileOnly "dev.emi:emi-neoforge:${emi_version}"

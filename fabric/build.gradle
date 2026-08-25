@@ -82,7 +82,7 @@ tasks.named('compileJava', JavaCompile).configure {
 }
 
 base {
-    archivesName = "${mod_id}-fabric-${minecraft_version}"
+    archivesName = "${mod_id}-fabric"
 }
 
 processResources {
