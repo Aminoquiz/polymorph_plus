@@ -12,3 +12,8 @@ run/
 # Mod page descriptions live at polymorph-mod/ root, not per-port
 DESCRIPTION_modrinth.md
 DESCRIPTION_curseforge.md
+
+# Private planning docs and machine-specific overrides never belong here.
+# Local paths go in <user home>/.gradle/gradle.properties instead.
+ROADMAP.md
+local.properties
