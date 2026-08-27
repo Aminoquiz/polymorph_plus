@@ -1,9 +1,10 @@
 /*
  * Copyright (C) 2020-2026 Illusive Soulworks
  *
- * 1.21.11 fork. MC 26.x renamed GuiGraphics#drawString to GuiGraphics#text; 1.21.11 still
- * exposes drawString(Font, FormattedCharSequence, int, int, int, boolean), so this fork
- * keeps that call. Everything else mirrors the java/ source.
+ * First-run onboarding bubbles. State is persisted via PolymorphClientConfig.tutorialStep
+ * so each hint is shown at most once per client install.
+ *
+ * 1.21.11 fork: GuiGraphics.text is still named drawString here.
  */
 package com.illusivesoulworks.polymorph.client;
 
@@ -41,6 +42,10 @@ public final class TutorialOverlay {
       ensureTimer(2);
       drawBubble(gg, "polymorph_plus.tutorial.pin", btnX + 20, btnY - 2);
       autoDismiss(2);
+    } else if (step == 5 && openButtonVisible) {
+      ensureTimer(5);
+      drawBubble(gg, "polymorph_plus.tutorial.cycle", btnX + 20, btnY - 2);
+      autoDismiss(5);
     }
   }
 
@@ -55,6 +60,10 @@ public final class TutorialOverlay {
       ensureTimer(3);
       drawBubble(gg, "polymorph_plus.tutorial.scroll", screenLeft, screenTop + 170);
       autoDismiss(3);
+    } else if (step == 4 && selectorActive) {
+      ensureTimer(4);
+      drawBubble(gg, "polymorph_plus.tutorial.prefer", screenLeft, screenTop + 170);
+      autoDismiss(4);
     }
   }
 
@@ -75,6 +84,20 @@ public final class TutorialOverlay {
   public static void onRecipePicked() {
     if (PolymorphClientConfig.getTutorialStep() == 1) {
       PolymorphClientConfig.setTutorialStep(2);
+      currentStep = -1;
+    }
+  }
+
+  public static void onSourceRemembered() {
+    if (PolymorphClientConfig.getTutorialStep() == 4) {
+      PolymorphClientConfig.setTutorialStep(5);
+      currentStep = -1;
+    }
+  }
+
+  public static void onScrollCycled() {
+    if (PolymorphClientConfig.getTutorialStep() == 5) {
+      PolymorphClientConfig.setTutorialStep(6);
       currentStep = -1;
     }
   }

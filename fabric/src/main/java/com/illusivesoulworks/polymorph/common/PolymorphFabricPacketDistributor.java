@@ -21,12 +21,16 @@ import com.illusivesoulworks.polymorph.api.common.base.IPolymorphNetwork;
 import com.illusivesoulworks.polymorph.api.common.base.IRecipePair;
 import com.illusivesoulworks.polymorph.common.network.client.CPacketBlockEntityListener;
 import com.illusivesoulworks.polymorph.common.network.client.CPacketPersistentRecipeSelection;
+import com.illusivesoulworks.polymorph.common.network.client.CPacketPlayerPriority;
 import com.illusivesoulworks.polymorph.common.network.client.CPacketPlayerRecipeSelection;
 import com.illusivesoulworks.polymorph.common.network.server.SPacketPlayerRecipeSync;
+import com.illusivesoulworks.polymorph.common.network.server.SPacketPackPriority;
 import com.illusivesoulworks.polymorph.common.network.server.SPacketRecipeHandshake;
 import com.illusivesoulworks.polymorph.common.network.server.SPacketRecipesList;
 import com.illusivesoulworks.polymorph.common.network.server.SPacketUpdatePreview;
+import com.illusivesoulworks.polymorph.PolymorphConstants;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.SortedSet;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -44,6 +48,22 @@ public class PolymorphFabricPacketDistributor implements IPolymorphNetwork {
   @Override
   public void sendPersistentRecipeSelectionC2S(Identifier resourceLocation) {
     ClientPlayNetworking.send(new CPacketPersistentRecipeSelection(resourceLocation));
+  }
+
+  @Override
+  public void sendPlayerPriorityC2S(List<String> namespaces, List<String> recipes) {
+    try {
+      ClientPlayNetworking.send(new CPacketPlayerPriority(namespaces, recipes));
+    } catch (Exception e) {
+      // Server has no channel for this payload (vanilla or polymorph-less). Harmless: the
+      // player keeps their local list and resolution falls back to pack list / first-match.
+      PolymorphConstants.LOG.debug("Could not send recipe source priority to the server", e);
+    }
+  }
+
+  @Override
+  public void sendPackPriorityS2C(ServerPlayer player, List<String> namespaces) {
+    ServerPlayNetworking.send(player, new SPacketPackPriority(namespaces));
   }
 
   @Override

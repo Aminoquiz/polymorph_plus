@@ -1,29 +1,34 @@
 /*
  * Copyright (C) 2020-2026 Illusive Soulworks
  *
- * MC 26.1 fork. Children are extracted via render, not render. AbstractWidget
- * mouseClicked now takes (MouseButtonEvent, boolean) — we wrap the mod's (mouseX, mouseY,
- * button) call into a synthetic MouseButtonEvent.
+ * 1.21.11 fork. AbstractWidget.mouseClicked takes (MouseButtonEvent, boolean), so the mod's
+ * (mouseX, mouseY, button) call is wrapped into a synthetic MouseButtonEvent.
  */
 package com.illusivesoulworks.polymorph.api.client.base;
 
 import com.illusivesoulworks.polymorph.api.PolymorphApi;
 import com.illusivesoulworks.polymorph.api.client.widgets.children.OpenSelectionButton;
+import com.illusivesoulworks.polymorph.api.client.widgets.children.OutputWidget;
 import com.illusivesoulworks.polymorph.api.client.widgets.children.SelectionWidget;
 import com.illusivesoulworks.polymorph.api.common.base.IRecipePair;
 import com.illusivesoulworks.polymorph.client.PolymorphClientConfig;
 import com.illusivesoulworks.polymorph.client.TutorialOverlay;
 import com.illusivesoulworks.polymorph.platform.Services;
+import com.mojang.blaze3d.platform.InputConstants;
+import com.mojang.blaze3d.platform.Window;
 import com.mojang.datafixers.util.Pair;
+import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.input.MouseButtonInfo;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.inventory.Slot;
 
 public abstract class AbstractRecipesWidget implements IRecipesWidget {
 
@@ -82,6 +87,72 @@ public abstract class AbstractRecipesWidget implements IRecipesWidget {
     }
   }
 
+  /**
+   * Shift+scroll on the result slot cycles the conflicting outputs without opening the
+   * selector. Deliberately gated on BOTH the shift modifier and the pointer being inside
+   * the 16x16 result slot, so plain scrolling and inventory-sorting mods are untouched.
+   */
+  private boolean isOverOutputSlot(double mouseX, double mouseY) {
+    Slot slot = this.getOutputSlot();
+
+    if (slot == null) {
+      return false;
+    }
+    int x = Services.CLIENT_PLATFORM.getScreenLeft(this.containerScreen) + slot.x;
+    int y = Services.CLIENT_PLATFORM.getScreenTop(this.containerScreen) + slot.y;
+    return mouseX >= x && mouseX < x + 16 && mouseY >= y && mouseY < y + 16;
+  }
+
+  private static boolean isShiftDown() {
+    Minecraft minecraft = Minecraft.getInstance();
+    Window window = minecraft.getWindow();
+
+    if (window == null) {
+      return false;
+    }
+    // MC 26.1 dropped Screen.hasShiftDown(); query GLFW directly instead.
+    return InputConstants.isKeyDown(window, InputConstants.KEY_LSHIFT)
+        || InputConstants.isKeyDown(window, InputConstants.KEY_RSHIFT);
+  }
+
+  private boolean cycleSelection(double scrollY) {
+
+    if (this.selectionWidget == null) {
+      return false;
+    }
+    List<OutputWidget> outputs = this.selectionWidget.getOutputWidgets();
+
+    if (outputs.size() < 2) {
+      return false;
+    }
+    // Scroll up walks towards the start of the list, matching the selector's own arrows.
+    int step = scrollY > 0 ? -1 : (scrollY < 0 ? 1 : 0);
+
+    if (step == 0) {
+      return false;
+    }
+    int current = -1;
+
+    for (int i = 0; i < outputs.size(); i++) {
+
+      if (outputs.get(i).isHighlighted()) {
+        current = i;
+        break;
+      }
+    }
+    int next = current < 0 ? (step > 0 ? 0 : outputs.size() - 1)
+        : Math.floorMod(current + step, outputs.size());
+    Identifier target = outputs.get(next).getResourceLocation();
+    // Highlight locally first so the feedback is immediate; the server echoes the same
+    // selection back through the recipes-list sync.
+    this.highlightRecipe(target);
+    this.selectionWidget.scrollIntoView(target);
+    this.selectRecipe(target);
+    TutorialOverlay.onRecipePicked();
+    TutorialOverlay.onScrollCycled();
+    return true;
+  }
+
   private boolean isOverOpenButton(double mouseX, double mouseY) {
     return this.openButton != null && this.openButton.visible
         && mouseX >= this.openButton.getX() && mouseX < this.openButton.getX() + 16
@@ -113,11 +184,18 @@ public abstract class AbstractRecipesWidget implements IRecipesWidget {
 
   @Override
   public void highlightRecipe(Identifier resourceLocation) {
-    this.selectionWidget.highlightButton(resourceLocation);
+
+    if (this.selectionWidget != null) {
+      this.selectionWidget.highlightButton(resourceLocation);
+    }
   }
 
   @Override
   public void setRecipesList(Set<IRecipePair> recipesList, Identifier selected) {
+
+    if (this.selectionWidget == null || this.openButton == null) {
+      return;
+    }
     SortedSet<IRecipePair> sorted = new TreeSet<>(recipesList);
     this.selectionWidget.setRecipeList(sorted);
     this.openButton.visible = recipesList.size() > 1;
@@ -131,6 +209,12 @@ public abstract class AbstractRecipesWidget implements IRecipesWidget {
   @Override
   public void render(GuiGraphics guiGraphics, int mouseX, int mouseY,
                      float renderPartialTicks) {
+
+    // initChildWidgets can be abandoned partway through if a screen it does not know about
+    // throws while being measured. Degrade to no selector rather than crashing every frame.
+    if (this.selectionWidget == null || this.openButton == null) {
+      return;
+    }
     this.selectionWidget.render(guiGraphics, mouseX, mouseY, renderPartialTicks);
     this.openButton.render(guiGraphics, mouseX, mouseY, renderPartialTicks);
     if (PolymorphClientConfig.isPinSelector() && this.openButton.visible) {
@@ -149,6 +233,10 @@ public abstract class AbstractRecipesWidget implements IRecipesWidget {
 
   @Override
   public boolean mouseClicked(double mouseX, double mouseY, int button) {
+
+    if (this.selectionWidget == null || this.openButton == null) {
+      return false;
+    }
     if (button == 1 && this.isOverOpenButton(mouseX, mouseY)) {
       boolean next = !PolymorphClientConfig.isPinSelector();
       PolymorphClientConfig.setPinSelector(next);
@@ -170,12 +258,17 @@ public abstract class AbstractRecipesWidget implements IRecipesWidget {
       TutorialOverlay.onOpenButtonClicked();
       return true;
     } else if (this.selectionWidget.mouseClicked(event, false)) {
+      boolean remembered = false;
+
       if (this.selectionWidget.wasLastClickArrow()) {
         TutorialOverlay.onScrolledOrArrowClicked();
       } else {
         TutorialOverlay.onRecipePicked();
+        remembered = this.rememberSourceIfShiftHeld();
       }
-      if (!pinned && !this.selectionWidget.wasLastClickArrow()) {
+      // A plain pick closes the panel, a shift-click does not: it just marked a preference
+      // with a star on the buttons, and closing would hide the only confirmation there is.
+      if (!pinned && !remembered && !this.selectionWidget.wasLastClickArrow()) {
         this.selectionWidget.setActive(false);
       }
       return true;
@@ -192,8 +285,48 @@ public abstract class AbstractRecipesWidget implements IRecipesWidget {
     return false;
   }
 
+  /**
+   * Shift-clicking an output means "always give me this outcome": the recipe's id is moved to
+   * the front of the player preference list and re-uploaded, so this conflict and any other one
+   * offering the same recipe resolve without a click.
+   *
+   * <p>Deliberately per recipe, not per mod. A craft yields a single outcome, so a namespace
+   * rule cannot settle a conflict whose candidates come from the same mod, which is the common
+   * case in a large pack. The namespace list is still consulted, just below this one, and stays
+   * hand-editable for blanket rules.
+   *
+   * <p>Feedback is the star the selector then draws on the winning candidate rather than an
+   * actionbar message, which the open inventory covers.
+   */
+  private boolean rememberSourceIfShiftHeld() {
+
+    if (!isShiftDown()) {
+      return false;
+    }
+    Identifier picked = this.selectionWidget.getLastSelected();
+
+    if (picked == null) {
+      return false;
+    }
+
+    // Only worth a packet when the list actually moved, but the stars are refreshed either
+    // way so a repeat shift-click still shows the player where the preference sits.
+    if (PolymorphClientConfig.promoteRecipe(picked.toString())) {
+      PolymorphApi.getInstance().getNetwork()
+          .sendPlayerPriorityC2S(PolymorphClientConfig.getPriorityNamespaces(),
+              PolymorphClientConfig.getPriorityRecipes());
+    }
+    this.selectionWidget.refreshPreferred();
+    TutorialOverlay.onSourceRemembered();
+    return true;
+  }
+
   @Override
   public boolean mouseScrolled(double mouseX, double mouseY, double scrollY) {
+    if (PolymorphClientConfig.isScrollCycle() && isShiftDown()
+        && this.isOverOutputSlot(mouseX, mouseY) && this.cycleSelection(scrollY)) {
+      return true;
+    }
     if (this.selectionWidget != null && this.selectionWidget.isActive()) {
       boolean consumed = this.selectionWidget.mouseScrolled(mouseX, mouseY, scrollY);
       if (consumed) {

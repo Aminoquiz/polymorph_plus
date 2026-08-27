@@ -11,20 +11,15 @@ import com.illusivesoulworks.polymorph.api.PolymorphApi;
 import com.illusivesoulworks.polymorph.api.client.PolymorphWidgets;
 import com.illusivesoulworks.polymorph.api.client.base.IRecipesWidget;
 import net.minecraft.client.Minecraft;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
-import net.minecraft.world.item.crafting.RecipeManager;
 
 /**
- * MC 26.1 fork. RecipeHolder.id() now returns ResourceKey<Recipe<?>>; unwrap with
- * identifier() before handing the recipe id to the widget. selectRecipe also bypasses the
- * widget when it's null so JEI/REI auto-fill works even when fired from their own screens
- * (no crafting container open yet).
+ * Forked because RecipeHolder.id() returns {@code ResourceKey<Recipe<?>>} here, so it needs
+ * identifier() unwrapping before the recipe id reaches the widget. selectRecipe also bypasses
+ * the widget when it is null, so JEI/REI auto-fill works when fired from their own screens with
+ * no crafting container open yet.
  */
 public class RecipeTransfer {
 
@@ -56,13 +51,7 @@ public class RecipeTransfer {
     Player player = Minecraft.getInstance().player;
 
     if (player != null) {
-      MinecraftServer server = player.level().getServer();
-
-      if (server != null) {
-        RecipeManager rm = server.getRecipeManager();
-        ResourceKey<Recipe<?>> key = ResourceKey.create(Registries.RECIPE, id);
-        rm.byKey(key).ifPresent(recipe -> api.getPlayerRecipeData(player).selectRecipe(recipe));
-      }
+      api.getPlayerRecipeData(player).chooseRecipe(id);
       api.getNetwork().sendPlayerRecipeSelectionC2S(id);
     }
   }

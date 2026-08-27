@@ -21,12 +21,16 @@ import com.illusivesoulworks.polymorph.api.common.base.IPolymorphNetwork;
 import com.illusivesoulworks.polymorph.api.common.base.IRecipePair;
 import com.illusivesoulworks.polymorph.common.network.client.CPacketBlockEntityListener;
 import com.illusivesoulworks.polymorph.common.network.client.CPacketPersistentRecipeSelection;
+import com.illusivesoulworks.polymorph.common.network.client.CPacketPlayerPriority;
 import com.illusivesoulworks.polymorph.common.network.client.CPacketPlayerRecipeSelection;
 import com.illusivesoulworks.polymorph.common.network.server.SPacketPlayerRecipeSync;
+import com.illusivesoulworks.polymorph.common.network.server.SPacketPackPriority;
 import com.illusivesoulworks.polymorph.common.network.server.SPacketRecipeHandshake;
 import com.illusivesoulworks.polymorph.common.network.server.SPacketRecipesList;
 import com.illusivesoulworks.polymorph.common.network.server.SPacketUpdatePreview;
+import com.illusivesoulworks.polymorph.PolymorphConstants;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.SortedSet;
 import net.minecraft.resources.Identifier;
@@ -44,6 +48,23 @@ public class PolymorphNeoForgePacketDistributor implements IPolymorphNetwork {
   @Override
   public void sendPersistentRecipeSelectionC2S(Identifier resourceLocation) {
     ClientPacketDistributor.sendToServer(new CPacketPersistentRecipeSelection(resourceLocation));
+  }
+
+  @Override
+  public void sendPlayerPriorityC2S(List<String> namespaces, List<String> recipes) {
+    try {
+      ClientPacketDistributor.sendToServer(new CPacketPlayerPriority(namespaces, recipes));
+    } catch (Exception e) {
+      // Payloads are registered optional(), so a vanilla or polymorph-less server simply
+      // has no channel for this. Nothing to recover: the player keeps their local list and
+      // conflict resolution falls back to the pack list or first-match.
+      PolymorphConstants.LOG.debug("Could not send recipe source priority to the server", e);
+    }
+  }
+
+  @Override
+  public void sendPackPriorityS2C(ServerPlayer player, List<String> namespaces) {
+    PacketDistributor.sendToPlayer(player, new SPacketPackPriority(namespaces));
   }
 
   @Override

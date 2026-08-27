@@ -40,16 +40,35 @@ public final class TutorialOverlay {
       ensureTimer(2);
       drawBubble(gg, "polymorph_plus.tutorial.pin", btnX + 20, btnY - 2);
       autoDismiss(2);
+    } else if (step == 5 && openButtonVisible) {
+      ensureTimer(5);
+      drawBubble(gg, "polymorph_plus.tutorial.cycle", btnX + 20, btnY - 2);
+      autoDismiss(5);
     }
   }
 
-  public static void renderForSelector(GuiGraphics gg, int stripX, int stripY,
-                                       boolean selectorActive) {
+  public static void renderForSelector(GuiGraphics gg, int screenLeft, int screenTop,
+                                       boolean selectorActive, boolean canScroll) {
     int step = PolymorphClientConfig.getTutorialStep();
     if (step == 1 && selectorActive) {
       ensureTimer(1);
-      drawBubble(gg, "polymorph_plus.tutorial.select", stripX, stripY - 22);
+      drawBubble(gg, "polymorph_plus.tutorial.select", screenLeft, screenTop + 170);
       autoDismiss(1);
+    } else if (step == 3 && selectorActive && canScroll) {
+      ensureTimer(3);
+      drawBubble(gg, "polymorph_plus.tutorial.scroll", screenLeft, screenTop + 170);
+      autoDismiss(3);
+    } else if (step == 4 && selectorActive) {
+      ensureTimer(4);
+      drawBubble(gg, "polymorph_plus.tutorial.prefer", screenLeft, screenTop + 170);
+      autoDismiss(4);
+    }
+  }
+
+  public static void onScrolledOrArrowClicked() {
+    if (PolymorphClientConfig.getTutorialStep() == 3) {
+      PolymorphClientConfig.setTutorialStep(4);
+      currentStep = -1;
     }
   }
 
@@ -63,6 +82,20 @@ public final class TutorialOverlay {
   public static void onRecipePicked() {
     if (PolymorphClientConfig.getTutorialStep() == 1) {
       PolymorphClientConfig.setTutorialStep(2);
+      currentStep = -1;
+    }
+  }
+
+  public static void onSourceRemembered() {
+    if (PolymorphClientConfig.getTutorialStep() == 4) {
+      PolymorphClientConfig.setTutorialStep(5);
+      currentStep = -1;
+    }
+  }
+
+  public static void onScrollCycled() {
+    if (PolymorphClientConfig.getTutorialStep() == 5) {
+      PolymorphClientConfig.setTutorialStep(6);
       currentStep = -1;
     }
   }
@@ -105,7 +138,7 @@ public final class TutorialOverlay {
     gg.fill(x + boxW - 1, y, x + boxW, y + boxH, BORDER_COLOR);
     int ty = y + PADDING;
     for (FormattedCharSequence line : lines) {
-      gg.drawString(font, line, x + PADDING, ty, TEXT_COLOR, false);
+      gg.text(font, line, x + PADDING, ty, TEXT_COLOR, false);
       ty += font.lineHeight;
     }
   }

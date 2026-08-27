@@ -1,12 +1,8 @@
 /*
  * Copyright (C) 2020-2026 Illusive Soulworks
  *
- * MC 26.1 fork. Two-phase GUI render: AbstractWidget now exposes
- * renderWidget(GuiGraphics, ...) instead of renderWidget(GuiGraphics, ...).
- * blitSprite signature dropped the z-arg; GuiGraphics's renderItem/renderItemDecorations
- * became GuiGraphics.item/itemDecorations. The new GuiGraphics handles
- * layering internally — no manual pose translate(0, 0, z) needed.
- * isValidClickButton now takes MouseButtonInfo, not int.
+ * 1.21.11 fork. blitSprite takes a RenderPipeline and no z-arg, and isValidClickButton takes
+ * MouseButtonInfo rather than an int.
  */
 package com.illusivesoulworks.polymorph.api.client.widgets.children;
 
@@ -26,10 +22,25 @@ import net.minecraft.world.item.ItemStack;
 
 public class OutputWidget extends AbstractWidget {
 
+  private static final int STAR_COLOR = 0xFFFFD000;
+  private static final int STAR_SHADOW = 0xFF3A2A00;
+  private static final int STAR_SIZE = 7;
+  /** 7x7 bitmap, one int per row, bit 6 is the leftmost pixel. */
+  private static final int[] STAR = {
+      0b0001000,
+      0b0001000,
+      0b1111111,
+      0b0111110,
+      0b0011100,
+      0b0110110,
+      0b0100010,
+  };
+
   private final ItemStack output;
   private final Identifier resourceLocation;
   private final Pair<WidgetSprites, WidgetSprites> sprites;
   private boolean highlighted = false;
+  private boolean preferred = false;
 
   public OutputWidget(Pair<WidgetSprites, WidgetSprites> sprites, IRecipePair recipePair) {
     super(0, 0, 25, 25, Component.empty());
@@ -54,6 +65,29 @@ public class OutputWidget extends AbstractWidget {
     int k = 4;
     graphics.renderItem(this.getOutput(), this.getX() + k, this.getY() + k);
     graphics.renderItemDecorations(minecraft.font, this.getOutput(), this.getX() + k, this.getY() + k);
+
+    if (this.preferred) {
+      // Marks the source the player told Polymorph to prefer. In-GUI on purpose: the actionbar
+      // message this replaces was drawn behind the open inventory and easy to miss.
+      int sx = this.getX() + this.width - STAR_SIZE - 2;
+      int sy = this.getY() + 2;
+      drawStar(graphics, sx + 1, sy + 1, STAR_SHADOW);
+      drawStar(graphics, sx, sy, STAR_COLOR);
+    }
+  }
+
+  private static void drawStar(GuiGraphics graphics, int x, int y, int color) {
+
+    for (int row = 0; row < STAR.length; row++) {
+      int bits = STAR[row];
+
+      for (int col = 0; col < STAR_SIZE; col++) {
+
+        if ((bits & (1 << (STAR_SIZE - 1 - col))) != 0) {
+          graphics.fill(x + col, y + row, x + col + 1, y + row + 1, color);
+        }
+      }
+    }
   }
 
   public ItemStack getOutput() {
@@ -66,6 +100,18 @@ public class OutputWidget extends AbstractWidget {
 
   public void setHighlighted(boolean highlighted) {
     this.highlighted = highlighted;
+  }
+
+  public boolean isHighlighted() {
+    return this.highlighted;
+  }
+
+  public void setPreferred(boolean preferred) {
+    this.preferred = preferred;
+  }
+
+  public boolean isPreferred() {
+    return this.preferred;
   }
 
   @Override

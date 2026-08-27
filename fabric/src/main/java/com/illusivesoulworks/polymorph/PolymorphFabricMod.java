@@ -21,8 +21,10 @@ import com.illusivesoulworks.polymorph.common.CommonEventsListener;
 import com.illusivesoulworks.polymorph.common.components.PolymorphFabricComponents;
 import com.illusivesoulworks.polymorph.common.network.client.CPacketBlockEntityListener;
 import com.illusivesoulworks.polymorph.common.network.client.CPacketPersistentRecipeSelection;
+import com.illusivesoulworks.polymorph.common.network.client.CPacketPlayerPriority;
 import com.illusivesoulworks.polymorph.common.network.client.CPacketPlayerRecipeSelection;
 import com.illusivesoulworks.polymorph.common.network.server.SPacketHighlightRecipe;
+import com.illusivesoulworks.polymorph.common.network.server.SPacketPackPriority;
 import com.illusivesoulworks.polymorph.common.network.server.SPacketPlayerRecipeSync;
 import com.illusivesoulworks.polymorph.common.network.server.SPacketRecipeHandshake;
 import com.illusivesoulworks.polymorph.common.network.server.SPacketRecipesList;
@@ -57,6 +59,10 @@ public class PolymorphFabricMod implements ModInitializer {
         CPacketPersistentRecipeSelection.STREAM_CODEC);
     PayloadTypeRegistry.playC2S()
         .register(CPacketBlockEntityListener.TYPE, CPacketBlockEntityListener.STREAM_CODEC);
+    PayloadTypeRegistry.playC2S()
+        .register(CPacketPlayerPriority.TYPE, CPacketPlayerPriority.STREAM_CODEC);
+    PayloadTypeRegistry.playS2C()
+        .register(SPacketPackPriority.TYPE, SPacketPackPriority.STREAM_CODEC);
     PayloadTypeRegistry.playS2C()
         .register(SPacketHighlightRecipe.TYPE, SPacketHighlightRecipe.STREAM_CODEC);
     PayloadTypeRegistry.playS2C()
@@ -72,6 +78,7 @@ public class PolymorphFabricMod implements ModInitializer {
     registerServerReceiver(CPacketPersistentRecipeSelection.TYPE,
         CPacketPersistentRecipeSelection::handle);
     registerServerReceiver(CPacketBlockEntityListener.TYPE, CPacketBlockEntityListener::handle);
+    registerServerReceiver(CPacketPlayerPriority.TYPE, CPacketPlayerPriority::handle);
   }
 
   private static <M extends CustomPacketPayload> void registerServerReceiver(

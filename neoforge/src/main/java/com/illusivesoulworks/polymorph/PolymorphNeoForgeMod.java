@@ -25,8 +25,10 @@ import com.illusivesoulworks.polymorph.common.network.ClientPayloadHandler;
 import com.illusivesoulworks.polymorph.common.network.ServerPayloadHandler;
 import com.illusivesoulworks.polymorph.common.network.client.CPacketBlockEntityListener;
 import com.illusivesoulworks.polymorph.common.network.client.CPacketPersistentRecipeSelection;
+import com.illusivesoulworks.polymorph.common.network.client.CPacketPlayerPriority;
 import com.illusivesoulworks.polymorph.common.network.client.CPacketPlayerRecipeSelection;
 import com.illusivesoulworks.polymorph.common.network.server.SPacketHighlightRecipe;
+import com.illusivesoulworks.polymorph.common.network.server.SPacketPackPriority;
 import com.illusivesoulworks.polymorph.common.network.server.SPacketPlayerRecipeSync;
 import com.illusivesoulworks.polymorph.common.network.server.SPacketRecipeHandshake;
 import com.illusivesoulworks.polymorph.common.network.server.SPacketRecipesList;
@@ -61,7 +63,11 @@ public class PolymorphNeoForgeMod {
   }
 
   private void registerPayload(final RegisterPayloadHandlersEvent evt) {
-    final PayloadRegistrar registrar = evt.registrar(PolymorphApi.MOD_ID);
+    // optional() on every payload so vanilla or polymorph-less clients can
+    // still connect to a polymorph_plus server (and vice versa). When one
+    // side lacks the mod, the selector UI simply does not surface; vanilla
+    // first-match recipe resolution takes over. Never rejects the handshake.
+    final PayloadRegistrar registrar = evt.registrar(PolymorphApi.MOD_ID).optional();
 
     registrar.playToClient(SPacketRecipesList.TYPE, SPacketRecipesList.STREAM_CODEC,
         ClientPayloadHandler.getInstance()::handlePacket);
@@ -82,5 +88,9 @@ public class PolymorphNeoForgeMod {
         ServerPayloadHandler.getInstance()::handlePacket);
     registrar.playToServer(CPacketBlockEntityListener.TYPE, CPacketBlockEntityListener.STREAM_CODEC,
         ServerPayloadHandler.getInstance()::handlePacket);
+    registrar.playToServer(CPacketPlayerPriority.TYPE, CPacketPlayerPriority.STREAM_CODEC,
+        ServerPayloadHandler.getInstance()::handlePacket);
+    registrar.playToClient(SPacketPackPriority.TYPE, SPacketPackPriority.STREAM_CODEC,
+        ClientPayloadHandler.getInstance()::handlePacket);
   }
 }

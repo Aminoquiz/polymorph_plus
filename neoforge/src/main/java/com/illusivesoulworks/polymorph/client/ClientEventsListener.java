@@ -18,11 +18,22 @@
 package com.illusivesoulworks.polymorph.client;
 
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.ScreenEvent;
 
 @SuppressWarnings("unused")
 public class ClientEventsListener {
+
+  @SubscribeEvent
+  public void loggingIn(ClientPlayerNetworkEvent.LoggingIn evt) {
+    PolymorphClientEvents.syncPriority();
+  }
+
+  @SubscribeEvent
+  public void loggingOut(ClientPlayerNetworkEvent.LoggingOut evt) {
+    PolymorphClientEvents.clearPackPriority();
+  }
 
   @SubscribeEvent
   public void tick(ClientTickEvent.Post evt) {

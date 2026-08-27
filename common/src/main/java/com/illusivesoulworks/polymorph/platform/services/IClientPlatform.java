@@ -24,4 +24,7 @@ public interface IClientPlatform {
   int getScreenTop(AbstractContainerScreen<?> screen);
 
   int getScreenLeft(AbstractContainerScreen<?> screen);
+
+  /** Width of the container GUI itself, not of the window. */
+  int getScreenWidth(AbstractContainerScreen<?> screen);
 }

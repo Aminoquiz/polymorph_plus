@@ -18,9 +18,12 @@
 package com.illusivesoulworks.polymorph.common;
 
 import com.illusivesoulworks.polymorph.api.PolymorphApi;
+import com.illusivesoulworks.polymorph.common.priority.PriorityReloadListener;
+import com.illusivesoulworks.polymorph.common.priority.RecipePriority;
 import com.illusivesoulworks.polymorph.server.PolymorphCommands;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.event.AddServerReloadListenersEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerContainerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
@@ -30,6 +33,22 @@ import net.neoforged.neoforge.event.tick.LevelTickEvent;
 
 @SuppressWarnings("unused")
 public class CommonEventsListener {
+
+  @SubscribeEvent
+  public void addReloadListeners(final AddServerReloadListenersEvent evt) {
+    evt.addListener(PriorityReloadListener.ID, new PriorityReloadListener());
+  }
+
+  @SubscribeEvent
+  public void playerLoggedIn(final PlayerEvent.PlayerLoggedInEvent evt) {
+
+    if (evt.getEntity() instanceof ServerPlayer serverPlayer) {
+      // The pack list is server-authoritative but the client resolves conflicts too (AE2's
+      // pattern terminal does it client-side), so both sides need the same ranking.
+      PolymorphApi.getInstance().getNetwork()
+          .sendPackPriorityS2C(serverPlayer, RecipePriority.getPackNamespaces());
+    }
+  }
 
   @SubscribeEvent
   public void registerCommands(final RegisterCommandsEvent evt) {
