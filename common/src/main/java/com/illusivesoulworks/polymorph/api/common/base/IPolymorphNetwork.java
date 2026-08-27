@@ -17,6 +17,7 @@
 
 package com.illusivesoulworks.polymorph.api.common.base;
 
+import java.util.List;
 import java.util.SortedSet;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -26,6 +27,8 @@ public interface IPolymorphNetwork {
   void sendPlayerRecipeSelectionC2S(ResourceLocation resourceLocation);
 
   void sendPersistentRecipeSelectionC2S(ResourceLocation resourceLocation);
+
+  void sendPlayerPriorityC2S(List<String> namespaces, List<String> recipes);
 
   void sendRecipesListS2C(ServerPlayer player);
 
@@ -42,4 +45,7 @@ public interface IPolymorphNetwork {
   void sendUpdatePreviewS2C(ServerPlayer player);
 
   void sendRecipeHandshakeS2C(ServerPlayer player);
+
+  /** Pushes the datapack source-priority list so the client ranks conflicts the same way. */
+  void sendPackPriorityS2C(ServerPlayer player, List<String> namespaces);
 }

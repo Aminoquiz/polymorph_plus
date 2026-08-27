@@ -22,20 +22,13 @@ import java.util.TreeSet;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.SmithingScreen;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeManager;
 
 /**
- * MC 26.1 fork. The client no longer holds a full {@code RecipeManager} — only a
- * {@code RecipeAccess} surface (property sets + stonecutter). For SP we can still reach
- * the integrated server's full RecipeManager via {@code level().getServer()}; on a
- * remote dedicated server the selected-recipe sync degrades to no-op until we lift the
- * IPlayerRecipeData API onto Identifier-only persistence (a follow-up). {@code
- * byKey} also now takes {@code ResourceKey<Recipe<?>>}, not {@code Identifier}.
+ * MC 26.1 fork. The client holds no full {@code RecipeManager} — only a {@code RecipeAccess}
+ * surface (property sets + stonecutter) — and {@code ClientLevel.getServer()} is null even in
+ * single player, so a holder cannot be looked up here at all. The selection is therefore stored
+ * by {@link Identifier} and matched against the candidates during resolution instead.
  */
 public class ClientPacketHandler {
 
@@ -48,28 +41,9 @@ public class ClientPacketHandler {
 
       if (recipeData != null) {
         recipeData.setRecipesList(sort(packet.recipeList().orElse(new HashSet<>())));
-        packet.selected().flatMap(ClientPacketHandler::lookup)
-            .ifPresent(recipeData::setSelectedRecipe);
+        recipeData.setSelectedRecipeId(packet.selected().orElse(null));
       }
     }
-  }
-
-  private static java.util.Optional<net.minecraft.world.item.crafting.RecipeHolder<?>> lookup(
-      Identifier id) {
-    LocalPlayer player = Minecraft.getInstance().player;
-
-    if (player == null) {
-      return Optional.empty();
-    }
-    MinecraftServer server = player.level().getServer();
-
-    if (server == null) {
-      // Remote multiplayer: no full RecipeManager on the client in 26.1.
-      return Optional.empty();
-    }
-    RecipeManager rm = server.getRecipeManager();
-    ResourceKey<Recipe<?>> key = ResourceKey.create(Registries.RECIPE, id);
-    return rm.byKey(key);
   }
 
   public static void handle(SPacketRecipesList packet) {

@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.SortedSet;
 import javax.annotation.Nonnull;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.crafting.Recipe;
@@ -42,6 +43,28 @@ public interface IRecipeData<E> {
   RecipeHolder<?> getSelectedRecipe();
 
   void setSelectedRecipe(RecipeHolder<?> recipe);
+
+  /**
+   * Records the selection by id rather than by holder. On MC 26.x the client has no full
+   * recipe manager of its own, so a holder cannot always be looked up there; the id is
+   * enough, since resolution only ever compares it against the candidates it already has.
+   * Defaults are no-ops so third-party implementations keep compiling.
+   */
+  default void setSelectedRecipeId(ResourceLocation id) {
+  }
+
+  default ResourceLocation getSelectedRecipeId() {
+    return null;
+  }
+
+  /**
+   * Records a deliberate pick by the player, as opposed to {@link #setSelectedRecipeId} which
+   * only mirrors what resolution landed on. Only the deliberate one is persisted, and only it
+   * competes with the player's favourites.
+   */
+  default void chooseRecipe(ResourceLocation id) {
+    this.setSelectedRecipeId(id);
+  }
 
   @Nonnull
   SortedSet<IRecipePair> getRecipesList();

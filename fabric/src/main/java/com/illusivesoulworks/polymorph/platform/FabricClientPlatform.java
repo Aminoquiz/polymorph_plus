@@ -32,4 +32,10 @@ public class FabricClientPlatform implements IClientPlatform {
   public int getScreenLeft(AbstractContainerScreen<?> screen) {
     return ((AccessorAbstractContainerScreen) screen).getLeftPos();
   }
+
+  @Override
+  public int getScreenWidth(AbstractContainerScreen<?> screen) {
+    return ((AccessorAbstractContainerScreen) screen).getImageWidth();
+  }
+
 }

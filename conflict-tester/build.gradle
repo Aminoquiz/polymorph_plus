@@ -36,11 +36,18 @@ neoForge {
     }
 }
 
+// Convenience copy of the built jar into a local staging folder. Opt-in: set jar_output_dir
+// in gradle.properties or on the command line. Absent, the task simply does nothing, so the
+// build works on a machine that is not the author's.
 tasks.named('jar').configure {
     doLast {
-        copy {
-            from archiveFile
-            into file('<local>/polymorph/polymorph-mod/new-jars')
+        def outDir = project.findProperty('jar_output_dir')
+
+        if (outDir) {
+            copy {
+                from archiveFile
+                into file(outDir)
+            }
         }
     }
 }

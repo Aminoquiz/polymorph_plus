@@ -11,8 +11,11 @@ import com.illusivesoulworks.polymorph.api.PolymorphApi;
 import com.illusivesoulworks.polymorph.api.common.base.IRecipePair;
 import com.illusivesoulworks.polymorph.api.common.capability.IPlayerRecipeData;
 import com.illusivesoulworks.polymorph.client.RecipesWidget;
+import com.illusivesoulworks.polymorph.common.priority.RecipePriority;
 import com.mojang.datafixers.util.Pair;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.SortedSet;
 import javax.annotation.Nonnull;
 import net.minecraft.resources.Identifier;
@@ -34,9 +37,20 @@ import net.minecraft.world.level.Level;
 public class PlayerRecipeData extends AbstractRecipeData<Player> implements
     IPlayerRecipeData {
 
+  // Namespace lists share one integer scale: the player's own list occupies the low range, the
+  // pack list is shifted above it. Favourites are ranked separately, on their own axis, because
+  // they sit above the remembered click rather than below it.
+  private static final int PACK_RANK_OFFSET = 1 << 20;
+
   private AbstractContainerMenu containerMenu;
   private RecipeHolder<?> cachedSelection;
   private int lastAccessTick;
+  private List<String> priorityNamespaces = List.of();
+  private Map<String, Integer> priorityRanks = Map.of();
+  private List<String> priorityRecipes = List.of();
+  private Map<String, Integer> recipeRanks = Map.of();
+  private Identifier sessionChoice;
+  private AbstractContainerMenu sessionMenu;
 
   public PlayerRecipeData(Player owner) {
     super(owner);
@@ -79,17 +93,24 @@ public class PlayerRecipeData extends AbstractRecipeData<Player> implements
   @Override
   public void selectRecipe(@Nonnull RecipeHolder<?> recipe) {
     this.cachedSelection = null;
+    this.sessionChoice = recipe.id().identifier();
+    this.sessionMenu = this.getOwner().containerMenu;
     super.selectRecipe(recipe);
     this.syncPlayerRecipeData();
+  }
+
+  @Override
+  public void setSelectedRecipeId(Identifier id) {
+    this.cachedSelection = null;
+    super.setSelectedRecipeId(id);
   }
 
   private void syncPlayerRecipeData() {
 
     if (this.getOwner() instanceof ServerPlayer) {
-      Identifier id =
-          this.getSelectedRecipe() != null ? this.getSelectedRecipe().id().identifier() : null;
       PolymorphApi.getInstance().getNetwork()
-          .sendPlayerSyncS2C((ServerPlayer) this.getOwner(), this.getRecipesList(), id);
+          .sendPlayerSyncS2C((ServerPlayer) this.getOwner(), this.getRecipesList(),
+              this.getSelectedRecipeId());
     }
   }
 
@@ -97,21 +118,97 @@ public class PlayerRecipeData extends AbstractRecipeData<Player> implements
   public void sendRecipesListToListeners() {
 
     if (this.getContainerMenu() == this.getOwner().containerMenu) {
-      Identifier id =
-          this.getSelectedRecipe() != null ? this.getSelectedRecipe().id().identifier() : null;
       Pair<SortedSet<IRecipePair>, Identifier> packetData =
-          new Pair<>(this.getRecipesList(), id);
+          new Pair<>(this.getRecipesList(), this.getSelectedRecipeId());
       Player player = this.getOwner();
 
       if (player.level().isClientSide()) {
-        RecipesWidget.get().ifPresent(
-            widget -> widget.setRecipesList(packetData.getFirst(), packetData.getSecond()));
+        // Client-side resolution (AE2's pattern terminal computes its output there) can run
+        // before the screen has built its widget, so queue the list instead of dropping it.
+        RecipesWidget.get().ifPresentOrElse(
+            widget -> widget.setRecipesList(packetData.getFirst(), packetData.getSecond()),
+            () -> RecipesWidget.enqueueRecipesList(packetData.getFirst(),
+                packetData.getSecond()));
       } else if (player instanceof ServerPlayer) {
         PolymorphApi.getInstance().getNetwork()
             .sendRecipesListS2C((ServerPlayer) player, packetData.getFirst(),
                 packetData.getSecond());
       }
     }
+  }
+
+  @Override
+  public void setPriorityNamespaces(List<String> namespaces) {
+    List<String> copy = List.copyOf(namespaces);
+    Map<String, Integer> ranks = new HashMap<>();
+
+    for (int i = 0; i < copy.size(); i++) {
+      ranks.putIfAbsent(copy.get(i), i);
+    }
+    this.priorityNamespaces = copy;
+    this.priorityRanks = Map.copyOf(ranks);
+  }
+
+  @Override
+  public List<String> getPriorityNamespaces() {
+    return this.priorityNamespaces;
+  }
+
+  @Override
+  public void setPriorityRecipes(List<String> recipes) {
+    List<String> copy = List.copyOf(recipes);
+    Map<String, Integer> ranks = new HashMap<>();
+
+    for (int i = 0; i < copy.size(); i++) {
+      ranks.putIfAbsent(copy.get(i), i);
+    }
+    this.priorityRecipes = copy;
+    this.recipeRanks = Map.copyOf(ranks);
+  }
+
+  @Override
+  public List<String> getPriorityRecipes() {
+    return this.priorityRecipes;
+  }
+
+  @Override
+  protected int favouriteRank(Identifier id) {
+    Integer rank = this.recipeRanks.get(id.toString());
+    return rank == null ? Integer.MAX_VALUE : rank;
+  }
+
+  @Override
+  protected int sourceRank(Identifier id) {
+    Integer namespaceRank = this.priorityRanks.get(id.getNamespace());
+
+    if (namespaceRank != null) {
+      return namespaceRank;
+    }
+    int packRank = RecipePriority.packRank(id.getNamespace());
+    return packRank == Integer.MAX_VALUE ? Integer.MAX_VALUE : PACK_RANK_OFFSET + packRank;
+  }
+
+  /**
+   * Valid only while the menu it was made on is still the one the player has open. Comparing
+   * menu instances is enough: closing a screen swaps in a different menu, so the override
+   * expires on its own with no close event to hook.
+   */
+  @Override
+  protected Identifier getSessionChoice() {
+
+    if (this.sessionMenu == null || this.sessionMenu != this.getOwner().containerMenu) {
+      this.sessionMenu = null;
+      this.sessionChoice = null;
+    }
+    return this.sessionChoice;
+  }
+
+  @Override
+  public void chooseRecipe(Identifier id) {
+    this.cachedSelection = null;
+    this.sessionChoice = id;
+    this.sessionMenu = this.getOwner().containerMenu;
+    super.chooseRecipe(id);
   }
 
   @Override

@@ -20,8 +20,14 @@ dependencies {
     // IntegratedMixinPlugin uses org.objectweb.asm.tree.ClassNode directly.
     compileOnly group: 'org.ow2.asm', name: 'asm-tree', version: '9.7'
 
-    // JEI compile reference — local jar from the user's mods folder (no maven repo yet).
-    compileOnly files("<local>/polymorph/mods_jars/forge/jei-26.2-neoforge-30.2.0.15.jar")
+    // JEI compile reference. No 26.x maven publication yet, so it is picked up from a local
+    // folder pointed at by local_mod_jars (gradle.properties) and skipped when absent — the
+    // JEI integration sources are excluded from this build anyway.
+    def localJars = file(project.findProperty('local_mod_jars') ?: 'local-mod-jars')
+
+    if (localJars.isDirectory()) {
+        compileOnly fileTree(dir: localJars, include: ['jei-*.jar'])
+    }
     // EMI / REI 26.x builds not published yet — restore when available.
     // compileOnly "dev.emi:emi-xplat-mojmap:${emi_version}"
 }

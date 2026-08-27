@@ -4,5 +4,7 @@
   "polymorph_plus.tutorial.conflict": "Conflit de craft détecté ! Cliquez sur la flèche pour choisir.",
   "polymorph_plus.tutorial.select": "Cliquez sur un résultat pour changer la recette.",
   "polymorph_plus.tutorial.pin": "Astuce : clic droit sur la flèche pour épingler le panneau.",
-  "polymorph_plus.tutorial.scroll": "Plus de 7 conflits ! Faites défiler ou cliquez sur les flèches latérales."
+  "polymorph_plus.tutorial.scroll": "Plus de 7 conflits ! Faites défiler ou cliquez sur les flèches latérales.",
+  "polymorph_plus.tutorial.prefer": "Shift + clic sur un résultat pour toujours préférer cette sortie. Une étoile marque le gagnant.",
+  "polymorph_plus.tutorial.cycle": "Astuce : maintenez Shift et faites défiler sur la case de résultat pour changer sans ouvrir le panneau."
 }

@@ -31,4 +31,10 @@ public class NeoForgeClientPlatform implements IClientPlatform {
   public int getScreenLeft(AbstractContainerScreen<?> screen) {
     return screen.getGuiLeft();
   }
+
+  @Override
+  public int getScreenWidth(AbstractContainerScreen<?> screen) {
+    return screen.getXSize();
+  }
+
 }
