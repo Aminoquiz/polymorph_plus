@@ -4,33 +4,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 Prior to version 0.45.0, this project used MCVERSION-MAJORMOD.MAJORAPI.MINOR.PATCH.
 
-## [1.3.0+1.21.11] - 2026.08.27
+## [1.3.1+1.21.11] - 2026.08.28
 
 ### Added
 
-- **Favourites.** Shift click a result in the picker to make it your favourite. From then on it
-  is chosen for you every time that conflict comes up, in any crafting grid, so you stop picking
-  the same thing over and over. A yellow star marks it in the picker.
-- **Shift and scroll to flip through results.** Hold shift and scroll the mouse wheel over the
-  result slot to go through the conflicting results without opening the picker at all. Can be
-  turned off in the client settings file.
-- **Preferred mod order for modpacks.** Pack authors can now ship a list of mods in order of
-  preference, so the conflicts their pack is known for resolve on their own and players never
-  see them.
-- Two new hints in the first run tutorial, covering favourites and the scroll shortcut.
+- **Favourites.** Shift click a result in the picker and it wins that conflict from then on, in
+  any crafting grid. A star marks it.
+- **Shift and scroll** over the result slot cycles through the results without opening the picker.
+- Modpack authors can ship a mod preference order so known conflicts resolve on their own.
 
 ### Fixed
 
-- The result picker no longer runs off the top of the screen in tall interfaces, such as the
-  Applied Energistics 2 terminal layouts. It now always sits just above the picker button,
-  wherever that button happens to be.
-- The result picker is now centred properly in interfaces wider than a vanilla one, instead of
-  being offset to one side.
-
-### Changed
-
-- The mod now shows up as Polymorph+ in the mod list, credited to its maintainer, with links
-  that point at this fork instead of the original mod.
+- The picker no longer runs off the top of the screen, and sits centred in wide interfaces.
 
 ## [1.1.0+1.21.1] - 2025.07.21
 ### Changed
