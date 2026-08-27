@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 Prior to version 0.45.0, this project used MCVERSION-MAJORMOD.MAJORAPI.MINOR.PATCH.
 
+## [1.3.1+26.1.2] - 2026.08.28
+
+### Fixed
+
+- Favourites now work in the Applied Energistics 2 crafting terminal. The result no longer
+  flickers to the wrong recipe, and your favourite comes back when you reopen it.
+
 ## [1.3.0+26.1.2] - 2026.08.26
 
 ### Added

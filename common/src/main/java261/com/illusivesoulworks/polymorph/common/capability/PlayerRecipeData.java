@@ -10,6 +10,7 @@ package com.illusivesoulworks.polymorph.common.capability;
 import com.illusivesoulworks.polymorph.api.PolymorphApi;
 import com.illusivesoulworks.polymorph.api.common.base.IRecipePair;
 import com.illusivesoulworks.polymorph.api.common.capability.IPlayerRecipeData;
+import com.illusivesoulworks.polymorph.client.PolymorphClientConfig;
 import com.illusivesoulworks.polymorph.client.RecipesWidget;
 import com.illusivesoulworks.polymorph.common.priority.RecipePriority;
 import com.mojang.datafixers.util.Pair;
@@ -171,21 +172,44 @@ public class PlayerRecipeData extends AbstractRecipeData<Player> implements
     return this.priorityRecipes;
   }
 
+  /**
+   * A menu that resolves its output on both sides, such as the AE2 crafting terminal, runs this
+   * on the client too, where the uploaded lists never land: only the server-bound handler fills
+   * them. Reading the config directly there keeps the two sides on the same answer instead of
+   * letting the client draw a candidate the server is about to replace.
+   */
+  private boolean useClientConfig() {
+    return this.getOwner().level().isClientSide();
+  }
+
   @Override
   protected int favouriteRank(Identifier id) {
+
+    if (this.useClientConfig()) {
+      return PolymorphClientConfig.recipeRankOf(id.toString());
+    }
     Integer rank = this.recipeRanks.get(id.toString());
     return rank == null ? Integer.MAX_VALUE : rank;
   }
 
   @Override
   protected int sourceRank(Identifier id) {
-    Integer namespaceRank = this.priorityRanks.get(id.getNamespace());
+    int namespaceRank = this.namespaceRank(id.getNamespace());
 
-    if (namespaceRank != null) {
+    if (namespaceRank != Integer.MAX_VALUE) {
       return namespaceRank;
     }
     int packRank = RecipePriority.packRank(id.getNamespace());
     return packRank == Integer.MAX_VALUE ? Integer.MAX_VALUE : PACK_RANK_OFFSET + packRank;
+  }
+
+  private int namespaceRank(String namespace) {
+
+    if (this.useClientConfig()) {
+      return PolymorphClientConfig.rankOf(namespace);
+    }
+    Integer rank = this.priorityRanks.get(namespace);
+    return rank == null ? Integer.MAX_VALUE : rank;
   }
 
   /**
