@@ -1,0 +1,15 @@
+// polymorph_plus port of Polymorph for Minecraft 1.21.1 (NeoForge + Fabric).
+// Per-subproject configuration lives in common/, neoforge/, fabric/.
+// Discord webhook + Modrinth/CurseForge auto-publish from upstream dropped.
+
+plugins {
+    id "org.jetbrains.gradle.plugin.idea-ext" version "1.1.7"
+}
+
+def ordered(String... dependencyPaths) {
+    def dependencies = dependencyPaths.collect { tasks.getByPath(it) }
+    for (int i = 0; i < dependencies.size() - 1; i++) {
+        dependencies[i + 1].mustRunAfter(dependencies[i])
+    }
+    return dependencies
+}

@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "id": "${mod_id}",
+  "provides": ["polymorph"],
+  "version": "${version}",
+  "name": "${mod_name}",
+  "description": "${description}",
+  "authors": [
+    "${mod_author}"
+  ],
+  "contact": {
+    "sources": "${sources_url}",
+    "issues": "${issues_url}"
+  },
+  "license": "${license}",
+  "icon": "polymorph_icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.illusivesoulworks.polymorph.PolymorphFabricMod"
+    ],
+    "client": [
+      "com.illusivesoulworks.polymorph.PolymorphFabricClientMod"
+    ],
+    "cardinal-components": [
+      "com.illusivesoulworks.polymorph.common.components.PolymorphFabricComponents"
+    ]
+  },
+  "custom": {
+    "cardinal-components": [
+      "polymorph:player_recipe_data",
+      "polymorph:block_entity_recipe_data"
+    ]
+  },
+  "mixins": [
+    "polymorph.mixins.json",
+    "polymorph-compatibility.mixins.json",
+    "polymorph.fabric.mixins.json",
+    "polymorph-compatibility.fabric.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.15",
+    "fabric-api": "*",
+    "minecraft": "${minecraft_version_range_alt}",
+    "java": ">=${java_version}"
+  },
+  "breaks": {
+    "polymorph": "<1.2.0"
+  }
+}

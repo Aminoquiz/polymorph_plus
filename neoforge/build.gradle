@@ -1,0 +1,61 @@
+plugins {
+    id 'multiloader-loader'
+    id 'net.neoforged.gradle.userdev' version '7.0.145'
+}
+
+// Automatically enable neoforge AccessTransformers if the file exists
+// This location is hardcoded in FML and can not be changed.
+// https://github.com/neoforged/FancyModLoader/blob/a952595eaaddd571fbc53f43847680b00894e0c1/loader/src/main/java/net/neoforged/fml/loading/moddiscovery/ModFile.java#L118
+def at = file('src/main/resources/META-INF/accesstransformer.cfg')
+if (at.exists()) {
+    minecraft.accessTransformers.file at
+}
+runs {
+    configureEach {
+        modSource project.sourceSets.main
+    }
+    client {
+        systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+    }
+    server {
+        systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+        programArgument '--nogui'
+    }
+
+    gameTestServer {
+        systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+    }
+
+    data {
+        programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
+    }
+}
+
+subsystems {
+    parchment {
+        minecraftVersion = "${parchment_mc}"
+        mappingsVersion = "${parchment_version}"
+    }
+}
+
+sourceSets.main.resources { srcDir 'src/generated/resources' }
+
+repositories {
+    maven {
+        name = "Shadows' Mods Maven"
+        url = "https://maven.shadowsoffire.dev/releases"
+    }
+}
+
+dependencies {
+    implementation "net.neoforged:neoforge:${neoforge_version}"
+
+    compileOnly "dev.shadowsoffire:FastWorkbench:${fastworkbench_version}"
+    compileOnly "dev.shadowsoffire:Placebo:${placebo_version}"
+    compileOnly "dev.emi:emi-xplat-mojmap:${emi_version}"
+    compileOnly "mezz.jei:jei-1.21-common:${jei_version}"
+    compileOnly "me.shedaniel:RoughlyEnoughItems-neoforge:${rei_version}"
+//    runtimeOnly "me.shedaniel:RoughlyEnoughItems-neoforge:${rei_version}"
+}
+
+// Modrinth + CurseForge auto-publish dropped (manual upload via Aminoquiz).

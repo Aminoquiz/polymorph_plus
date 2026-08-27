@@ -1,0 +1,39 @@
+// Minimal NeoForge mod that ships shaped/shapeless/furnace/smithing recipes
+// conflicting with vanilla outputs. Used to surface Polymorph+ selector UI
+// in dev and dedi smoke tests.
+
+plugins {
+    id 'java'
+    id 'net.neoforged.gradle.userdev' version '7.0.145'
+}
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(java_version)
+}
+
+base {
+    archivesName = 'conflict_tester-neoforge'
+}
+
+version = '1.0.0+1.21.1'
+group = 'com.illusivesoulworks.polymorph.tester'
+
+dependencies {
+    implementation "net.neoforged:neoforge:${neoforge_version}"
+}
+
+// Convenience copy of the built jar into a local staging folder. Opt-in: set jar_output_dir
+// in gradle.properties or on the command line. Absent, the task simply does nothing, so the
+// build works on a machine that is not the author's.
+tasks.named('jar').configure {
+    doLast {
+        def outDir = project.findProperty('jar_output_dir')
+
+        if (outDir) {
+            copy {
+                from archiveFile
+                into file(outDir)
+            }
+        }
+    }
+}

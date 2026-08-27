@@ -1,0 +1,17 @@
+{
+  "required": false,
+  "package": "com.illusivesoulworks.polymorph.mixin.integration",
+  "compatibilityLevel": "JAVA_16",
+  "mixins": [
+    "emi.MixinEmiRecipeFiller",
+    "jei.MixinRecipeTransferUtil",
+    "jei.MixinPacketRecipeTransfer"
+  ],
+  "injectors": {
+    "defaultRequire": 1,
+    "maxShiftBy": 3
+  },
+  "refmap": "${mod_id}.refmap.json",
+  "plugin": "com.illusivesoulworks.polymorph.mixin.IntegratedMixinPlugin",
+  "minVersion": "0.8"
+}

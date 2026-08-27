@@ -1,0 +1,56 @@
+modLoader = "javafml"
+loaderVersion = "[1,)"
+license = "${license}"
+issueTrackerURL= "${issues_url}"
+[[mods]]
+    modId = "${mod_id}"
+    version = "${version}"
+    displayName = "${mod_name}"
+    displayURL = "${sources_url}"
+    logoFile="polymorph_icon.png"
+    logoBlur = false
+    authors = "${mod_author}"
+    description = '''${description}'''
+[[mods]]
+    modId = "polymorph"
+    version = "1.2.456"
+    displayName = "Polymorph (alias)"
+    description = '''Compatibility alias provided by Polymorph+. Allows mods that depend on `polymorph` (Polymorphic Occultism, Polymorphic Extended Crafting, RS Polymorph, etc.) to load against Polymorph+.
+
+Do NOT install upstream Polymorph alongside Polymorph+. Pick one:
+- Keep Polymorph+ (this mod) and REMOVE polymorph-*.jar from your mods folder.
+- Or keep upstream Polymorph and REMOVE polymorph_plus-*.jar.
+
+Both mods inject mixins on the same vanilla menus and cannot coexist.'''
+[[mixins]]
+    config = "polymorph.mixins.json"
+[[mixins]]
+    config = "polymorph-compatibility.mixins.json"
+[[mixins]]
+    config = "polymorph-compatibility.neoforge.mixins.json"
+[[dependencies.${mod_id}]]
+    modId = "neoforge"
+    type="required"
+    versionRange = "${neoforge_version_range}"
+    ordering = "NONE"
+    side = "BOTH"
+[[dependencies.${mod_id}]]
+    modId = "minecraft"
+    type="required"
+    versionRange = "${minecraft_version_range}"
+    ordering = "NONE"
+    side = "BOTH"
+# Incompat with upstream Polymorph (< 1.2.0). Our alias declares
+# version 1.2.456 (a distinctive marker that won't collide with any real
+# upstream release) so it falls outside this range, avoiding self-fire.
+# If upstream ever publishes >= 1.2.0 the range lets it pass without
+# triggering this incompat. When both jars coexist, FML's duplicate-mod
+# check fires before this dep is evaluated, so the user typically sees
+# the duplicate crash; this declaration remains as a safety net.
+[[dependencies.${mod_id}]]
+    modId = "polymorph"
+    type = "incompatible"
+    reason = "Polymorph+ already provides the polymorph alias. Installing both produces a duplicate mod id and double UI conflicts on the same vanilla menus. Remove one."
+    versionRange = "[0,1.2.0)"
+    ordering = "NONE"
+    side = "BOTH"

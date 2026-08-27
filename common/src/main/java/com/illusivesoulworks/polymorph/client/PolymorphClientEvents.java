@@ -1,0 +1,101 @@
+/*
+ * Copyright (C) 2020-2022 Illusive Soulworks
+ *
+ * Polymorph is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ *
+ * Polymorph is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with Polymorph.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+package com.illusivesoulworks.polymorph.client;
+
+import com.illusivesoulworks.polymorph.api.PolymorphApi;
+import com.illusivesoulworks.polymorph.api.client.base.ITickingRecipesWidget;
+import com.illusivesoulworks.polymorph.common.priority.RecipePriority;
+import java.util.List;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+
+public class PolymorphClientEvents {
+
+  /**
+   * Uploads the player's source-preference list on join. Conflict resolution runs
+   * server-side, so the server needs the list before the first crafting grid is touched.
+   * Skipped entirely when the player has no preferences, which keeps vanilla-ish setups
+   * off the wire.
+   */
+  public static void syncPriority() {
+    List<String> namespaces = PolymorphClientConfig.getPriorityNamespaces();
+    List<String> recipes = PolymorphClientConfig.getPriorityRecipes();
+
+    if (!namespaces.isEmpty() || !recipes.isEmpty()) {
+      PolymorphApi.getInstance().getNetwork().sendPlayerPriorityC2S(namespaces, recipes);
+    }
+  }
+
+  /**
+   * The pack list is pushed by the server on join, but a server without polymorph_plus sends
+   * nothing at all, so the previous world's list has to be dropped on the way out rather than
+   * waiting to be overwritten.
+   */
+  public static void clearPackPriority() {
+    RecipePriority.setPackNamespaces(List.of());
+  }
+
+  public static void tick() {
+    Minecraft mc = Minecraft.getInstance();
+    RecipesWidget.get().ifPresent(widget -> {
+      if (mc.player == null || mc.screen == null) {
+        RecipesWidget.clear();
+      } else if (widget instanceof ITickingRecipesWidget) {
+        ((ITickingRecipesWidget) widget).tick();
+      }
+    });
+  }
+
+  public static void initScreen(Screen screen) {
+
+    if (screen instanceof AbstractContainerScreen) {
+      RecipesWidget.create((AbstractContainerScreen<?>) screen);
+    }
+  }
+
+  public static void render(Screen screen, GuiGraphics guiGraphics, int mouseX, int mouseY,
+                            float partialTicks) {
+
+    if (screen instanceof AbstractContainerScreen) {
+      RecipesWidget.get().ifPresent(
+          recipeController -> recipeController.render(guiGraphics, mouseX, mouseY, partialTicks));
+    }
+  }
+
+  public static boolean mouseClick(Screen screen, double mouseX, double mouseY, int button) {
+
+    if (screen instanceof AbstractContainerScreen) {
+      return RecipesWidget.get()
+          .map(recipeController -> recipeController.mouseClicked(mouseX, mouseY, button))
+          .orElse(false);
+    }
+    return false;
+  }
+
+  public static boolean mouseScroll(Screen screen, double mouseX, double mouseY, double scrollY) {
+
+    if (screen instanceof AbstractContainerScreen) {
+      return RecipesWidget.get()
+          .map(recipeController -> recipeController.mouseScrolled(mouseX, mouseY, scrollY))
+          .orElse(false);
+    }
+    return false;
+  }
+}
