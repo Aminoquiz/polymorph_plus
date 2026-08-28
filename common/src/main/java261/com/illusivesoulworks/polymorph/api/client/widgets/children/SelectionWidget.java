@@ -98,12 +98,28 @@ public class SelectionWidget implements Renderable, GuiEventListener {
   }
 
   /**
-   * Lays the visible buttons out as a row sitting just above the selector button.
-   *
-   * <p>Upstream anchored the scrollable variant to the top of the container GUI instead, which
-   * is off screen in a tall GUI such as AE2's terminal styles. The non-scrolling variant was
-   * already anchored to the button, so both now use the same anchor and the row simply follows
-   * the button wherever the GUI puts it. Still clamped into the window as a backstop.
+   * A scrolling row is centred on the GUI and about as wide, so anything lower than the GUI's
+   * own top edge cuts across its title bar. A tall GUI, such as AE2's terminal styles, puts
+   * that position off the top of the window, and there the button is the only anchor certain
+   * to be on screen.
+   */
+  private int rowTop(boolean scrolls) {
+
+    if (scrolls) {
+      int aboveGui =
+          Services.CLIENT_PLATFORM.getScreenTop(this.containerScreen) - BUTTON_SIZE - 1;
+
+      if (aboveGui >= 0) {
+        return aboveGui;
+      }
+    }
+    return clamp(this.y, 0, windowHeight() - BUTTON_SIZE);
+  }
+
+  /**
+   * Lays the visible buttons out as a single row. It follows the selector button, except once
+   * it scrolls: the row is then too wide for the button to carry, so it is centred on the GUI
+   * and raised by {@link #rowTop(boolean)}. Both axes are clamped into the window.
    */
   private void updateButtonPositions() {
     this.clampScroll();
@@ -134,7 +150,7 @@ public class SelectionWidget implements Renderable, GuiEventListener {
     }
     int margin = scrolls ? ARROW_WIDTH + ARROW_GAP : 0;
     this.anchorX = clamp(left, margin, windowWidth() - rowWidth - margin);
-    this.anchorY = clamp(this.y, 0, windowHeight() - BUTTON_SIZE);
+    this.anchorY = this.rowTop(scrolls);
     setRect(this.prevArrow, this.anchorX - ARROW_GAP - ARROW_WIDTH, this.anchorY, ARROW_WIDTH,
         BUTTON_SIZE);
     setRect(this.nextArrow, this.anchorX + rowWidth + ARROW_GAP, this.anchorY, ARROW_WIDTH,
