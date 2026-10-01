@@ -117,9 +117,9 @@ processResources {
 // Common ships polymorph_plus-compatibility.mixins.json listing JEI mixins. Those classes
 // are excluded from the Fabric compile (no JEI Fabric dep on 26.1), so the mixin loader
 // crashes at startup trying to resolve them. After processResources finishes (which copied
-// common's resources in), overwrite the compat JSON with an empty mixin list.
+// common's resources in), overwrite the compat JSON with the mixins that do compile here.
 processResources.doLast {
     def compat = new File("${processResources.destinationDir}/polymorph_plus-compatibility.mixins.json")
     compat.parentFile.mkdirs()
-    compat.text = '{"required":false,"package":"com.illusivesoulworks.polymorph.mixin.integration","compatibilityLevel":"JAVA_16","mixins":[],"plugin":"com.illusivesoulworks.polymorph.mixin.IntegratedMixinPlugin","minVersion":"0.8"}'
+    compat.text = '{"required":false,"package":"com.illusivesoulworks.polymorph.mixin.integration","compatibilityLevel":"JAVA_16","mixins":["toms_storage.MixinCraftingTerminalBlockEntity"],"injectors":{"defaultRequire":1},"plugin":"com.illusivesoulworks.polymorph.mixin.IntegratedMixinPlugin","minVersion":"0.8"}'
 }
