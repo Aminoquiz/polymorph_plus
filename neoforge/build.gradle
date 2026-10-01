@@ -31,13 +31,19 @@ neoForge {
 
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
-// FastWorkbench 10.x for 26.1.2 dropped the `dev.shadowsoffire.fastbench.util.FastBenchUtil`
-// utility class entirely (now mixes directly into vanilla AbstractCraftingMenu). Our legacy
-// MixinFastBenchUtil target no longer exists; sources stay excluded until the integration is
-// rewritten against the new mixin layout. REI now compiles (compileOnly above).
+// FastWorkbench has no maven publication for 26.x, so its mixin only compiles when the jar sits
+// in the local_mod_jars folder. The legacy FastBenchModule is not needed on 10.x: the grid update
+// runs within a tick of a selection and resolves through the mixin.
+def localModJars = file(project.findProperty('local_mod_jars') ?: 'local-mod-jars')
+def hasFastWorkbench = localModJars.isDirectory() &&
+        !fileTree(dir: localModJars, include: ['FastWorkbench-*.jar']).isEmpty()
+
 sourceSets.main.java {
     exclude 'com/illusivesoulworks/polymorph/common/integration/fastbench/**'
-    exclude 'com/illusivesoulworks/polymorph/mixin/integration/fastbench/**'
+
+    if (!hasFastWorkbench) {
+        exclude 'com/illusivesoulworks/polymorph/mixin/integration/fastbench/**'
+    }
 }
 
 // AccessTransformer auto-pickup (FML hardcodes this path).
@@ -63,14 +69,19 @@ tasks.named('jar').configure {
 }
 
 dependencies {
-    // JEI + REI compile references. No 26.x maven publication yet, so they come from the
-    // folder local_mod_jars points at and are skipped when absent.
-    def localJars = file(project.findProperty('local_mod_jars') ?: 'local-mod-jars')
+    // JEI, REI and FastWorkbench compile references. No 26.x maven publication yet, so they come
+    // from the folder local_mod_jars points at and are skipped when absent.
+    if (localModJars.isDirectory()) {
+        compileOnly fileTree(dir: localModJars,
+                include: ['jei-*.jar', 'RoughlyEnoughItems-*.jar', 'FastWorkbench-*.jar'])
+    }
+    // Extra mods for dev runs. Opt-in: -Pdev_run_mods=<folder of jars>. A dev run does not scan
+    // the game directory's mods folder, and 26.x has no additionalRuntimeClasspath.
+    def devRunMods = project.findProperty('dev_run_mods')
 
-    if (localJars.isDirectory()) {
-        compileOnly fileTree(dir: localJars, include: ['jei-*.jar', 'RoughlyEnoughItems-*.jar'])
+    if (devRunMods) {
+        runtimeOnly fileTree(dir: file(devRunMods), include: '*.jar', exclude: "${mod_id}-*.jar")
     }
     // EMI 26.x not yet published.
-    // FastWorkbench 10.x removed FastBenchUtil entirely; legacy mixin target gone, integration deferred.
     // compileOnly "dev.emi:emi-neoforge:${emi_version}"
 }

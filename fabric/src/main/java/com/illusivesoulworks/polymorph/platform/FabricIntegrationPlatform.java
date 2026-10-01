@@ -18,18 +18,20 @@
 package com.illusivesoulworks.polymorph.platform;
 
 import com.illusivesoulworks.polymorph.common.integration.AbstractCompatibilityModule;
+import com.illusivesoulworks.polymorph.common.integration.PolymorphIntegrations;
+import com.illusivesoulworks.polymorph.common.integration.toms_storage.TomsStorageModule;
 import com.illusivesoulworks.polymorph.platform.services.IIntegrationPlatform;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
-// No active integrations on Fabric 26.1.2 (QuickBench/REI/JEI not yet on Fabric 26.1).
-// Returning an empty map keeps the ServiceLoader contract satisfied without referencing
-// integration classes that were excluded from compilation.
+// QuickBench, REI and JEI have no Fabric 26.x build to integrate with yet.
 public class FabricIntegrationPlatform implements IIntegrationPlatform {
 
   @Override
   public Map<String, Supplier<Supplier<AbstractCompatibilityModule>>> createCompatibilityModules() {
-    return Collections.emptyMap();
+    Map<String, Supplier<Supplier<AbstractCompatibilityModule>>> modules = new HashMap<>();
+    modules.put(PolymorphIntegrations.Mod.TOMS_STORAGE.getId(), () -> TomsStorageModule::new);
+    return modules;
   }
 }

@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 Prior to version 0.45.0, this project used MCVERSION-MAJORMOD.MAJORAPI.MINOR.PATCH.
 
+## [1.3.3+26.1.2] - 2026.10.01
+
+### Fixed
+
+- Fixed a bug where the result picker did not show up when Fast Workbench was installed.
+- Fixed a bug where the result picker did not show up in the Tom's Simple Storage crafting
+  terminal.
+
 ## [1.3.2+26.1.2] - 2026.08.28
 
 ### Fixed
