@@ -26,7 +26,7 @@ dependencies {
     def localJars = file(project.findProperty('local_mod_jars') ?: 'local-mod-jars')
 
     if (localJars.isDirectory()) {
-        compileOnly fileTree(dir: localJars, include: ['jei-*.jar'])
+        compileOnly fileTree(dir: localJars, include: ["jei-${minecraft_version}-*.jar"])
     }
     // EMI / REI 26.x builds not published yet — restore when available.
     // compileOnly "dev.emi:emi-xplat-mojmap:${emi_version}"

@@ -16,7 +16,7 @@ base {
     archivesName = 'conflict_tester-neoforge'
 }
 
-version = '1.0.0+26.2.0'
+version = '1.0.0+26.3.0'
 group = 'com.illusivesoulworks.polymorph.tester'
 
 neoForge {

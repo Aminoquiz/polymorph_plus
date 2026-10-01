@@ -67,7 +67,14 @@ dependencies {
     def localJars = file(project.findProperty('local_mod_jars') ?: 'local-mod-jars')
 
     if (localJars.isDirectory()) {
-        compileOnly fileTree(dir: localJars, include: ['jei-*.jar', 'RoughlyEnoughItems-*.jar'])
+        compileOnly fileTree(dir: localJars, include: ["jei-${minecraft_version}-*.jar", "RoughlyEnoughItems-${minecraft_version}.*.jar"])
+    }
+    // Extra mods for dev runs. Opt-in: -Pdev_run_mods=<folder of jars>. A dev run does not scan
+    // the game directory's mods folder, and 26.x has no additionalRuntimeClasspath.
+    def devRunMods = project.findProperty('dev_run_mods')
+
+    if (devRunMods) {
+        runtimeOnly fileTree(dir: file(devRunMods), include: '*.jar', exclude: "${mod_id}-*.jar")
     }
     // EMI 26.x not yet published.
     // compileOnly "dev.emi:emi-neoforge:${emi_version}"
