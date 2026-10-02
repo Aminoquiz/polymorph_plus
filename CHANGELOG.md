@@ -4,12 +4,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 Prior to version 0.45.0, this project used MCVERSION-MAJORMOD.MAJORAPI.MINOR.PATCH.
 
+## [1.3.4+26.2.0] - 2026.10.02
+
+### Fixed
+
+- Tooltips are no longer hidden behind the result picker.
+
 ## [1.3.3+26.2.0] - 2026.10.01
 
 ### Fixed
 
-- Fixed a bug where the result picker did not show up in the Tom's Simple Storage crafting
-  terminal.
+- The result picker now shows up in the Tom's Simple Storage crafting terminal.
+- The result picker sits fully above the interface again when it has enough results to scroll.
 
 ## [1.3.2+26.2.0] - 2026.08.28
 
