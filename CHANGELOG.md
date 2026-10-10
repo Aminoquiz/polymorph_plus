@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 Prior to version 0.45.0, this project used MCVERSION-MAJORMOD.MAJORAPI.MINOR.PATCH.
 
+## [1.3.5+26.3.0] - 2026.10.10
+
+### Fixed
+
+- The result picker shows up again on the crafting table, in the inventory and in furnaces.
+- The result picker button follows the Tom's Simple Storage crafting terminal in its tall size.
+
 ## [1.3.4+26.3.0] - 2026.10.02
 
 ### Fixed

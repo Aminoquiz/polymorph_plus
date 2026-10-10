@@ -27,6 +27,7 @@ public class ClientEventsListener {
     ClientTickEvents.END_CLIENT_TICK.register(client -> PolymorphClientEvents.tick());
     ScreenEvents.AFTER_INIT.register((client, screen, scaledWidth, scaledHeight) -> {
       PolymorphClientEvents.initScreen(screen);
+      ScreenEvents.afterExtract(screen).register(PolymorphClientEvents::renderIfMissed);
       // allowMouseClick returns true to ALLOW the click, false to BLOCK. Our mouseClick
       // returns true when our overlay CONSUMED the click (vanilla should be blocked).
       // Invert: block vanilla only when consumed; otherwise let the click through.
