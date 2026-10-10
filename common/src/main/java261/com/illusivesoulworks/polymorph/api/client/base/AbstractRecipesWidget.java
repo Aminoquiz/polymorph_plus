@@ -216,6 +216,8 @@ public abstract class AbstractRecipesWidget implements IRecipesWidget {
     if (this.selectionWidget == null || this.openButton == null) {
       return;
     }
+    // Some screens move their slots after init (Tom's terminal in its tall layout).
+    this.resetWidgetOffsets();
     this.selectionWidget.extractRenderState(guiGraphics, mouseX, mouseY, renderPartialTicks);
     this.openButton.extractRenderState(guiGraphics, mouseX, mouseY, renderPartialTicks);
     if (PolymorphClientConfig.isPinSelector() && this.openButton.visible) {
