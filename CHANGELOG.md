@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 Prior to version 0.45.0, this project used MCVERSION-MAJORMOD.MAJORAPI.MINOR.PATCH.
 
+## [Unreleased]
+
+### Fixed
+
+- Right-clicking the picker arrow pins the panel again, and left-clicking it opens the picker
+  instead of pinning it. 26.3 renumbered the mouse buttons (left and right are 1 and 3 now), so
+  the picker read a left click as the right one and its unpin branch could never fire.
+- Either mouse button picks a result in the picker again.
+
 ## [1.3.5+26.3.0] - 2026.10.10
 
 ### Fixed

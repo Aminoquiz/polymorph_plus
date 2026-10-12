@@ -18,6 +18,7 @@
 package com.illusivesoulworks.polymorph.api.client.widgets.children;
 
 import com.illusivesoulworks.polymorph.api.common.base.IRecipePair;
+import com.illusivesoulworks.polymorph.client.MouseButtons;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
 import javax.annotation.Nonnull;
@@ -90,6 +91,6 @@ public class OutputWidget extends AbstractWidget {
 
   @Override
   protected boolean isValidClickButton(int button) {
-    return button == 0 || button == 1;
+    return button == MouseButtons.LEFT || button == MouseButtons.RIGHT;
   }
 }

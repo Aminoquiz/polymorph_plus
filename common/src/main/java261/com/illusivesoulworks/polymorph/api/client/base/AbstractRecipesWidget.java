@@ -12,6 +12,7 @@ import com.illusivesoulworks.polymorph.api.client.widgets.children.OpenSelection
 import com.illusivesoulworks.polymorph.api.client.widgets.children.OutputWidget;
 import com.illusivesoulworks.polymorph.api.client.widgets.children.SelectionWidget;
 import com.illusivesoulworks.polymorph.api.common.base.IRecipePair;
+import com.illusivesoulworks.polymorph.client.MouseButtons;
 import com.illusivesoulworks.polymorph.client.PolymorphClientConfig;
 import com.illusivesoulworks.polymorph.client.TutorialOverlay;
 import com.illusivesoulworks.polymorph.platform.Services;
@@ -240,7 +241,9 @@ public abstract class AbstractRecipesWidget implements IRecipesWidget {
     if (this.selectionWidget == null || this.openButton == null) {
       return false;
     }
-    if (button == 1 && this.isOverOpenButton(mouseX, mouseY)) {
+    // The tip tells the player to right-click the arrow to pin the panel, so the button has to
+    // be identified by the codes of the running game: 26.3 renumbered them (0/1 -> 1/3).
+    if (button == MouseButtons.RIGHT && this.isOverOpenButton(mouseX, mouseY)) {
       boolean next = !PolymorphClientConfig.isPinSelector();
       PolymorphClientConfig.setPinSelector(next);
       if (next) {
@@ -252,7 +255,7 @@ public abstract class AbstractRecipesWidget implements IRecipesWidget {
     MouseButtonEvent event = new MouseButtonEvent(mouseX, mouseY, new MouseButtonInfo(button, 0));
     boolean pinned = PolymorphClientConfig.isPinSelector();
 
-    if (button == 0 && pinned && this.isOverOpenButton(mouseX, mouseY)) {
+    if (button == MouseButtons.LEFT && pinned && this.isOverOpenButton(mouseX, mouseY)) {
       PolymorphClientConfig.setPinSelector(false);
       this.selectionWidget.setActive(false);
       return true;
