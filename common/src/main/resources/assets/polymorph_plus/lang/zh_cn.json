@@ -1,5 +1,11 @@
 {
   "commands.polymorph.conflicts.starting": "正在检测冲突的合成表……",
   "commands.polymorph.conflicts.success": "发现 %d 个潜在的合成表冲突。请查看 logs/conflicts.log 获取更多信息。",
-  "polymorph.networking.failed": "多态合成网络连接出错：%s"
+  "polymorph.networking.failed": "多态合成网络连接出错：%s",
+  "polymorph_plus.tutorial.conflict": "配方冲突！点击箭头选择配方。",
+  "polymorph_plus.tutorial.select": "点击输出物即可切换配方。",
+  "polymorph_plus.tutorial.pin": "提示：右键点击箭头可固定面板，使其保持打开。",
+  "polymorph_plus.tutorial.scroll": "超过 7 个冲突配方！滚动或点击两侧箭头进行浏览。",
+  "polymorph_plus.tutorial.prefer": "按住 Shift 点击产物可给产物加星标，始终优先选择该产物。",
+  "polymorph_plus.tutorial.cycle": "提示：按住 Shift 并在输出槽上滚动，即可无需打开此面板循环切换产物。"
 }
