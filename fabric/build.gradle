@@ -1,8 +1,8 @@
 plugins {
-    id 'fabric-loom' version '1.1-SNAPSHOT'
+    id 'fabric-loom' version '1.5-SNAPSHOT'
     id 'maven-publish'
     id 'idea'
-    id 'net.darkhax.curseforgegradle' version '1.+'
+    id 'net.darkhax.curseforgegradle' version '1.1.26'
     id 'com.modrinth.minotaur' version '2.+'
 }
 
@@ -27,6 +27,7 @@ dependencies {
     implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
     implementation project(":common")
     implementation group: 'com.electronwill.night-config', name: 'core', version: '3.6.5'
+    modCompileOnly "maven.modrinth:quickbench:4.0.1+mc.1.19.2"
 
     include group: 'com.illusivesoulworks.spectrelib', name: 'spectrelib-fabric', version: "${spectrelib_version}"
 
@@ -118,7 +119,6 @@ task publishCurseForge(type: net.darkhax.curseforgegradle.TaskPublishCurseForge)
     def projectId = "${cf_fabric_id}".toString()
     def mainFile = upload(projectId, file("${project.buildDir}/libs/${archivesBaseName}-${version}.jar"))
     mainFile.changelogType = 'markdown'
-    mainFile.changelog = file('../CHANGELOG_LATEST.md')
     mainFile.releaseType = "${release_type}"
     "${release_versions}".split(',').each {
         mainFile.addGameVersion("${it}")
@@ -129,11 +129,10 @@ task publishCurseForge(type: net.darkhax.curseforgegradle.TaskPublishCurseForge)
 }
 
 modrinth {
-    token = findProperty('modrinthKey') ?: 0
+    token = findProperty('modrinthKey') ?: ''
     projectId = "${modrinth_id}"
     versionName = getArchivesBaseName() + "-" + getVersion()
     versionType = "${release_type}"
-    changelog = file('../CHANGELOG_LATEST.md').text
     uploadFile = file("${project.buildDir}/libs/${archivesBaseName}-${version}.jar")
     additionalFiles = [sourcesJar]
     gameVersions = "${release_versions}".split(",") as List<String>

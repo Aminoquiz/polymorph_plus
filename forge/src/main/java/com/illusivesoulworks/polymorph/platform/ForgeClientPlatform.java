@@ -123,7 +123,8 @@ public class ForgeClientPlatform implements IClientPlatform {
       RenderSystem.disableTexture();
       RenderSystem.enableBlend();
       RenderSystem.defaultBlendFunc();
-      BufferUploader.drawWithShader(bufferbuilder.end());
+      bufferbuilder.end();
+      BufferUploader.end(bufferbuilder);
       RenderSystem.disableBlend();
       RenderSystem.enableTexture();
       MultiBufferSource.BufferSource multibuffersource$buffersource =
@@ -149,5 +150,10 @@ public class ForgeClientPlatform implements IClientPlatform {
       }
       itemRenderer.blitOffset = f;
     }
+  }
+
+  @Override
+  public int getScreenWidth(AbstractContainerScreen<?> screen) {
+    return screen.getXSize();
   }
 }

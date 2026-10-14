@@ -28,6 +28,9 @@ import com.illusivesoulworks.polymorph.common.network.server.SPacketBlockEntityR
 import com.illusivesoulworks.polymorph.common.network.server.SPacketHighlightRecipe;
 import com.illusivesoulworks.polymorph.common.network.server.SPacketPlayerRecipeSync;
 import com.illusivesoulworks.polymorph.common.network.server.SPacketRecipesList;
+import com.illusivesoulworks.polymorph.common.network.client.CPacketPlayerPriority;
+import com.illusivesoulworks.polymorph.common.network.server.SPacketPackPriority;
+import java.util.List;
 import java.util.SortedSet;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
@@ -39,6 +42,26 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 
 public class PolymorphFabricPacketDistributor implements IPolymorphPacketDistributor {
+
+  @Override
+  public void sendPlayerPriorityC2S(List<String> namespaces, List<String> recipes) {
+
+    if (ClientPlayNetworking.canSend(PolymorphFabricNetwork.PLAYER_PRIORITY)) {
+      FriendlyByteBuf buf = PacketByteBufs.create();
+      CPacketPlayerPriority.encode(new CPacketPlayerPriority(namespaces, recipes), buf);
+      ClientPlayNetworking.send(PolymorphFabricNetwork.PLAYER_PRIORITY, buf);
+    }
+  }
+
+  @Override
+  public void sendPackPriorityS2C(ServerPlayer player, List<String> namespaces) {
+
+    if (ServerPlayNetworking.canSend(player, PolymorphFabricNetwork.PACK_PRIORITY)) {
+      FriendlyByteBuf buf = PacketByteBufs.create();
+      SPacketPackPriority.encode(new SPacketPackPriority(namespaces), buf);
+      ServerPlayNetworking.send(player, PolymorphFabricNetwork.PACK_PRIORITY, buf);
+    }
+  }
 
   @Override
   public void sendPlayerRecipeSelectionC2S(ResourceLocation resourceLocation) {

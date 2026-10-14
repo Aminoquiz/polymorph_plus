@@ -13,6 +13,9 @@
     "MixinRecipeManager",
     "MixinSmithingMenu"
   ],
+  "client": [
+    "MixinAbstractContainerScreen"
+  ],
   "injectors": {
     "defaultRequire": 1,
     "maxShiftBy": 3

@@ -49,6 +49,11 @@ public class FabricClientPlatform implements IClientPlatform {
   }
 
   @Override
+  public int getScreenWidth(AbstractContainerScreen<?> screen) {
+    return ((AccessorAbstractContainerScreen) screen).getImageWidth();
+  }
+
+  @Override
   public int getScreenLeft(AbstractContainerScreen<?> screen) {
     return ((AccessorAbstractContainerScreen) screen).getLeftPos();
   }
@@ -117,7 +122,8 @@ public class FabricClientPlatform implements IClientPlatform {
       RenderSystem.disableTexture();
       RenderSystem.enableBlend();
       RenderSystem.defaultBlendFunc();
-      BufferUploader.drawWithShader(bufferbuilder.end());
+      bufferbuilder.end();
+      BufferUploader.end(bufferbuilder);
       RenderSystem.disableBlend();
       RenderSystem.enableTexture();
       MultiBufferSource.BufferSource bufferSource =

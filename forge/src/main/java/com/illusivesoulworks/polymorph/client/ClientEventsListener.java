@@ -17,12 +17,24 @@
 
 package com.illusivesoulworks.polymorph.client;
 
+import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 @SuppressWarnings("unused")
 public class ClientEventsListener {
+
+  @SubscribeEvent
+  public void loggingIn(ClientPlayerNetworkEvent.LoggedInEvent evt) {
+    PolymorphClientEvents.syncPriority();
+  }
+
+  @SubscribeEvent
+  public void loggingOut(ClientPlayerNetworkEvent.LoggedOutEvent evt) {
+    PolymorphClientEvents.clearPackPriority();
+  }
 
   @SubscribeEvent
   public void tick(TickEvent.ClientTickEvent evt) {
@@ -33,21 +45,30 @@ public class ClientEventsListener {
   }
 
   @SubscribeEvent
-  public void initScreen(ScreenEvent.Init.Post evt) {
+  public void initScreen(ScreenEvent.InitScreenEvent.Post evt) {
     PolymorphClientEvents.initScreen(evt.getScreen());
   }
 
-  @SubscribeEvent
-  public void render(ScreenEvent.Render.Post evt) {
-    PolymorphClientEvents.render(evt.getScreen(), evt.getPoseStack(), evt.getMouseX(),
-        evt.getMouseY(), evt.getPartialTick());
+  @SubscribeEvent(priority = EventPriority.LOWEST)
+  public void render(ScreenEvent.DrawScreenEvent.Post evt) {
+    PolymorphClientEvents.renderIfMissed(evt.getScreen(), evt.getPoseStack(), evt.getMouseX(),
+        evt.getMouseY(), evt.getPartialTicks());
   }
 
   @SubscribeEvent
-  public void mouseClick(ScreenEvent.MouseButtonPressed.Pre evt) {
+  public void mouseClick(ScreenEvent.MouseClickedEvent.Pre evt) {
 
     if (PolymorphClientEvents.mouseClick(evt.getScreen(), evt.getMouseX(), evt.getMouseY(),
         evt.getButton())) {
+      evt.setCanceled(true);
+    }
+  }
+
+  @SubscribeEvent
+  public void mouseScroll(ScreenEvent.MouseScrollEvent.Pre evt) {
+
+    if (PolymorphClientEvents.mouseScroll(evt.getScreen(), evt.getMouseX(), evt.getMouseY(),
+        evt.getScrollDelta())) {
       evt.setCanceled(true);
     }
   }

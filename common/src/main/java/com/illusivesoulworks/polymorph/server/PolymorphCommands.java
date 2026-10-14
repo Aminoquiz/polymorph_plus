@@ -34,13 +34,13 @@ import java.util.List;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.TreeSet;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Container;
@@ -62,9 +62,18 @@ public class PolymorphCommands {
     dispatcher.register(command);
   }
 
+  // Common-pool threads carry the app class loader, so mod classes loaded through the
+  // transforming loader (Tinkers' FluidEvents on Forge) fail to resolve mid-scan.
+  private static void runScan(Runnable scan) {
+    Thread thread = new Thread(scan, "Polymorph conflict scan");
+    thread.setContextClassLoader(Thread.currentThread().getContextClassLoader());
+    thread.setDaemon(true);
+    thread.start();
+  }
+
   private static int findConflicts(CommandSourceStack source) {
-    CompletableFuture.runAsync(() -> {
-      source.sendSuccess(Component.translatable("commands.polymorph.conflicts.starting"), true);
+    runScan(() -> {
+      source.sendSuccess(new TranslatableComponent("commands.polymorph.conflicts.starting"), true);
       ServerLevel world = source.getLevel();
       RecipeManager recipeManager = world.getRecipeManager();
       List<String> output = new ArrayList<>();
@@ -80,12 +89,11 @@ public class PolymorphCommands {
           Files.write(Paths.get(Services.PLATFORM.getGameDir() + "/logs/conflicts.log"), output,
               StandardCharsets.UTF_8);
         } catch (IOException e) {
-          PolymorphConstants.LOG.error(
-              "Whoops! Something went wrong writing down your conflicts :(");
-          e.printStackTrace();
+          // Through the logger: a stack trace on stdout misses the log file players attach.
+          PolymorphConstants.LOG.error("Failed to write the recipe conflict report", e);
         }
       }
-      source.sendSuccess(Component.translatable("commands.polymorph.conflicts.success", count),
+      source.sendSuccess(new TranslatableComponent("commands.polymorph.conflicts.success", count),
           true);
     });
     return Command.SINGLE_SUCCESS;

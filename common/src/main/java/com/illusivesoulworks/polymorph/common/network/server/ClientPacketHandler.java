@@ -18,10 +18,8 @@
 package com.illusivesoulworks.polymorph.common.network.server;
 
 import com.illusivesoulworks.polymorph.api.PolymorphApi;
-import com.illusivesoulworks.polymorph.api.client.base.IRecipesWidget;
 import com.illusivesoulworks.polymorph.client.recipe.RecipesWidget;
 import com.illusivesoulworks.polymorph.common.capability.PolymorphCapabilities;
-import java.util.Optional;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
@@ -59,13 +57,7 @@ public class ClientPacketHandler {
     LocalPlayer clientPlayerEntity = Minecraft.getInstance().player;
 
     if (clientPlayerEntity != null) {
-      Optional<IRecipesWidget> maybeWidget = RecipesWidget.get();
-      maybeWidget.ifPresent(
-          widget -> widget.setRecipesList(packet.getRecipeList(), packet.getSelected()));
-
-      if (maybeWidget.isEmpty()) {
-        RecipesWidget.enqueueRecipesList(packet.getRecipeList(), packet.getSelected());
-      }
+      RecipesWidget.deliver(packet.getRecipeList(), packet.getSelected());
     }
   }
 

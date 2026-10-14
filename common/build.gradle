@@ -27,6 +27,13 @@ dependencies {
     implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
     implementation group: 'com.illusivesoulworks.spectrelib', name: 'spectrelib-common', version: "${spectrelib_version}"
     implementation group: 'com.electronwill.night-config', name: 'core', version: '3.6.5'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.10.2'
+}
+
+test {
+    useJUnitPlatform()
 }
 
 processResources {

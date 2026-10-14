@@ -4,8 +4,14 @@
   "compatibilityLevel": "JAVA_16",
   "refmap": "polymorph.refmap.json",
   "mixins": [
+    "craftingstation.MixinCraftingStationContainer",
     "fastbench.PolymorphMixinFastBenchUtil",
-    "fastsuite.PolymorphMixinAuxRecipeManager"
+    "fastsuite.PolymorphMixinAuxRecipeManager",
+    "storagenetwork.MixinContainerNetwork",
+    "cyclic.MixinContainerWorkbench",
+    "refinedstorage.MixinGridNetworkNode",
+    "toms_storage.MixinCraftingTerminalBlockEntity",
+    "travelersbackpack.MixinTravelersBackpackBaseMenu"
   ],
   "plugin": "com.illusivesoulworks.polymorph.mixin.IntegratedMixinPlugin",
   "minVersion": "0.8",

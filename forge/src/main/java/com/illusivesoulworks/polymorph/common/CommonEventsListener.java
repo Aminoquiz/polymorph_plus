@@ -45,10 +45,29 @@ import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.server.ServerAboutToStartEvent;
 import net.minecraftforge.event.server.ServerStoppedEvent;
+import com.illusivesoulworks.polymorph.common.priority.PriorityReloadListener;
+import com.illusivesoulworks.polymorph.common.priority.RecipePriority;
+import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 @SuppressWarnings("unused")
 public class CommonEventsListener {
+
+  @SubscribeEvent
+  public void addReloadListeners(final AddReloadListenerEvent evt) {
+    evt.addListener(
+        new PriorityReloadListener(() -> PolymorphApi.common().getServer().orElse(null)));
+  }
+
+  // The client resolves conflicts too, so it needs the same pack ranking as the server.
+  @SubscribeEvent
+  public void playerLoggedIn(final PlayerEvent.PlayerLoggedInEvent evt) {
+
+    if (evt.getEntity() instanceof ServerPlayer serverPlayer) {
+      PolymorphApi.common().getPacketDistributor()
+          .sendPackPriorityS2C(serverPlayer, RecipePriority.getPackNamespaces());
+    }
+  }
 
   @SubscribeEvent
   public void registerCommands(final RegisterCommandsEvent evt) {
@@ -82,14 +101,14 @@ public class CommonEventsListener {
 
   @SubscribeEvent
   public void openContainer(final PlayerContainerEvent.Open evt) {
-    PolymorphCommonEvents.openContainer(evt.getEntity(), evt.getContainer());
+    PolymorphCommonEvents.openContainer(evt.getPlayer(), evt.getContainer());
   }
 
   @SubscribeEvent
-  public void levelTick(final TickEvent.LevelTickEvent evt) {
+  public void levelTick(final TickEvent.WorldTickEvent evt) {
 
     if (evt.phase == TickEvent.Phase.END) {
-      PolymorphCommonEvents.levelTick(evt.level);
+      PolymorphCommonEvents.levelTick(evt.world);
     }
   }
 

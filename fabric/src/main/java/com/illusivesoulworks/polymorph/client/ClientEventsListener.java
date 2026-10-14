@@ -18,6 +18,7 @@
 package com.illusivesoulworks.polymorph.client;
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenMouseEvents;
 
@@ -25,10 +26,18 @@ public class ClientEventsListener {
 
   public static void setup() {
     ClientTickEvents.END_CLIENT_TICK.register(client -> PolymorphClientEvents.tick());
+    ClientPlayConnectionEvents.JOIN.register(
+        (handler, sender, client) -> PolymorphClientEvents.syncPriority());
+    ClientPlayConnectionEvents.DISCONNECT.register(
+        (handler, client) -> PolymorphClientEvents.clearPackPriority());
     ScreenEvents.AFTER_INIT.register((client, screen, scaledWidth, scaledHeight) -> {
       PolymorphClientEvents.initScreen(screen);
-      ScreenEvents.afterRender(screen).register(PolymorphClientEvents::render);
-      ScreenMouseEvents.beforeMouseClick(screen).register(PolymorphClientEvents::mouseClick);
+      ScreenEvents.afterRender(screen).register(PolymorphClientEvents::renderIfMissed);
+      // allow* callbacks return false to block vanilla; ours return true when consumed.
+      ScreenMouseEvents.allowMouseClick(screen).register((s, mx, my, btn) ->
+          !PolymorphClientEvents.mouseClick(s, mx, my, btn));
+      ScreenMouseEvents.allowMouseScroll(screen).register((s, mx, my, hAmt, vAmt) ->
+          !PolymorphClientEvents.mouseScroll(s, mx, my, vAmt));
     });
   }
 }

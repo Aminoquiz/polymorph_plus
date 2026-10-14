@@ -17,6 +17,7 @@
 
 package com.illusivesoulworks.polymorph.api.common.base;
 
+import java.util.List;
 import java.util.SortedSet;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -45,4 +46,9 @@ public interface IPolymorphPacketDistributor {
   void sendBlockEntitySyncS2C(BlockPos blockPos, ResourceLocation selected);
 
   void sendBlockEntityListenerC2S(boolean add);
+
+  void sendPlayerPriorityC2S(List<String> namespaces, List<String> recipes);
+
+  /** Pushes the datapack namespace priority list so the client ranks conflicts the same way. */
+  void sendPackPriorityS2C(ServerPlayer player, List<String> namespaces);
 }
