@@ -28,8 +28,18 @@ dependencies {
     if (localJars.isDirectory()) {
         compileOnly fileTree(dir: localJars, include: ['jei-*.jar'])
     }
+
+    compileOnly fileTree(dir: rootProject.file('../../../external_sources/jars'), include: ["jei/jei-26.1.2-*.jar"])
     // EMI / REI 26.x builds not published yet — restore when available.
     // compileOnly "dev.emi:emi-xplat-mojmap:${emi_version}"
+
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.10.2'
+    testRuntimeOnly 'com.google.code.gson:gson:2.11.0'
+}
+
+test {
+    useJUnitPlatform()
 }
 
 // ── Source remap (1.21.1 → 26.1.2 vanilla renames) ────────────────────────────
@@ -120,7 +130,7 @@ def remapCommonSources = tasks.register('remapCommonSources', Copy) {
 sourceSets {
     main {
         java {
-            srcDirs = [remappedCommonSrc]
+            srcDirs = [files(remappedCommonSrc).builtBy(remapCommonSources)]
         }
     }
 }

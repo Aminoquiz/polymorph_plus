@@ -121,7 +121,27 @@ public final class TutorialOverlay {
     }
   }
 
+  private static String pendingKey;
+  private static int pendingX;
+  private static int pendingY;
+
+  // Recorded during the screen pass and drawn from the end-of-frame hook, so JEI and other
+  // overlays that draw after the screen cannot cover it.
   private static void drawBubble(GuiGraphics gg, String langKey, int x, int y) {
+    pendingKey = langKey;
+    pendingX = x;
+    pendingY = y;
+  }
+
+  public static void flush(GuiGraphics gg) {
+    if (pendingKey == null) {
+      return;
+    }
+    String langKey = pendingKey;
+    int x = pendingX;
+    int y = pendingY;
+    pendingKey = null;
+    gg.nextStratum();
     Font font = Minecraft.getInstance().font;
     Component msg = Component.translatable(langKey);
     List<FormattedCharSequence> lines = font.split(msg, MAX_WIDTH);
@@ -131,6 +151,9 @@ public final class TutorialOverlay {
     }
     int boxW = textWidth + PADDING * 2;
     int boxH = lines.size() * font.lineHeight + PADDING * 2;
+    // A tall GUI, such as Occultism's storage controller, pushes the bubble past the window edge.
+    x = Math.max(0, Math.min(x, Minecraft.getInstance().getWindow().getGuiScaledWidth() - boxW));
+    y = Math.max(0, Math.min(y, Minecraft.getInstance().getWindow().getGuiScaledHeight() - boxH));
     gg.fill(x, y, x + boxW, y + boxH, BG_COLOR);
     gg.fill(x, y, x + boxW, y + 1, BORDER_COLOR);
     gg.fill(x, y + boxH - 1, x + boxW, y + boxH, BORDER_COLOR);

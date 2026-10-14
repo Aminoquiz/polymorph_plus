@@ -3,8 +3,11 @@
   "package": "com.illusivesoulworks.polymorph.mixin.integration",
   "compatibilityLevel": "JAVA_16",
   "mixins": [
+    "sophisticatedcore.MixinCraftingUpgradeContainer",
     "jei.MixinRecipeTransferUtil",
     "jei.MixinPacketRecipeTransfer",
+    "storagenetwork.MixinContainerNetwork",
+    "cyclic.MixinContainerWorkbench",
     "toms_storage.MixinCraftingTerminalBlockEntity"
   ],
   "injectors": {

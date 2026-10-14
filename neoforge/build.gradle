@@ -35,8 +35,8 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 // in the local_mod_jars folder. The legacy FastBenchModule is not needed on 10.x: the grid update
 // runs within a tick of a selection and resolves through the mixin.
 def localModJars = file(project.findProperty('local_mod_jars') ?: 'local-mod-jars')
-def hasFastWorkbench = localModJars.isDirectory() &&
-        !fileTree(dir: localModJars, include: ['FastWorkbench-*.jar']).isEmpty()
+def hasFastWorkbench = !fileTree(dir: rootProject.file('../../../external_sources/jars/fastworkbench'), include: ['FastWorkbench-26.1.2-*.jar']).isEmpty() ||
+        (localModJars.isDirectory() && !fileTree(dir: localModJars, include: ['FastWorkbench-*.jar']).isEmpty())
 
 sourceSets.main.java {
     exclude 'com/illusivesoulworks/polymorph/common/integration/fastbench/**'
@@ -75,6 +75,7 @@ dependencies {
         compileOnly fileTree(dir: localModJars,
                 include: ['jei-*.jar', 'RoughlyEnoughItems-*.jar', 'FastWorkbench-*.jar'])
     }
+    compileOnly fileTree(dir: rootProject.file('../../../external_sources/jars'), include: ["jei/jei-26.1.2-*.jar", "rei/RoughlyEnoughItems-26.1.*.jar", "fastworkbench/FastWorkbench-26.1.2-*.jar", "fastfurnace/FastFurnace-26.1.2-*.jar", "fastsuite/FastSuite-26.1.2-*.jar"])
     // Extra mods for dev runs. Opt-in: -Pdev_run_mods=<folder of jars>. A dev run does not scan
     // the game directory's mods folder, and 26.x has no additionalRuntimeClasspath.
     def devRunMods = project.findProperty('dev_run_mods')

@@ -17,6 +17,7 @@
 
 package com.illusivesoulworks.polymorph.client;
 
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
@@ -45,7 +46,7 @@ public class ClientEventsListener {
     PolymorphClientEvents.initScreen(evt.getScreen());
   }
 
-  @SubscribeEvent
+  @SubscribeEvent(priority = EventPriority.LOWEST)
   public void render(ScreenEvent.Render.Post evt) {
     PolymorphClientEvents.renderIfMissed(evt.getScreen(), evt.getGuiGraphics(), evt.getMouseX(),
         evt.getMouseY(), evt.getPartialTick());

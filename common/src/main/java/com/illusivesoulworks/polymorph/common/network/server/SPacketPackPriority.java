@@ -41,7 +41,7 @@ public record SPacketPackPriority(List<String> namespaces) implements CustomPack
           SPacketPackPriority::new);
 
   public static void handle(SPacketPackPriority packet) {
-    RecipePriority.setPackNamespaces(packet.namespaces());
+    RecipePriority.setClientPackNamespaces(packet.namespaces());
   }
 
   @Nonnull

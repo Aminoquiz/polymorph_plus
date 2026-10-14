@@ -126,10 +126,7 @@ public class PlayerRecipeData extends AbstractRecipeData<Player> implements
       if (player.level().isClientSide()) {
         // Client-side resolution (AE2's pattern terminal computes its output there) can run
         // before the screen has built its widget, so queue the list instead of dropping it.
-        RecipesWidget.get().ifPresentOrElse(
-            widget -> widget.setRecipesList(packetData.getFirst(), packetData.getSecond()),
-            () -> RecipesWidget.enqueueRecipesList(packetData.getFirst(),
-                packetData.getSecond()));
+        RecipesWidget.deliver(packetData.getFirst(), packetData.getSecond());
       } else if (player instanceof ServerPlayer) {
         PolymorphApi.getInstance().getNetwork()
             .sendRecipesListS2C((ServerPlayer) player, packetData.getFirst(),
@@ -199,7 +196,7 @@ public class PlayerRecipeData extends AbstractRecipeData<Player> implements
     if (namespaceRank != Integer.MAX_VALUE) {
       return namespaceRank;
     }
-    int packRank = RecipePriority.packRank(id.getNamespace());
+    int packRank = RecipePriority.packRank(id.getNamespace(), this.useClientConfig());
     return packRank == Integer.MAX_VALUE ? Integer.MAX_VALUE : PACK_RANK_OFFSET + packRank;
   }
 

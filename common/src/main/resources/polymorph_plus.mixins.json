@@ -2,11 +2,13 @@
   "required": true,
   "minVersion": "0.8",
   "package": "com.illusivesoulworks.polymorph.mixin.core",
+  "plugin": "com.illusivesoulworks.polymorph.mixin.CoreMixinPlugin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "AccessorAbstractFurnaceBlockEntity",
     "AccessorCrafterMenu",
     "AccessorRecipeManager",
+    "MixinAbstractFurnaceBlockEntity",
     "MixinCrafterMenu",
     "MixinCraftingMenu",
     "MixinLevelChunk",

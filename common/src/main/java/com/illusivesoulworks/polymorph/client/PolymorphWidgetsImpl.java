@@ -17,6 +17,7 @@
 
 package com.illusivesoulworks.polymorph.client;
 
+import com.illusivesoulworks.polymorph.common.integration.sophisticatedcore.SophisticatedCoreModule;
 import com.illusivesoulworks.polymorph.PolymorphConstants;
 import com.illusivesoulworks.polymorph.api.PolymorphApi;
 import com.illusivesoulworks.polymorph.api.client.PolymorphWidgets;
@@ -62,6 +63,10 @@ public class PolymorphWidgetsImpl extends PolymorphWidgets {
 
   @Override
   public IRecipesWidget getWidgetOrDefault(AbstractContainerScreen<?> containerScreen) {
+
+    if (SophisticatedCoreModule.isSophisticatedMenu(containerScreen.getMenu())) {
+      return null;
+    }
     IRecipesWidget widget = this.getWidget(containerScreen);
 
     if (widget == null) {
