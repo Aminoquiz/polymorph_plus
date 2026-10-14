@@ -1,6 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "${mod_id}",
+  "provides": ["polymorph"],
   "version": "${version}",
   "name": "${mod_name}",
   "description": "${mod_description}",
@@ -11,7 +12,7 @@
     "issues": "${issue_tracker}"
   },
   "license": "${license}",
-  "icon": "${mod_id}_icon.png",
+  "icon": "polymorph_icon.png",
   "environment": "*",
   "entrypoints": {
     "main": [
@@ -33,12 +34,16 @@
   },
   "mixins": [
     "polymorph.mixins.json",
-    "polymorph.fabric.mixins.json"
+    "polymorph.fabric.mixins.json",
+    "polymorph-integrations.fabric.mixins.json"
   ],
   "depends": {
     "fabricloader": ">=0.14.23",
     "fabric": "*",
     "minecraft": "${fabric_mc_version_range}",
     "java": ">=17"
+  },
+  "breaks": {
+    "polymorph": "<1.2.0"
   }
 }

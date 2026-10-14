@@ -30,4 +30,7 @@ public interface AccessorAbstractContainerScreen {
 
   @Accessor
   int getTopPos();
+
+  @Accessor
+  int getImageWidth();
 }

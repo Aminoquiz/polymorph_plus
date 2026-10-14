@@ -18,6 +18,10 @@
 package com.illusivesoulworks.polymorph.platform;
 
 import com.illusivesoulworks.polymorph.common.integration.AbstractCompatibilityModule;
+import com.illusivesoulworks.polymorph.common.integration.PolymorphIntegrations;
+import com.illusivesoulworks.polymorph.common.integration.toms_storage.TomsStorageModule;
+import com.illusivesoulworks.polymorph.common.integration.travelersbackpack.TravelersBackpackModule;
+import com.illusivesoulworks.polymorph.common.integration.quickbench.QuickBenchModule;
 import com.illusivesoulworks.polymorph.platform.services.IIntegrationPlatform;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,6 +31,11 @@ public class FabricIntegrationPlatform implements IIntegrationPlatform {
 
   @Override
   public Map<String, Supplier<Supplier<AbstractCompatibilityModule>>> createCompatibilityModules() {
-    return new HashMap<>();
+    Map<String, Supplier<Supplier<AbstractCompatibilityModule>>> result = new HashMap<>();
+    result.put("quickbench", () -> QuickBenchModule::new);
+    result.put(PolymorphIntegrations.Mod.TOMS_STORAGE.getId(), () -> TomsStorageModule::new);
+    result.put(PolymorphIntegrations.Mod.TRAVELERSBACKPACK.getId(),
+        () -> TravelersBackpackModule::new);
+    return result;
   }
 }

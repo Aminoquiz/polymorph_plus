@@ -150,4 +150,9 @@ public class ForgeClientPlatform implements IClientPlatform {
       itemRenderer.blitOffset = f;
     }
   }
+
+  @Override
+  public int getScreenWidth(AbstractContainerScreen<?> screen) {
+    return screen.getXSize();
+  }
 }

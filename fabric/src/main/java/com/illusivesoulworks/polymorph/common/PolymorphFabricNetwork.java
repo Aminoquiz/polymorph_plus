@@ -20,6 +20,8 @@ package com.illusivesoulworks.polymorph.common;
 import com.illusivesoulworks.polymorph.api.PolymorphApi;
 import com.illusivesoulworks.polymorph.common.network.client.CPacketBlockEntityListener;
 import com.illusivesoulworks.polymorph.common.network.client.CPacketPersistentRecipeSelection;
+import com.illusivesoulworks.polymorph.common.network.client.CPacketPlayerPriority;
+import com.illusivesoulworks.polymorph.common.network.server.SPacketPackPriority;
 import com.illusivesoulworks.polymorph.common.network.client.CPacketPlayerRecipeSelection;
 import com.illusivesoulworks.polymorph.common.network.client.CPacketStackRecipeSelection;
 import com.illusivesoulworks.polymorph.common.network.server.SPacketBlockEntityRecipeSync;
@@ -54,7 +56,14 @@ public class PolymorphFabricNetwork {
   public static final ResourceLocation BLOCK_ENTITY_LISTENER =
       new ResourceLocation(PolymorphApi.MOD_ID, "block_entity_listener");
 
+  public static final ResourceLocation PLAYER_PRIORITY =
+      new ResourceLocation(PolymorphApi.MOD_ID, "player_priority");
+  public static final ResourceLocation PACK_PRIORITY =
+      new ResourceLocation(PolymorphApi.MOD_ID, "pack_priority");
+
   public static void setup() {
+    registerServerReceiver(PLAYER_PRIORITY, CPacketPlayerPriority::decode,
+        CPacketPlayerPriority::handle);
     registerServerReceiver(PLAYER_SELECT, CPacketPlayerRecipeSelection::decode,
         CPacketPlayerRecipeSelection::handle);
     registerServerReceiver(PERSISTENT_SELECT, CPacketPersistentRecipeSelection::decode,
@@ -66,6 +75,8 @@ public class PolymorphFabricNetwork {
   }
 
   public static void clientSetup() {
+    registerClientReceiver(PACK_PRIORITY, SPacketPackPriority::decode,
+        SPacketPackPriority::handle);
     registerClientReceiver(HIGHLIGHT_RECIPE, SPacketHighlightRecipe::decode,
         SPacketHighlightRecipe::handle);
     registerClientReceiver(RECIPE_SYNC, SPacketPlayerRecipeSync::decode,
