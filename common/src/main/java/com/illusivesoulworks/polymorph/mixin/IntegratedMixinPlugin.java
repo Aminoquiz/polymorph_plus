@@ -37,8 +37,14 @@ public class IntegratedMixinPlugin implements IMixinConfigPlugin, IMixinErrorHan
   private static final Map<String, String> CLASS_TO_MOD = new HashMap<>();
 
   static {
+    CLASS_TO_MOD.put("com.tfar.craftingstation.", PolymorphIntegrations.Mod.CRAFTINGSTATION.getId());
     CLASS_TO_MOD.put("shadows.fastbench.", PolymorphIntegrations.Mod.FASTWORKBENCH.getId());
-    CLASS_TO_MOD.put("shadows.fastsuite.", PolymorphIntegrations.Mod.FASTSUITE.getId());
+    CLASS_TO_MOD.put("com.refinedmods.refinedstorage.", PolymorphIntegrations.Mod.REFINEDSTORAGE.getId());
+    CLASS_TO_MOD.put("com.tom.storagemod.", PolymorphIntegrations.Mod.TOMS_STORAGE.getId());
+    CLASS_TO_MOD.put("com.tiviacz.travelersbackpack.",
+        PolymorphIntegrations.Mod.TRAVELERSBACKPACK.getId());
+    CLASS_TO_MOD.put("com.lothrazar.storagenetwork.", PolymorphIntegrations.Mod.STORAGENETWORK.getId());
+    CLASS_TO_MOD.put("com.lothrazar.cyclic.", PolymorphIntegrations.Mod.CYCLIC.getId());
   }
 
   @Override

@@ -52,6 +52,11 @@ public class ForgePlatform implements IPlatform {
   }
 
   @Override
+  public ItemStack[] getIngredientItems(net.minecraft.world.item.crafting.Ingredient ingredient) {
+    return ingredient.getItems();
+  }
+
+  @Override
   public Path getConfigDir() {
     return FMLPaths.CONFIGDIR.get();
   }

@@ -1,0 +1,14 @@
+{
+  "required": false,
+  "package": "com.illusivesoulworks.polymorph.mixin.integration",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "toms_storage.MixinCraftingTerminalBlockEntity",
+    "travelersbackpack.MixinTravelersBackpackBaseScreenHandler"
+  ],
+  "plugin": "com.illusivesoulworks.polymorph.mixin.IntegratedMixinPlugin",
+  "minVersion": "0.8",
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

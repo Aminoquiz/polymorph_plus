@@ -49,6 +49,15 @@ public class FabricPlatform implements IPlatform {
     return FabricLoader.getInstance().getGameDir();
   }
 
+  // Ingredient.getItems is client-only in 1.16.5 and absent from the server jar.
+  @Override
+  public ItemStack[] getIngredientItems(net.minecraft.world.item.crafting.Ingredient ingredient) {
+    com.illusivesoulworks.polymorph.mixin.AccessorIngredient access =
+        (com.illusivesoulworks.polymorph.mixin.AccessorIngredient) (Object) ingredient;
+    access.callDissolve();
+    return access.getItemStacks();
+  }
+
   @Override
   public Path getConfigDir() {
     return FabricLoader.getInstance().getConfigDir();

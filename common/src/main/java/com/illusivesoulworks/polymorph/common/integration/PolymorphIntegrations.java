@@ -66,8 +66,9 @@ public class PolymorphIntegrations {
     }
 
     for (Mod mod : Mod.values()) {
+      Object val = config.get(mod.getId());
 
-      if (config.get(mod.getId())) {
+      if (val instanceof Boolean && (Boolean) val) {
         ACTIVATED.add(mod.getId());
       }
     }
@@ -150,9 +151,14 @@ public class PolymorphIntegrations {
   }
 
   public enum Mod {
+    CRAFTINGSTATION("craftingstation", true, Loader.FORGE),
     FASTFURNACE("fastfurnace", true, Loader.FORGE),
     FASTWORKBENCH("fastbench", true, Loader.FORGE),
-    FASTSUITE("fastsuite", true, Loader.FORGE);
+    STORAGENETWORK("storagenetwork", true, Loader.FORGE),
+    CYCLIC("cyclic", true, Loader.FORGE),
+    REFINEDSTORAGE("refinedstorage", true, Loader.FORGE),
+    TOMS_STORAGE("toms_storage", true, Loader.FABRIC, Loader.FORGE),
+    TRAVELERSBACKPACK("travelersbackpack", true, Loader.FABRIC, Loader.FORGE);
 
     private final String id;
     private final boolean defaultValue;

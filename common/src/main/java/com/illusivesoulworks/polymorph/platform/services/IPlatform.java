@@ -35,6 +35,8 @@ public interface IPlatform {
 
   Path getGameDir();
 
+  ItemStack[] getIngredientItems(net.minecraft.world.item.crafting.Ingredient ingredient);
+
   Path getConfigDir();
 
   boolean isModLoaded(String id);

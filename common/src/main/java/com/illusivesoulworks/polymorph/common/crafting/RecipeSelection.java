@@ -50,7 +50,8 @@ public class RecipeSelection {
 
     for (Slot slot : slots) {
 
-      if (slot.container instanceof Inventory inv) {
+      if (slot.container instanceof Inventory) {
+        Inventory inv = (Inventory) slot.container;
         player = inv.player;
         break;
       }

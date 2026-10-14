@@ -23,7 +23,34 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 
-public record CPacketBlockEntityListener(boolean add) {
+public final class CPacketBlockEntityListener {
+  private final boolean add;
+
+  public CPacketBlockEntityListener(boolean add) {
+    this.add = add;
+  }
+
+  public boolean add() {
+    return this.add;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof CPacketBlockEntityListener)) {
+      return false;
+    }
+    CPacketBlockEntityListener other = (CPacketBlockEntityListener) o;
+    return java.util.Objects.equals(this.add, other.add);
+  }
+
+  @Override
+  public int hashCode() {
+    return java.util.Objects.hash(this.add);
+  }
+
 
   public static void encode(CPacketBlockEntityListener packet, FriendlyByteBuf buffer) {
     buffer.writeBoolean(packet.add);

@@ -44,8 +44,12 @@ public class MixinCraftingMenu {
       method = "slotChangedCraftingGrid")
   private static <C extends Container, T extends Recipe<C>> Optional<T> polymorph$getRecipe(
       RecipeManager recipeManager, RecipeType<T> type, C inventory, Level world,
-      AbstractContainerMenu p_150547_, Level p_150548_, Player player,
-      CraftingContainer p_150550_, ResultContainer p_150551_) {
-    return RecipeSelection.getPlayerRecipe(p_150547_, type, inventory, world, player);
+      int containerId, Level level, Player player, CraftingContainer craftSlots,
+      ResultContainer resultSlots) {
+    // 1.16 passes the container id here, not the menu.
+    AbstractContainerMenu menu =
+        player.containerMenu.containerId == containerId || player.inventoryMenu == null
+            ? player.containerMenu : player.inventoryMenu;
+    return RecipeSelection.getPlayerRecipe(menu, type, inventory, world, player);
   }
 }

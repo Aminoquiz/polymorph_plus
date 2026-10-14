@@ -27,13 +27,28 @@ import com.illusivesoulworks.polymorph.common.network.server.SPacketBlockEntityR
 import com.illusivesoulworks.polymorph.common.network.server.SPacketHighlightRecipe;
 import com.illusivesoulworks.polymorph.common.network.server.SPacketPlayerRecipeSync;
 import com.illusivesoulworks.polymorph.common.network.server.SPacketRecipesList;
+import com.illusivesoulworks.polymorph.common.network.client.CPacketPlayerPriority;
+import com.illusivesoulworks.polymorph.common.network.server.SPacketPackPriority;
+import java.util.List;
 import java.util.SortedSet;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.network.PacketDistributor;
+import net.minecraftforge.fml.network.PacketDistributor;
 
 public class PolymorphForgePacketDistributor implements IPolymorphPacketDistributor {
+
+  @Override
+  public void sendPlayerPriorityC2S(List<String> namespaces, List<String> recipes) {
+    PolymorphForgeNetwork.get().send(PacketDistributor.SERVER.noArg(),
+        new CPacketPlayerPriority(namespaces, recipes));
+  }
+
+  @Override
+  public void sendPackPriorityS2C(ServerPlayer player, List<String> namespaces) {
+    PolymorphForgeNetwork.get().send(PacketDistributor.PLAYER.with(() -> player),
+        new SPacketPackPriority(namespaces));
+  }
 
   @Override
   public void sendPlayerRecipeSelectionC2S(ResourceLocation resourceLocation) {

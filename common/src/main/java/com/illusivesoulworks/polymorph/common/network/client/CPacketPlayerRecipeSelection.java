@@ -26,7 +26,34 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ItemCombinerMenu;
 
-public record CPacketPlayerRecipeSelection(ResourceLocation recipe) {
+public final class CPacketPlayerRecipeSelection {
+  private final ResourceLocation recipe;
+
+  public CPacketPlayerRecipeSelection(ResourceLocation recipe) {
+    this.recipe = recipe;
+  }
+
+  public ResourceLocation recipe() {
+    return this.recipe;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof CPacketPlayerRecipeSelection)) {
+      return false;
+    }
+    CPacketPlayerRecipeSelection other = (CPacketPlayerRecipeSelection) o;
+    return java.util.Objects.equals(this.recipe, other.recipe);
+  }
+
+  @Override
+  public int hashCode() {
+    return java.util.Objects.hash(this.recipe);
+  }
+
 
   public static void encode(CPacketPlayerRecipeSelection packet, FriendlyByteBuf buffer) {
     buffer.writeResourceLocation(packet.recipe);
@@ -42,7 +69,7 @@ public record CPacketPlayerRecipeSelection(ResourceLocation recipe) {
       PolymorphApi.common().getRecipeData(player)
           .ifPresent(recipeData -> recipeData.selectRecipe(recipe));
       PolymorphIntegrations.selectRecipe(container, recipe);
-      container.slotsChanged(player.getInventory());
+      container.slotsChanged(player.inventory);
 
       if (container instanceof ItemCombinerMenu) {
         ((ItemCombinerMenu) container).createResult();

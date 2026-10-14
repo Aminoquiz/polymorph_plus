@@ -20,7 +20,34 @@ package com.illusivesoulworks.polymorph.common.network.server;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 
-public record SPacketHighlightRecipe(ResourceLocation recipe) {
+public final class SPacketHighlightRecipe {
+  private final ResourceLocation recipe;
+
+  public SPacketHighlightRecipe(ResourceLocation recipe) {
+    this.recipe = recipe;
+  }
+
+  public ResourceLocation recipe() {
+    return this.recipe;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof SPacketHighlightRecipe)) {
+      return false;
+    }
+    SPacketHighlightRecipe other = (SPacketHighlightRecipe) o;
+    return java.util.Objects.equals(this.recipe, other.recipe);
+  }
+
+  @Override
+  public int hashCode() {
+    return java.util.Objects.hash(this.recipe);
+  }
+
 
   public ResourceLocation getRecipe() {
     return this.recipe;

@@ -22,8 +22,40 @@ import javax.annotation.Nonnull;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
-public record RecipePair(ResourceLocation resourceLocation,
-                         ItemStack output) implements IRecipePair {
+public final class RecipePair implements IRecipePair {
+  private final ResourceLocation resourceLocation;
+  private final ItemStack output;
+
+  public RecipePair(ResourceLocation resourceLocation, ItemStack output) {
+    this.resourceLocation = resourceLocation;
+    this.output = output;
+  }
+
+  public ResourceLocation resourceLocation() {
+    return this.resourceLocation;
+  }
+
+  public ItemStack output() {
+    return this.output;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof RecipePair)) {
+      return false;
+    }
+    RecipePair other = (RecipePair) o;
+    return java.util.Objects.equals(this.resourceLocation, other.resourceLocation) && java.util.Objects.equals(this.output, other.output);
+  }
+
+  @Override
+  public int hashCode() {
+    return java.util.Objects.hash(this.resourceLocation, this.output);
+  }
+
 
   @Override
   public ItemStack getOutput() {

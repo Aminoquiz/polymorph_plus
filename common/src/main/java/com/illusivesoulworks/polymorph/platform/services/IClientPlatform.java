@@ -34,4 +34,6 @@ public interface IClientPlatform {
   void renderTooltip(ItemStack stack, PoseStack poseStack, List<Component> text, int mouseX,
                      int mouseY, AbstractContainerScreen<?> containerScreen, Font font,
                      SelectionWidget.GradientDrawer drawer);
+  /** Width of the container GUI itself, not of the window. */
+  int getScreenWidth(AbstractContainerScreen<?> screen);
 }

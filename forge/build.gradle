@@ -1,41 +1,21 @@
-buildscript {
-    repositories {
-        maven { url = 'https://maven.minecraftforge.net' }
-		maven { url = 'https://plugins.gradle.org/m2/' }
-		maven {
-            name = 'ParchmentMC'
-            url = 'https://maven.parchmentmc.org/'
-        }
-		maven {
-            name = 'Sponge / Mixin'
-            url = 'https://repo.spongepowered.org/repository/maven-public/'
-        }
-        mavenCentral()
-    }
-    dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
-        classpath group: 'org.parchmentmc', name: 'librarian', version: '1.+'
-        classpath group: 'org.spongepowered', name: 'mixingradle', version: '0.7-SNAPSHOT'
-        classpath group: 'net.darkhax.curseforgegradle', name: 'CurseForgeGradle', version: '1.+'
-        classpath group: 'com.modrinth.minotaur', name: 'Minotaur', version: '2.+'
-    }
+plugins {
+    id 'eclipse'
+    id 'idea'
+    id 'maven-publish'
+    id 'net.minecraftforge.gradle' version '[6.0.24,6.2)'
+    id 'org.parchmentmc.librarian.forgegradle' version '1.+'
+    id 'com.modrinth.minotaur' version '2.+'
+    id 'org.spongepowered.mixin' version '0.7.+'
+    id 'net.darkhax.curseforgegradle' version '1.1.26'
 }
-apply plugin: 'java'
-apply plugin: 'net.minecraftforge.gradle'
-apply plugin: 'eclipse'
-apply plugin: 'maven-publish'
-apply plugin: 'org.spongepowered.mixin'
-apply plugin: 'org.parchmentmc.librarian.forgegradle'
-apply plugin: 'net.darkhax.curseforgegradle'
-apply plugin: 'com.modrinth.minotaur'
 
 archivesBaseName = "${mod_id}-forge"
 
 mixin {
-    add sourceSets.main, "${mod_id}.refmap.json"
+    add sourceSets.main, "polymorph.refmap.json"
 
-    config "${mod_id}.mixins.json"
-    config "${mod_id}-integrations.forge.mixins.json"
+    config "polymorph.mixins.json"
+    config "polymorph-integrations.forge.mixins.json"
 }
 
 minecraft {
@@ -55,8 +35,8 @@ minecraft {
             taskName 'Client'
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
-            args "-mixin.config=${mod_id}.mixins.json"
-            args "-mixin.config=${mod_id}-integrations.forge.mixins.json"
+            args "-mixin.config=polymorph.mixins.json"
+            args "-mixin.config=polymorph-integrations.forge.mixins.json"
             mods {
                 modClientRun {
                     source sourceSets.main
@@ -71,8 +51,8 @@ minecraft {
             taskName 'Server'
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
-			args "-mixin.config=${mod_id}.mixins.json"
-            args "-mixin.config=${mod_id}-integrations.forge.mixins.json"
+			args "-mixin.config=polymorph.mixins.json"
+            args "-mixin.config=polymorph-integrations.forge.mixins.json"
             mods {
                 modServerRun {
                     source sourceSets.main
@@ -88,8 +68,8 @@ minecraft {
             taskName 'Data'
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
-            args "-mixin.config=${mod_id}.mixins.json"
-            args "-mixin.config=${mod_id}-integrations.forge.mixins.json"
+            args "-mixin.config=polymorph.mixins.json"
+            args "-mixin.config=polymorph-integrations.forge.mixins.json"
             mods {
                 modDataRun {
                     source sourceSets.main
@@ -105,21 +85,104 @@ sourceSets.main.resources.srcDir 'src/generated/resources'
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
     compileOnly project(":common")
-	annotationProcessor 'org.spongepowered:mixin:0.8.4-SNAPSHOT:processor'
+	annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 
     implementation fg.deobf("curse.maven:fastworkbench-288885:${file_fastworkbench}")
     implementation fg.deobf("curse.maven:fastfurnace-299540:${file_fastfurnace}")
-    implementation fg.deobf("curse.maven:fastsuite-475117:${file_fastsuite}")
     implementation fg.deobf("curse.maven:placebo-283644:${file_placebo}")
+}
 
-    implementation fg.deobf(group: 'com.illusivesoulworks.spectrelib', name: 'spectrelib-forge', version: "${spectrelib_range}")
-    jarJar fg.deobf(group: 'com.illusivesoulworks.spectrelib', name: 'spectrelib-forge', version: "${spectrelib_range}") {
-        jarJar.pin(it, "${spectrelib_version}")
+// Forge 36 keeps MCP class names (only members take the official names), while common and
+// Fabric use Mojang class names. The Forge compile reads a copy of common + forge sources
+// with Mojang class names rewritten to MCP ones through mappings/mojang_to_mcp_classes.txt.
+def remappedSrc = file("${buildDir}/remappedSrc")
+def classMapFile = file('mappings/mojang_to_mcp_classes.txt')
+
+task remapSources {
+    def roots = [project(':common').file('src/main/java'), file('src/main/java')]
+    inputs.files(roots.collect { fileTree(it) })
+    inputs.file(classMapFile)
+    outputs.dir(remappedSrc)
+    doLast {
+        Map<String, String> dotted = [:]
+        Map<String, String> slashed = [:]
+        classMapFile.eachLine { line ->
+            def parts = line.trim().split(' ')
+            if (parts.length == 2) {
+                slashed[parts[0]] = parts[1]
+                dotted[parts[0].replace('/', '.').replace('$', '.')] = parts[1].replace('/', '.').replace('$', '.')
+            }
+        }
+        def simpleOf = { String n -> n.substring(n.lastIndexOf('.') + 1) }
+        project.delete(remappedSrc)
+        roots.each { root ->
+            fileTree(root).include('**/*.java').each { File f ->
+                String text = f.getText('UTF-8')
+                Map<String, String> simple = [:]
+                def importPat = ~/(?m)^import\s+(static\s+)?([\w.]+)\s*;/
+                int headerEnd = 0
+                def m = importPat.matcher(text)
+                while (m.find()) {
+                    headerEnd = m.end()
+                }
+                String header = text.substring(0, headerEnd)
+                String body = text.substring(headerEnd)
+                header = header.replaceAll(importPat) { List g ->
+                    String st = g[1] ?: ''
+                    String cls = g[2]
+                    String rest = ''
+                    while (cls.contains('.') && !dotted.containsKey(cls)) {
+                        rest = cls.substring(cls.lastIndexOf('.')) + rest
+                        cls = cls.substring(0, cls.lastIndexOf('.'))
+                    }
+                    if (!dotted.containsKey(cls)) {
+                        return g[0]
+                    }
+                    if (!st && rest.isEmpty()) {
+                        String mcp = dotted[cls]
+                        simple[simpleOf(cls)] = simpleOf(mcp)
+                        dotted.each { k, v ->
+                            if (k.startsWith(cls + '.')) {
+                                simple[simpleOf(cls) + k.substring(cls.length())] =
+                                    simpleOf(mcp) + v.substring(mcp.length())
+                            }
+                        }
+                    }
+                    "import ${st}${dotted[cls]}${rest};"
+                }
+                body = body.replaceAll(~/\b(?:net\.minecraft|com\.mojang)(?:\.\w+)+/) { String all ->
+                    String cls = all
+                    String rest = ''
+                    while (cls.contains('.') && !dotted.containsKey(cls)) {
+                        rest = cls.substring(cls.lastIndexOf('.')) + rest
+                        cls = cls.substring(0, cls.lastIndexOf('.'))
+                    }
+                    dotted.containsKey(cls) ? dotted[cls] + rest : all
+                }
+                body = body.replaceAll(java.util.regex.Pattern.compile('(?:net/minecraft|com/mojang)/[\\w/$]+')) { String all ->
+                    slashed.getOrDefault(all, all)
+                }
+                if (!simple.isEmpty()) {
+                    def keys = simple.keySet().sort { -it.length() }.collect { java.util.regex.Pattern.quote(it) }
+                    def tokenPat = java.util.regex.Pattern.compile('(?<![\\w.])(' + keys.join('|') + ')(?!\\w)')
+                    body = body.replaceAll(tokenPat) { List g -> simple[g[1]] }
+                }
+                File out = new File(remappedSrc, root.toPath().relativize(f.toPath()).toString())
+                out.parentFile.mkdirs()
+                out.setText(header + body, 'UTF-8')
+            }
+        }
     }
 }
 
-tasks.withType(JavaCompile) {
-    source(project(":common").sourceSets.main.allSource)
+compileJava {
+    dependsOn remapSources
+    source = fileTree(remappedSrc)
+}
+
+javadoc {
+    dependsOn remapSources
+    source = fileTree(remappedSrc)
 }
 
 sourceSets {
@@ -130,51 +193,27 @@ sourceSets {
     }
 }
 
-def replaceResources = tasks.register("replaceResources", Copy) {
-    it.outputs.upToDateWhen { false }
-
-    it.from(sourceSets.main.resources) {
-        include "META-INF/mods.toml"
-        expand 'version': version, 'forge_mc_version_range': forge_mc_version_range, 'forge_version_range': forge_version_range,
-                'license': license, 'mod_id': mod_id, 'mod_author': mod_author, 'mod_description': mod_description,
-                'mod_name': mod_name, 'issue_tracker': issue_tracker
-    }
-    it.from(project(":common").sourceSets.main.resources) {
-        include "pack.mcmeta"
-        expand 'mod_name': mod_name
-    }
-    it.into "$buildDir/resources/main/"
-}
-
+def resourceTargets = ['META-INF/mods.toml', 'pack.mcmeta', '*.mixins.json']
+def replaceProperties = [
+        forge_version: forge_version, forge_version_range: forge_version_range, version: version,
+        forge_mc_version_range: forge_mc_version_range, license: license, mod_id: mod_id, mod_author: mod_author,
+        mod_description: mod_description, mod_name: mod_name, issue_tracker: issue_tracker, refmap_target: "polymorph."
+]
 processResources {
     from project(":common").sourceSets.main.resources
     duplicatesStrategy(DuplicatesStrategy.FAIL)
-    exclude('META-INF/mods.toml')
-    exclude('pack.mcmeta')
+    inputs.properties replaceProperties
+    replaceProperties.put 'project', project
 
-    filesMatching('*.mixins.json') {
-        expand "refmap_target": "${mod_id}."
+    filesMatching(resourceTargets) {
+        expand replaceProperties
     }
-    configure { finalizedBy(replaceResources) }
 }
 
 jar.finalizedBy('reobfJar')
 
-reobf {
-    jarJar {}
-}
-
-tasks.jarJar.configure {
+jar {
     archiveClassifier.set("")
-    from(rootProject.file("LICENSE"))
-    from(rootProject.file("COPYING"))
-    from(rootProject.file("COPYING.LESSER"))
-    from(rootProject.file("README.md"))
-    from(rootProject.file("CHANGELOG.md"))
-}
-
-jarJar {
-    enable()
 }
 
 publishing {
@@ -198,7 +237,6 @@ task publishCurseForge(type: net.darkhax.curseforgegradle.TaskPublishCurseForge)
     def projectId = "${cf_forge_id}".toString()
     def mainFile = upload(projectId, file("${project.buildDir}/libs/${archivesBaseName}-${version}.jar"))
     mainFile.changelogType = 'markdown'
-    mainFile.changelog = file('../CHANGELOG_LATEST.md')
     mainFile.releaseType = "${release_type}"
     "${release_versions}".split(',').each {
         mainFile.addGameVersion("${it}")
@@ -207,11 +245,10 @@ task publishCurseForge(type: net.darkhax.curseforgegradle.TaskPublishCurseForge)
 }
 
 modrinth {
-    token = findProperty('modrinthKey') ?: 0
+    token = findProperty('modrinthKey') ?: ''
     projectId = "${modrinth_id}"
     versionName = getArchivesBaseName() + "-" + getVersion()
     versionType = "${release_type}"
-    changelog = file('../CHANGELOG_LATEST.md').text
     uploadFile = file("${project.buildDir}/libs/${archivesBaseName}-${version}.jar")
     additionalFiles = [sourcesJar]
     gameVersions = "${release_versions}".split(",") as List<String>

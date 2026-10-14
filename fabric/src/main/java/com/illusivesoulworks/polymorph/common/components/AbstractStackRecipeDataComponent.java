@@ -249,7 +249,7 @@ public abstract class AbstractStackRecipeDataComponent extends ItemComponent imp
     if (compoundTag.contains("RecipeDataSet")) {
       Set<IRecipePair> dataset = this.getRecipesList();
       dataset.clear();
-      ListTag list = compoundTag.getList("RecipeDataSet", Tag.TAG_COMPOUND);
+      ListTag list = compoundTag.getList("RecipeDataSet", 10);
 
       for (Tag inbt : list) {
         CompoundTag tag = (CompoundTag) inbt;

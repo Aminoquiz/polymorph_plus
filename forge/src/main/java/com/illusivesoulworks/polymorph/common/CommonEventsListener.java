@@ -36,19 +36,38 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
-import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.event.server.ServerAboutToStartEvent;
-import net.minecraftforge.event.server.ServerStoppedEvent;
+import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
+import net.minecraftforge.fml.event.server.FMLServerStoppedEvent;
+import com.illusivesoulworks.polymorph.common.priority.PriorityReloadListener;
+import com.illusivesoulworks.polymorph.common.priority.RecipePriority;
+import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 @SuppressWarnings("unused")
 public class CommonEventsListener {
+
+  @SubscribeEvent
+  public void addReloadListeners(final AddReloadListenerEvent evt) {
+    evt.addListener(
+        new PriorityReloadListener(() -> PolymorphApi.common().getServer().orElse(null)));
+  }
+
+  // The client resolves conflicts too, so it needs the same pack ranking as the server.
+  @SubscribeEvent
+  public void playerLoggedIn(final PlayerEvent.PlayerLoggedInEvent evt) {
+
+    if (evt.getEntity() instanceof ServerPlayer) {
+      ServerPlayer serverPlayer = (ServerPlayer) evt.getEntity();
+      PolymorphApi.common().getPacketDistributor()
+          .sendPackPriorityS2C(serverPlayer, RecipePriority.getPackNamespaces());
+    }
+  }
 
   @SubscribeEvent
   public void registerCommands(final RegisterCommandsEvent evt) {
@@ -56,40 +75,34 @@ public class CommonEventsListener {
   }
 
   @SubscribeEvent
-  public void registerCapabilities(final RegisterCapabilitiesEvent evt) {
-    evt.register(IPlayerRecipeData.class);
-    evt.register(IStackRecipeData.class);
-    evt.register(IBlockEntityRecipeData.class);
-  }
-
-  @SubscribeEvent
-  public void serverAboutToStart(final ServerAboutToStartEvent evt) {
+  public void serverAboutToStart(final FMLServerAboutToStartEvent evt) {
     PolymorphApi.common().setServer(evt.getServer());
   }
 
   @SubscribeEvent
   public void playerLoggedOut(final PlayerEvent.PlayerLoggedOutEvent evt) {
 
-    if (evt.getEntity() instanceof ServerPlayer serverPlayer) {
+    if (evt.getEntity() instanceof ServerPlayer) {
+      ServerPlayer serverPlayer = (ServerPlayer) evt.getEntity();
       PolymorphCommonEvents.playerDisconnected(serverPlayer);
     }
   }
 
   @SubscribeEvent
-  public void serverStopped(final ServerStoppedEvent evt) {
+  public void serverStopped(final FMLServerStoppedEvent evt) {
     PolymorphApi.common().setServer(null);
   }
 
   @SubscribeEvent
   public void openContainer(final PlayerContainerEvent.Open evt) {
-    PolymorphCommonEvents.openContainer(evt.getEntity(), evt.getContainer());
+    PolymorphCommonEvents.openContainer(evt.getPlayer(), evt.getContainer());
   }
 
   @SubscribeEvent
-  public void levelTick(final TickEvent.LevelTickEvent evt) {
+  public void levelTick(final TickEvent.WorldTickEvent evt) {
 
     if (evt.phase == TickEvent.Phase.END) {
-      PolymorphCommonEvents.levelTick(evt.level);
+      PolymorphCommonEvents.levelTick(evt.world);
     }
   }
 
@@ -127,8 +140,34 @@ public class CommonEventsListener {
         });
   }
 
-  private static record StackRecipeDataProvider(LazyOptional<IStackRecipeData> capability)
-      implements ICapabilitySerializable<Tag> {
+  private static final class StackRecipeDataProvider implements ICapabilitySerializable<Tag> {
+    private final LazyOptional<IStackRecipeData> capability;
+
+    public StackRecipeDataProvider(LazyOptional<IStackRecipeData> capability) {
+      this.capability = capability;
+    }
+
+    public LazyOptional<IStackRecipeData> capability() {
+      return this.capability;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (!(o instanceof StackRecipeDataProvider)) {
+        return false;
+      }
+      StackRecipeDataProvider other = (StackRecipeDataProvider) o;
+      return java.util.Objects.equals(this.capability, other.capability);
+    }
+
+    @Override
+    public int hashCode() {
+      return java.util.Objects.hash(this.capability);
+    }
+
 
     @Nonnull
     @Override
@@ -151,8 +190,34 @@ public class CommonEventsListener {
     }
   }
 
-  private static record PlayerRecipeDataProvider(LazyOptional<IPlayerRecipeData> capability)
-      implements ICapabilitySerializable<Tag> {
+  private static final class PlayerRecipeDataProvider implements ICapabilitySerializable<Tag> {
+    private final LazyOptional<IPlayerRecipeData> capability;
+
+    public PlayerRecipeDataProvider(LazyOptional<IPlayerRecipeData> capability) {
+      this.capability = capability;
+    }
+
+    public LazyOptional<IPlayerRecipeData> capability() {
+      return this.capability;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (!(o instanceof PlayerRecipeDataProvider)) {
+        return false;
+      }
+      PlayerRecipeDataProvider other = (PlayerRecipeDataProvider) o;
+      return java.util.Objects.equals(this.capability, other.capability);
+    }
+
+    @Override
+    public int hashCode() {
+      return java.util.Objects.hash(this.capability);
+    }
+
 
     @Nonnull
     @Override
@@ -175,8 +240,34 @@ public class CommonEventsListener {
     }
   }
 
-  private static record BlockEntityRecipeDataProvider(
-      LazyOptional<IBlockEntityRecipeData> capability) implements ICapabilitySerializable<Tag> {
+  private static final class BlockEntityRecipeDataProvider implements ICapabilitySerializable<Tag> {
+    private final LazyOptional<IBlockEntityRecipeData> capability;
+
+    public BlockEntityRecipeDataProvider(LazyOptional<IBlockEntityRecipeData> capability) {
+      this.capability = capability;
+    }
+
+    public LazyOptional<IBlockEntityRecipeData> capability() {
+      return this.capability;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (!(o instanceof BlockEntityRecipeDataProvider)) {
+        return false;
+      }
+      BlockEntityRecipeDataProvider other = (BlockEntityRecipeDataProvider) o;
+      return java.util.Objects.equals(this.capability, other.capability);
+    }
+
+    @Override
+    public int hashCode() {
+      return java.util.Objects.hash(this.capability);
+    }
+
 
     @Nonnull
     @Override

@@ -21,6 +21,8 @@ import com.illusivesoulworks.polymorph.platform.Services;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import javax.annotation.Nonnull;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 
@@ -31,7 +33,7 @@ public class OpenSelectionButton extends ImageButton {
   private int yOffset;
 
   public OpenSelectionButton(AbstractContainerScreen<?> containerScreen, int x, int y,
-                             OnPress onPress) {
+                             Button.OnPress onPress) {
     super(0, 0, 16, 16, 0, 0, 17, AbstractRecipesWidget.WIDGETS, 256, 256, onPress);
     this.containerScreen = containerScreen;
     this.xOffset = x;
@@ -43,12 +45,27 @@ public class OpenSelectionButton extends ImageButton {
     this.yOffset = y;
   }
 
+  public int getXOffset() {
+    return this.xOffset;
+  }
+
+  public int getYOffset() {
+    return this.yOffset;
+  }
+
   @Override
   public void renderButton(@Nonnull PoseStack poseStack, int mouseX, int mouseY,
                            float partialTicks) {
-    RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-    this.x = Services.CLIENT_PLATFORM.getScreenLeft(this.containerScreen) + this.xOffset;
-    this.y = Services.CLIENT_PLATFORM.getScreenTop(this.containerScreen) + this.yOffset;
+    RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+    // Clamped so a GUI anchored near a window edge cannot push the button out of reach.
+    this.x = clamp(Services.CLIENT_PLATFORM.getScreenLeft(this.containerScreen) + this.xOffset,
+        Minecraft.getInstance().getWindow().getGuiScaledWidth() - this.width);
+    this.y = clamp(Services.CLIENT_PLATFORM.getScreenTop(this.containerScreen) + this.yOffset,
+        Minecraft.getInstance().getWindow().getGuiScaledHeight() - this.height);
     super.renderButton(poseStack, mouseX, mouseY, partialTicks);
+  }
+
+  private static int clamp(int value, int max) {
+    return max < 0 ? 0 : Math.max(0, Math.min(max, value));
   }
 }

@@ -21,8 +21,40 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 
-public record SPacketBlockEntityRecipeSync(BlockPos blockPos,
-                                           ResourceLocation selected) {
+public final class SPacketBlockEntityRecipeSync {
+  private final BlockPos blockPos;
+  private final ResourceLocation selected;
+
+  public SPacketBlockEntityRecipeSync(BlockPos blockPos, ResourceLocation selected) {
+    this.blockPos = blockPos;
+    this.selected = selected;
+  }
+
+  public BlockPos blockPos() {
+    return this.blockPos;
+  }
+
+  public ResourceLocation selected() {
+    return this.selected;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof SPacketBlockEntityRecipeSync)) {
+      return false;
+    }
+    SPacketBlockEntityRecipeSync other = (SPacketBlockEntityRecipeSync) o;
+    return java.util.Objects.equals(this.blockPos, other.blockPos) && java.util.Objects.equals(this.selected, other.selected);
+  }
+
+  @Override
+  public int hashCode() {
+    return java.util.Objects.hash(this.blockPos, this.selected);
+  }
+
 
   public BlockPos getBlockPos() {
     return this.blockPos;

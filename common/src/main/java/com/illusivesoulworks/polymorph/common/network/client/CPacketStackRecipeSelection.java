@@ -27,7 +27,34 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.Level;
 
-public record CPacketStackRecipeSelection(ResourceLocation recipe) {
+public final class CPacketStackRecipeSelection {
+  private final ResourceLocation recipe;
+
+  public CPacketStackRecipeSelection(ResourceLocation recipe) {
+    this.recipe = recipe;
+  }
+
+  public ResourceLocation recipe() {
+    return this.recipe;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof CPacketStackRecipeSelection)) {
+      return false;
+    }
+    CPacketStackRecipeSelection other = (CPacketStackRecipeSelection) o;
+    return java.util.Objects.equals(this.recipe, other.recipe);
+  }
+
+  @Override
+  public int hashCode() {
+    return java.util.Objects.hash(this.recipe);
+  }
+
 
   public static void encode(CPacketStackRecipeSelection packet, FriendlyByteBuf buffer) {
     buffer.writeResourceLocation(packet.recipe);

@@ -20,6 +20,7 @@ package com.illusivesoulworks.polymorph.common.integration.fastbench;
 import com.illusivesoulworks.polymorph.common.integration.AbstractCompatibilityModule;
 import com.illusivesoulworks.polymorph.mixin.core.AccessorCraftingMenu;
 import com.illusivesoulworks.polymorph.mixin.core.AccessorInventoryMenu;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.CraftingContainer;
@@ -29,16 +30,17 @@ import net.minecraft.world.inventory.ResultContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraftforge.fml.network.PacketDistributor;
 import shadows.fastbench.FastBench;
 import shadows.fastbench.net.RecipeMessage;
-import shadows.placebo.network.PacketDistro;
 
 public class FastBenchModule extends AbstractCompatibilityModule {
 
   @Override
   public boolean selectRecipe(AbstractContainerMenu container, Recipe<?> recipe) {
 
-    if (recipe instanceof CraftingRecipe craftingRecipe) {
+    if (recipe instanceof CraftingRecipe) {
+      CraftingRecipe craftingRecipe = (CraftingRecipe) recipe;
       CraftingContainer inv = null;
       ResultContainer result = null;
       Player player = null;
@@ -62,7 +64,11 @@ public class FastBenchModule extends AbstractCompatibilityModule {
         // https://github.com/TheIllusiveC4/Polymorph/issues/163
         // noinspection ConstantConditions
         if (stack != null && !ItemStack.matches(stack, result.getItem(0))) {
-          PacketDistro.sendTo(FastBench.CHANNEL, new RecipeMessage(craftingRecipe, stack), player);
+          if (player instanceof ServerPlayer) {
+            ServerPlayer serverPlayer = (ServerPlayer) player;
+            FastBench.CHANNEL.send(PacketDistributor.PLAYER.with(() -> serverPlayer),
+                new RecipeMessage(craftingRecipe, stack));
+          }
           result.setItem(0, stack);
           result.setRecipeUsed(craftingRecipe);
         }

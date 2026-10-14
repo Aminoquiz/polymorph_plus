@@ -24,9 +24,35 @@ import java.util.TreeSet;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 
-public record SPacketRecipesList(
-    SortedSet<IRecipePair> recipeList,
-    ResourceLocation selected) {
+public final class SPacketRecipesList {
+  private final SortedSet<IRecipePair> recipeList;
+  private final ResourceLocation selected;
+
+  public SortedSet<IRecipePair> recipeList() {
+    return this.recipeList;
+  }
+
+  public ResourceLocation selected() {
+    return this.selected;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof SPacketRecipesList)) {
+      return false;
+    }
+    SPacketRecipesList other = (SPacketRecipesList) o;
+    return java.util.Objects.equals(this.recipeList, other.recipeList) && java.util.Objects.equals(this.selected, other.selected);
+  }
+
+  @Override
+  public int hashCode() {
+    return java.util.Objects.hash(this.recipeList, this.selected);
+  }
+
 
   public SPacketRecipesList(SortedSet<IRecipePair> recipeList, ResourceLocation selected) {
     this.recipeList = new TreeSet<>();

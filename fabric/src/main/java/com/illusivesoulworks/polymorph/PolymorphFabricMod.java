@@ -22,7 +22,7 @@ import com.illusivesoulworks.polymorph.common.PolymorphFabricNetwork;
 import com.illusivesoulworks.polymorph.common.components.PolymorphFabricComponents;
 import com.illusivesoulworks.polymorph.server.PolymorphCommands;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 
 public class PolymorphFabricMod implements ModInitializer {
 
@@ -33,7 +33,7 @@ public class PolymorphFabricMod implements ModInitializer {
     PolymorphFabricNetwork.setup();
     PolymorphFabricComponents.setup();
     CommandRegistrationCallback.EVENT.register(
-        (dispatcher, registryAccess, environment) -> PolymorphCommands.register(dispatcher));
+        (dispatcher, dedicated) -> PolymorphCommands.register(dispatcher));
     CommonEventsListener.setup();
   }
 }
