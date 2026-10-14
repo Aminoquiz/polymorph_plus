@@ -19,6 +19,7 @@ package com.illusivesoulworks.polymorph.platform;
 
 import com.illusivesoulworks.polymorph.common.integration.AbstractCompatibilityModule;
 import com.illusivesoulworks.polymorph.common.integration.PolymorphIntegrations;
+import com.illusivesoulworks.polymorph.common.integration.sophisticatedcore.SophisticatedCoreModule;
 import com.illusivesoulworks.polymorph.common.integration.toms_storage.TomsStorageModule;
 import com.illusivesoulworks.polymorph.platform.services.IIntegrationPlatform;
 import java.util.HashMap;
@@ -31,6 +32,8 @@ public class NeoForgeIntegrationPlatform implements IIntegrationPlatform {
   public Map<String, Supplier<Supplier<AbstractCompatibilityModule>>> createCompatibilityModules() {
     Map<String, Supplier<Supplier<AbstractCompatibilityModule>>> modules = new HashMap<>();
     modules.put(PolymorphIntegrations.Mod.TOMS_STORAGE.getId(), () -> TomsStorageModule::new);
+    modules.put(PolymorphIntegrations.Mod.SOPHISTICATEDCORE.getId(),
+        () -> SophisticatedCoreModule::new);
     return modules;
   }
 }

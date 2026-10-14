@@ -17,9 +17,16 @@
 
 package com.illusivesoulworks.polymorph.common;
 
+import com.illusivesoulworks.polymorph.api.PolymorphApi;
+import com.illusivesoulworks.polymorph.common.priority.PriorityReloadListener;
+import com.illusivesoulworks.polymorph.common.priority.RecipePriority;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
+import net.fabricmc.fabric.api.networking.v1.PacketSender;
+import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.packs.PackType;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 
@@ -28,6 +35,17 @@ public class CommonEventsListener {
   public static void setup() {
     ServerTickEvents.END_LEVEL_TICK.register(CommonEventsListener::levelTick);
     ServerPlayConnectionEvents.DISCONNECT.register(CommonEventsListener::disconnect);
+    ServerPlayConnectionEvents.JOIN.register(CommonEventsListener::join);
+    ServerLifecycleEvents.SERVER_STARTING.register(PriorityReloadListener::setServer);
+    ServerLifecycleEvents.SERVER_STOPPED.register(server -> PriorityReloadListener.setServer(null));
+    ResourceLoader.get(PackType.SERVER_DATA)
+        .registerReloadListener(PriorityReloadListener.ID, new PriorityReloadListener());
+  }
+
+  private static void join(ServerGamePacketListenerImpl listener, PacketSender sender,
+                           MinecraftServer server) {
+    PolymorphApi.getInstance().getNetwork()
+        .sendPackPriorityS2C(listener.getPlayer(), RecipePriority.getPackNamespaces());
   }
 
   private static void disconnect(ServerGamePacketListenerImpl serverGamePacketListener,

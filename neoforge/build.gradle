@@ -69,6 +69,8 @@ dependencies {
     if (localJars.isDirectory()) {
         compileOnly fileTree(dir: localJars, include: ['jei-*.jar', 'RoughlyEnoughItems-*.jar'])
     }
+
+    compileOnly fileTree(dir: rootProject.file('../../../external_sources/jars'), include: ["jei/jei-26.2-*.jar", "rei/RoughlyEnoughItems-26.2.*.jar"])
     // EMI 26.x not yet published.
     // compileOnly "dev.emi:emi-neoforge:${emi_version}"
 }

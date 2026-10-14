@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.TreeSet;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -59,8 +58,17 @@ public class PolymorphCommands {
     dispatcher.register(command);
   }
 
+  // Common-pool threads carry the app class loader, so mod classes loaded through the
+  // transforming loader (Tinkers' FluidEvents on Forge) fail to resolve mid-scan.
+  private static void runScan(Runnable scan) {
+    Thread thread = new Thread(scan, "Polymorph conflict scan");
+    thread.setContextClassLoader(Thread.currentThread().getContextClassLoader());
+    thread.setDaemon(true);
+    thread.start();
+  }
+
   private static int findConflicts(CommandSourceStack source) {
-    CompletableFuture.runAsync(() -> {
+    runScan(() -> {
       source.sendSuccess(() -> Component.translatable("commands.polymorph.conflicts.starting"),
           true);
       ServerLevel world = source.getLevel();

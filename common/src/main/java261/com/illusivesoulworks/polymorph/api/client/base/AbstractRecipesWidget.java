@@ -50,6 +50,8 @@ public abstract class AbstractRecipesWidget implements IRecipesWidget {
   protected final AbstractContainerScreen<?> containerScreen;
   protected final int xOffset;
   protected final int yOffset;
+  private int anchorX;
+  private int anchorY;
 
   protected SelectionWidget selectionWidget;
   protected OpenSelectionButton openButton;
@@ -67,6 +69,8 @@ public abstract class AbstractRecipesWidget implements IRecipesWidget {
 
   @Override
   public void initChildWidgets() {
+    this.anchorX = this.getXPos();
+    this.anchorY = this.getYPos();
     int x = Services.CLIENT_PLATFORM.getScreenLeft(this.containerScreen) + this.getXPos();
     int y = Services.CLIENT_PLATFORM.getScreenTop(this.containerScreen) + this.getYPos();
     this.selectionWidget =
@@ -168,11 +172,21 @@ public abstract class AbstractRecipesWidget implements IRecipesWidget {
     return Pair.of(OUTPUT, CURRENT_OUTPUT);
   }
 
+  // Moves by the anchor shift only, so offsets a subclass set in initChildWidgets (Traveler's
+  // Backpack's own widget) survive.
   protected void resetWidgetOffsets() {
-    int x = this.getXPos();
-    int y = this.getYPos();
-    this.selectionWidget.setOffsets(x + this.xOffset, y + this.yOffset);
-    this.openButton.setOffsets(x, y);
+    int dx = this.getXPos() - this.anchorX;
+    int dy = this.getYPos() - this.anchorY;
+
+    if (dx == 0 && dy == 0) {
+      return;
+    }
+    this.anchorX += dx;
+    this.anchorY += dy;
+    this.selectionWidget.setOffsets(this.selectionWidget.getXOffset() + dx,
+        this.selectionWidget.getYOffset() + dy);
+    this.openButton.setOffsets(this.openButton.getXOffset() + dx,
+        this.openButton.getYOffset() + dy);
   }
 
   @Override
