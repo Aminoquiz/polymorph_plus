@@ -1,0 +1,58 @@
+/*
+ * Copyright (C) 2020-2026 Illusive Soulworks
+ *
+ * 1.21.8 fork. Colour tinting
+ * goes through the GuiGraphics blit overloads rather than RenderSystem.setShaderColor.
+ */
+package com.illusivesoulworks.polymorph.api.client.widgets.children;
+
+import com.illusivesoulworks.polymorph.platform.Services;
+import javax.annotation.Nonnull;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.ImageButton;
+import net.minecraft.client.gui.components.WidgetSprites;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+
+public class OpenSelectionButton extends ImageButton {
+
+  private final AbstractContainerScreen<?> containerScreen;
+  private int xOffset;
+  private int yOffset;
+
+  public OpenSelectionButton(AbstractContainerScreen<?> containerScreen, int x, int y,
+                             WidgetSprites sprites, OnPress onPress) {
+    super(0, 0, 16, 16, sprites, onPress);
+    this.containerScreen = containerScreen;
+    this.xOffset = x;
+    this.yOffset = y;
+  }
+
+  public void setOffsets(int x, int y) {
+    this.xOffset = x;
+    this.yOffset = y;
+  }
+
+  public int getXOffset() {
+    return this.xOffset;
+  }
+
+  public int getYOffset() {
+    return this.yOffset;
+  }
+
+  @Override
+  public void renderWidget(@Nonnull GuiGraphics graphics, int mouseX, int mouseY,
+                              float partialTicks) {
+    // Clamped so a GUI anchored near a window edge cannot push the button out of reach.
+    this.setX(clamp(Services.CLIENT_PLATFORM.getScreenLeft(this.containerScreen) + this.xOffset,
+        Minecraft.getInstance().getWindow().getGuiScaledWidth() - this.width));
+    this.setY(clamp(Services.CLIENT_PLATFORM.getScreenTop(this.containerScreen) + this.yOffset,
+        Minecraft.getInstance().getWindow().getGuiScaledHeight() - this.height));
+    super.renderWidget(graphics, mouseX, mouseY, partialTicks);
+  }
+
+  private static int clamp(int value, int max) {
+    return max < 0 ? 0 : Math.max(0, Math.min(max, value));
+  }
+}
