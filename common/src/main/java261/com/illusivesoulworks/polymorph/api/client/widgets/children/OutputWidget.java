@@ -11,6 +11,7 @@
 package com.illusivesoulworks.polymorph.api.client.widgets.children;
 
 import com.illusivesoulworks.polymorph.api.common.base.IRecipePair;
+import com.illusivesoulworks.polymorph.client.MouseButtons;
 import com.mojang.datafixers.util.Pair;
 import javax.annotation.Nonnull;
 import net.minecraft.client.Minecraft;
@@ -130,7 +131,8 @@ public class OutputWidget extends AbstractWidget {
 
   @Override
   protected boolean isValidClickButton(MouseButtonInfo buttonInfo) {
+    // Left and right both pick a result, as they did before 26.3 renumbered the buttons.
     int b = buttonInfo.button();
-    return b == 0 || b == 1;
+    return b == MouseButtons.LEFT || b == MouseButtons.RIGHT;
   }
 }
