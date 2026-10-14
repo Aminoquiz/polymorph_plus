@@ -1,0 +1,9 @@
+{
+  "required": true,
+  "minVersion": "0.8.5",
+  "package": "com.shiver.polymorphlegacy.mixin.core",
+  "refmap": "mixins.polymorph_plus.refmap.json",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": ["AccessorContainerFurnace", "MixinContainer", "MixinSlotCrafting", "MixinTileEntityFurnace"],
+  "injectors": { "defaultRequire": 1 }
+}

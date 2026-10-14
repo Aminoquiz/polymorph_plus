@@ -1,0 +1,12 @@
+polymorph_plus.choose=选择合成结果（右键固定）
+polymorph_plus.pages=使用滚轮、两侧箭头或方向键浏览
+polymorph_plus.tutorial.conflict=配方冲突！点击箭头进行选择。
+polymorph_plus.tutorial.select=点击一个产物以切换配方。
+polymorph_plus.tutorial.pin=提示：右键点击箭头可固定面板。
+polymorph_plus.tutorial.scroll=冲突超过 7 个！使用滚轮或两侧箭头浏览。
+polymorph_plus.tutorial.prefer=按住 Shift 点击产物，以后总是优先该结果。星标表示优先项。
+polymorph_plus.tutorial.cycle=提示：按住 Shift 在结果槽上滚动，无需打开面板即可切换。
+commands.polymorph.usage=/polymorph <conflicts|reload>
+commands.polymorph.conflicts.starting=正在查找配方冲突……
+commands.polymorph.conflicts.success=发现 %d 处可能的冲突，详情见 logs/conflicts.log。
+commands.polymorph.reload.success=已重新加载配方来源优先级：%s
