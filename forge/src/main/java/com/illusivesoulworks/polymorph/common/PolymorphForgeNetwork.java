@@ -20,6 +20,8 @@ package com.illusivesoulworks.polymorph.common;
 import com.illusivesoulworks.polymorph.api.PolymorphApi;
 import com.illusivesoulworks.polymorph.common.network.client.CPacketBlockEntityListener;
 import com.illusivesoulworks.polymorph.common.network.client.CPacketPersistentRecipeSelection;
+import com.illusivesoulworks.polymorph.common.network.client.CPacketPlayerPriority;
+import com.illusivesoulworks.polymorph.common.network.server.SPacketPackPriority;
 import com.illusivesoulworks.polymorph.common.network.client.CPacketPlayerRecipeSelection;
 import com.illusivesoulworks.polymorph.common.network.client.CPacketStackRecipeSelection;
 import com.illusivesoulworks.polymorph.common.network.server.SPacketBlockEntityRecipeSync;
@@ -40,7 +42,13 @@ import net.minecraftforge.network.simple.SimpleChannel;
 
 public class PolymorphForgeNetwork {
 
-  private static final String PTC_VERSION = "1";
+  private static final String PTC_VERSION = "polymorph_plus-1";
+
+  // A peer without the mod is fine; upstream Polymorph ("1") is refused.
+  private static boolean accepts(String version) {
+    return PTC_VERSION.equals(version) || NetworkRegistry.ABSENT.equals(version)
+        || NetworkRegistry.ACCEPTVANILLA.equals(version);
+  }
 
   private static SimpleChannel instance;
   private static int id = 0;
@@ -52,8 +60,8 @@ public class PolymorphForgeNetwork {
   public static void setup() {
     instance =
         NetworkRegistry.ChannelBuilder.named(new ResourceLocation(PolymorphApi.MOD_ID, "main"))
-            .networkProtocolVersion(() -> PTC_VERSION).clientAcceptedVersions(PTC_VERSION::equals)
-            .serverAcceptedVersions(PTC_VERSION::equals).simpleChannel();
+            .networkProtocolVersion(() -> PTC_VERSION).clientAcceptedVersions(PolymorphForgeNetwork::accepts)
+            .serverAcceptedVersions(PolymorphForgeNetwork::accepts).simpleChannel();
 
     // Server-to-Client
     registerS2C(SPacketRecipesList.class, SPacketRecipesList::encode, SPacketRecipesList::decode,
@@ -74,6 +82,12 @@ public class PolymorphForgeNetwork {
         CPacketStackRecipeSelection::decode, CPacketStackRecipeSelection::handle);
     registerC2S(CPacketBlockEntityListener.class, CPacketBlockEntityListener::encode,
         CPacketBlockEntityListener::decode, CPacketBlockEntityListener::handle);
+
+    // Appended last so the discriminators of the upstream messages above stay unchanged.
+    registerC2S(CPacketPlayerPriority.class, CPacketPlayerPriority::encode,
+        CPacketPlayerPriority::decode, CPacketPlayerPriority::handle);
+    registerS2C(SPacketPackPriority.class, SPacketPackPriority::encode,
+        SPacketPackPriority::decode, SPacketPackPriority::handle);
   }
 
   public static <M> void registerC2S(Class<M> clazz, BiConsumer<M, FriendlyByteBuf> encoder,

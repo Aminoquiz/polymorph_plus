@@ -18,7 +18,13 @@
 package com.illusivesoulworks.polymorph.common;
 
 import com.illusivesoulworks.polymorph.api.PolymorphApi;
+import com.illusivesoulworks.polymorph.common.priority.PriorityReloadListener;
+import com.illusivesoulworks.polymorph.common.priority.RecipePriority;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.PackType;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.server.MinecraftServer;
@@ -32,6 +38,23 @@ public class CommonEventsListener {
     ServerLifecycleEvents.SERVER_STOPPED.register(CommonEventsListener::serverStopped);
     ServerTickEvents.END_WORLD_TICK.register(CommonEventsListener::levelTick);
     ServerPlayConnectionEvents.DISCONNECT.register(CommonEventsListener::disconnect);
+    ServerPlayConnectionEvents.JOIN.register(
+        (handler, sender, server) -> PolymorphApi.common().getPacketDistributor()
+            .sendPackPriorityS2C(handler.getPlayer(), RecipePriority.getPackNamespaces()));
+    ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(new PriorityListener());
+  }
+
+  private static class PriorityListener extends PriorityReloadListener
+      implements IdentifiableResourceReloadListener {
+
+    PriorityListener() {
+      super(() -> PolymorphApi.common().getServer().orElse(null));
+    }
+
+    @Override
+    public ResourceLocation getFabricId() {
+      return PriorityReloadListener.ID;
+    }
   }
 
   private static void disconnect(ServerGamePacketListenerImpl serverGamePacketListener,

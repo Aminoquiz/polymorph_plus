@@ -21,6 +21,7 @@ import com.illusivesoulworks.polymorph.PolymorphConstants;
 import com.illusivesoulworks.polymorph.api.PolymorphApi;
 import com.illusivesoulworks.polymorph.api.common.base.IRecipePair;
 import com.illusivesoulworks.polymorph.api.common.capability.IRecipeData;
+import com.illusivesoulworks.polymorph.common.priority.RecipePriority;
 import com.illusivesoulworks.polymorph.common.impl.RecipePair;
 import com.mojang.datafixers.util.Pair;
 import java.util.ArrayList;
@@ -54,6 +55,8 @@ public abstract class AbstractRecipeData<E> implements IRecipeData<E> {
   private Recipe<?> lastRecipe;
   private Recipe<?> selectedRecipe;
   private ResourceLocation loadedRecipe;
+  // The last deliberate pick, persisted to NBT; selectedRecipe only mirrors what resolution chose.
+  private ResourceLocation chosenRecipeId;
   private boolean isFailing;
 
   private NonNullList<Item> input;
@@ -151,14 +154,16 @@ public abstract class AbstractRecipeData<E> implements IRecipeData<E> {
       return Optional.empty();
     }
     List<T> validRecipes = new ArrayList<>();
+    ResourceLocation sessionChoice = this.getSessionChoice();
+    T sessionMatch = null;
+    T chosenMatch = null;
+    T favourite = null;
+    T sourceMatch = null;
+    int favouriteRank = Integer.MAX_VALUE;
+    int sourceRank = Integer.MAX_VALUE;
 
     for (T entry : recipes) {
       ResourceLocation id = entry.getId();
-
-      if (ref.get() == null &&
-          this.getSelectedRecipe().map(recipe -> recipe.getId().equals(id)).orElse(false)) {
-        ref.set(entry);
-      }
       ItemStack output = entry.getResultItem(level.registryAccess());
 
       // noinspection ConstantConditions
@@ -171,6 +176,26 @@ public abstract class AbstractRecipeData<E> implements IRecipeData<E> {
       }
       newDataset.add(new RecipePair(id, output));
       validRecipes.add(entry);
+
+      if (sessionMatch == null && id.equals(sessionChoice)) {
+        sessionMatch = entry;
+      }
+
+      if (chosenMatch == null && id.equals(this.chosenRecipeId)) {
+        chosenMatch = entry;
+      }
+      int entryFavouriteRank = this.favouriteRank(id);
+
+      if (entryFavouriteRank < favouriteRank) {
+        favouriteRank = entryFavouriteRank;
+        favourite = entry;
+      }
+      int entrySourceRank = this.sourceRank(id);
+
+      if (entrySourceRank < sourceRank) {
+        sourceRank = entrySourceRank;
+        sourceMatch = entry;
+      }
     }
 
     if (validRecipes.isEmpty()) {
@@ -179,7 +204,11 @@ public abstract class AbstractRecipeData<E> implements IRecipeData<E> {
       return Optional.empty();
     }
     this.setRecipesList(newDataset);
-    result = ref.get();
+    // The open menu's own click first, then the favourite, then the remembered click, then the
+    // namespace and pack lists, then upstream's sorted-first default.
+    result = sessionMatch != null ? sessionMatch
+        : favourite != null ? favourite
+            : chosenMatch != null ? chosenMatch : sourceMatch;
 
     if (result == null) {
       ResourceLocation rl = newDataset.first().getResourceLocation();
@@ -203,6 +232,28 @@ public abstract class AbstractRecipeData<E> implements IRecipeData<E> {
     this.setFailing(false);
     this.sendRecipesListToListeners(false);
     return Optional.of(result);
+  }
+
+  /**
+   * The recipe picked in the menu that is open right now. It must not outlive that menu, or it
+   * would shadow the favourite forever.
+   */
+  protected ResourceLocation getSessionChoice() {
+    return null;
+  }
+
+  /** Rank among the player's favourite recipes. Lower wins, MAX_VALUE means not a favourite. */
+  protected int favouriteRank(ResourceLocation id) {
+    return Integer.MAX_VALUE;
+  }
+
+  /** Rank by source namespace. Lower wins, MAX_VALUE means no preference applies. */
+  protected int sourceRank(ResourceLocation id) {
+    return RecipePriority.packRank(id.getNamespace());
+  }
+
+  public ResourceLocation getChosenRecipeId() {
+    return this.chosenRecipeId;
   }
 
   @Override
@@ -258,6 +309,7 @@ public abstract class AbstractRecipeData<E> implements IRecipeData<E> {
   @Override
   public void selectRecipe(@Nonnull Recipe<?> recipe) {
     this.setSelectedRecipe(recipe);
+    this.chosenRecipeId = recipe.getId();
   }
 
   @Override
@@ -293,7 +345,8 @@ public abstract class AbstractRecipeData<E> implements IRecipeData<E> {
   public void readNBT(CompoundTag compoundTag) {
 
     if (compoundTag.contains("SelectedRecipe")) {
-      this.loadedRecipe = new ResourceLocation(compoundTag.getString("SelectedRecipe"));
+      this.loadedRecipe = ResourceLocation.tryParse(compoundTag.getString("SelectedRecipe"));
+      this.chosenRecipeId = this.loadedRecipe;
     }
 
     if (compoundTag.contains("RecipeDataSet")) {
@@ -314,8 +367,9 @@ public abstract class AbstractRecipeData<E> implements IRecipeData<E> {
   @Override
   public CompoundTag writeNBT() {
     CompoundTag nbt = new CompoundTag();
-    this.getSelectedRecipe().ifPresent(
-        selected -> nbt.putString("SelectedRecipe", this.selectedRecipe.getId().toString()));
+    if (this.chosenRecipeId != null) {
+      nbt.putString("SelectedRecipe", this.chosenRecipeId.toString());
+    }
     Set<IRecipePair> dataset = this.getRecipesList();
 
     if (!dataset.isEmpty()) {

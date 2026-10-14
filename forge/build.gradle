@@ -2,11 +2,11 @@ plugins {
     id 'eclipse'
     id 'idea'
     id 'maven-publish'
-    id 'net.minecraftforge.gradle' version '[6.0,)'
+    id 'net.minecraftforge.gradle' version '[6.0.24,6.2)'
     id 'org.parchmentmc.librarian.forgegradle' version '1.+'
     id 'com.modrinth.minotaur' version '2.+'
     id 'org.spongepowered.mixin' version '0.7.+'
-    id 'net.darkhax.curseforgegradle' version '1.+'
+    id 'net.darkhax.curseforgegradle' version '1.1.26'
 }
 
 version = "${version}"
@@ -17,10 +17,10 @@ base {
 }
 
 mixin {
-    add sourceSets.main, "${mod_id}.refmap.json"
+    add sourceSets.main, "polymorph.refmap.json"
 
-    config "${mod_id}.mixins.json"
-    config "${mod_id}-integrations.forge.mixins.json"
+    config "polymorph.mixins.json"
+    config "polymorph-integrations.forge.mixins.json"
 }
 
 minecraft {
@@ -40,8 +40,8 @@ minecraft {
             taskName 'Client'
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
-            args "-mixin.config=${mod_id}.mixins.json"
-            args "-mixin.config=${mod_id}-integrations.forge.mixins.json"
+            args "-mixin.config=polymorph.mixins.json"
+            args "-mixin.config=polymorph-integrations.forge.mixins.json"
             mods {
                 modClientRun {
                     source sourceSets.main
@@ -56,8 +56,8 @@ minecraft {
             taskName 'Server'
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
-			args "-mixin.config=${mod_id}.mixins.json"
-            args "-mixin.config=${mod_id}-integrations.forge.mixins.json"
+			args "-mixin.config=polymorph.mixins.json"
+            args "-mixin.config=polymorph-integrations.forge.mixins.json"
             mods {
                 modServerRun {
                     source sourceSets.main
@@ -73,8 +73,8 @@ minecraft {
             taskName 'Data'
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
-            args "-mixin.config=${mod_id}.mixins.json"
-            args "-mixin.config=${mod_id}-integrations.forge.mixins.json"
+            args "-mixin.config=polymorph.mixins.json"
+            args "-mixin.config=polymorph-integrations.forge.mixins.json"
             mods {
                 modDataRun {
                     source sourceSets.main
@@ -103,6 +103,8 @@ dependencies {
     compileOnly fg.deobf("dev.shadowsoffire:FastFurnace:${fastfurnace_version}")
     compileOnly fg.deobf("dev.shadowsoffire:FastSuite:${fastsuite_version}")
     compileOnly fg.deobf("dev.shadowsoffire:Placebo:${placebo_version}")
+    compileOnly fg.deobf("maven.modrinth:toms-storage:${toms_storage_version}")
+    testCompileOnly fg.deobf("maven.modrinth:toms-storage:${toms_storage_version}")
 
     implementation fg.deobf(group: 'com.illusivesoulworks.spectrelib', name: 'spectrelib-forge', version: "${spectrelib_range}")
     jarJar (group: 'com.illusivesoulworks.spectrelib', name: 'spectrelib-forge', version: "${spectrelib_range}") {
@@ -126,7 +128,7 @@ def resourceTargets = ['META-INF/mods.toml', 'pack.mcmeta', '*.mixins.json']
 def replaceProperties = [
         forge_version: forge_version, forge_version_range: forge_version_range, version: version,
         forge_mc_version_range: forge_mc_version_range, license: license, mod_id: mod_id, mod_author: mod_author,
-        mod_description: mod_description, mod_name: mod_name, issue_tracker: issue_tracker, refmap_target: "${mod_id}."
+        mod_description: mod_description, mod_name: mod_name, issue_tracker: issue_tracker, refmap_target: "polymorph."
 ]
 processResources {
     from project(":common").sourceSets.main.resources
@@ -151,7 +153,6 @@ tasks.jarJar.configure {
     from(rootProject.file("COPYING"))
     from(rootProject.file("COPYING.LESSER"))
     from(rootProject.file("README.md"))
-    from(rootProject.file("CHANGELOG.md"))
 }
 
 jarJar {
@@ -179,7 +180,6 @@ task publishCurseForge(type: net.darkhax.curseforgegradle.TaskPublishCurseForge)
     def projectId = "${cf_id}".toString()
     def mainFile = upload(projectId, file("${project.buildDir}/libs/${archivesBaseName}-${version}.jar"))
     mainFile.changelogType = 'markdown'
-    mainFile.changelog = file('../CHANGELOG_LATEST.md')
     mainFile.releaseType = "${release_type}"
     "${release_versions}".split(',').each {
         mainFile.addGameVersion("${it}")
@@ -195,11 +195,10 @@ task publishCurseForge(type: net.darkhax.curseforgegradle.TaskPublishCurseForge)
 }
 
 modrinth {
-    token = findProperty('modrinthKey') ?: 0
+    token = findProperty('modrinthKey') ?: ''
     projectId = "${modrinth_id}"
     versionName = getArchivesBaseName() + "-" + getVersion()
     versionType = "${release_type}"
-    changelog = file('../CHANGELOG_LATEST.md').text
     uploadFile = file("${project.buildDir}/libs/${archivesBaseName}-${version}.jar")
     additionalFiles = [sourcesJar]
     gameVersions = "${release_versions}".split(",") as List<String>

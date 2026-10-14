@@ -39,6 +39,10 @@ public interface IRecipesWidget {
 
   boolean mouseClicked(double mouseX, double mouseY, int button);
 
+  default boolean mouseScrolled(double mouseX, double mouseY, double scrollY) {
+    return false;
+  }
+
   Slot getOutputSlot();
 
   SelectionWidget getSelectionWidget();

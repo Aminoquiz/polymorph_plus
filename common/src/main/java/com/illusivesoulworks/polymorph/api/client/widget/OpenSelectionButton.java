@@ -21,6 +21,7 @@ import com.illusivesoulworks.polymorph.platform.Services;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import javax.annotation.Nonnull;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -44,12 +45,27 @@ public class OpenSelectionButton extends ImageButton {
     this.yOffset = y;
   }
 
+  public int getXOffset() {
+    return this.xOffset;
+  }
+
+  public int getYOffset() {
+    return this.yOffset;
+  }
+
   @Override
   public void renderWidget(@Nonnull GuiGraphics guiGraphics, int mouseX, int mouseY,
                            float partialTicks) {
     RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-    this.setX(Services.CLIENT_PLATFORM.getScreenLeft(this.containerScreen) + this.xOffset);
-    this.setY(Services.CLIENT_PLATFORM.getScreenTop(this.containerScreen) + this.yOffset);
+    // Clamped so a GUI anchored near a window edge cannot push the button out of reach.
+    this.setX(clamp(Services.CLIENT_PLATFORM.getScreenLeft(this.containerScreen) + this.xOffset,
+        Minecraft.getInstance().getWindow().getGuiScaledWidth() - this.width));
+    this.setY(clamp(Services.CLIENT_PLATFORM.getScreenTop(this.containerScreen) + this.yOffset,
+        Minecraft.getInstance().getWindow().getGuiScaledHeight() - this.height));
     super.renderWidget(guiGraphics, mouseX, mouseY, partialTicks);
+  }
+
+  private static int clamp(int value, int max) {
+    return max < 0 ? 0 : Math.max(0, Math.min(max, value));
   }
 }

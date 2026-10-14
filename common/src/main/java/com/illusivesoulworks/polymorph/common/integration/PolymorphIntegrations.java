@@ -160,7 +160,12 @@ public class PolymorphIntegrations {
     QUICKBENCH("quickbench", true, Loader.FABRIC),
     FASTFURNACE("fastfurnace", true, Loader.FORGE),
     FASTWORKBENCH("fastbench", true, Loader.FORGE),
-    FASTSUITE("fastsuite", true, Loader.FORGE);
+    FASTSUITE("fastsuite", true, Loader.FORGE),
+    STORAGENETWORK("storagenetwork", true, Loader.FORGE),
+    CYCLIC("cyclic", true, Loader.FORGE),
+    SOPHISTICATEDCORE("sophisticatedcore", true, Loader.FORGE),
+    REFINEDSTORAGE("refinedstorage", true, Loader.FORGE),
+    TOMS_STORAGE("toms_storage", true, Loader.FABRIC, Loader.FORGE);
 
     private final String id;
     private final boolean defaultValue;

@@ -17,12 +17,24 @@
 
 package com.illusivesoulworks.polymorph.client;
 
+import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 @SuppressWarnings("unused")
 public class ClientEventsListener {
+
+  @SubscribeEvent
+  public void loggingIn(ClientPlayerNetworkEvent.LoggingIn evt) {
+    PolymorphClientEvents.syncPriority();
+  }
+
+  @SubscribeEvent
+  public void loggingOut(ClientPlayerNetworkEvent.LoggingOut evt) {
+    PolymorphClientEvents.clearPackPriority();
+  }
 
   @SubscribeEvent
   public void tick(TickEvent.ClientTickEvent evt) {
@@ -37,9 +49,9 @@ public class ClientEventsListener {
     PolymorphClientEvents.initScreen(evt.getScreen());
   }
 
-  @SubscribeEvent
+  @SubscribeEvent(priority = EventPriority.LOWEST)
   public void render(ScreenEvent.Render.Post evt) {
-    PolymorphClientEvents.render(evt.getScreen(), evt.getGuiGraphics(), evt.getMouseX(),
+    PolymorphClientEvents.renderIfMissed(evt.getScreen(), evt.getGuiGraphics(), evt.getMouseX(),
         evt.getMouseY(), evt.getPartialTick());
   }
 
@@ -48,6 +60,15 @@ public class ClientEventsListener {
 
     if (PolymorphClientEvents.mouseClick(evt.getScreen(), evt.getMouseX(), evt.getMouseY(),
         evt.getButton())) {
+      evt.setCanceled(true);
+    }
+  }
+
+  @SubscribeEvent
+  public void mouseScroll(ScreenEvent.MouseScrolled.Pre evt) {
+
+    if (PolymorphClientEvents.mouseScroll(evt.getScreen(), evt.getMouseX(), evt.getMouseY(),
+        evt.getScrollDelta())) {
       evt.setCanceled(true);
     }
   }

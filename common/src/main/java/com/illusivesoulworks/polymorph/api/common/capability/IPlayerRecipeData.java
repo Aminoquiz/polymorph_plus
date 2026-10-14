@@ -17,6 +17,7 @@
 
 package com.illusivesoulworks.polymorph.api.common.capability;
 
+import java.util.List;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -26,4 +27,20 @@ public interface IPlayerRecipeData extends IRecipeData<Player> {
   void setContainerMenu(AbstractContainerMenu container);
 
   AbstractContainerMenu getContainerMenu();
+
+  /** The player's namespace preference list, most preferred first, uploaded by the client. */
+  default void setPriorityNamespaces(List<String> namespaces) {
+  }
+
+  default List<String> getPriorityNamespaces() {
+    return List.of();
+  }
+
+  /** The player's favourite recipes, most preferred first. Outranks the namespace list. */
+  default void setPriorityRecipes(List<String> recipes) {
+  }
+
+  default List<String> getPriorityRecipes() {
+    return List.of();
+  }
 }

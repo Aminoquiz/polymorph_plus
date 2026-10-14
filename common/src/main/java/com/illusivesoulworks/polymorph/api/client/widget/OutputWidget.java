@@ -30,9 +30,24 @@ import net.minecraft.world.item.ItemStack;
 
 public class OutputWidget extends AbstractWidget {
 
+  private static final int STAR_COLOR = 0xFFFFD000;
+  private static final int STAR_SHADOW = 0xFF3A2A00;
+  private static final int STAR_SIZE = 7;
+  /** 7x7 bitmap, one int per row, bit 6 is the leftmost pixel. */
+  private static final int[] STAR = {
+      0b0001000,
+      0b0001000,
+      0b1111111,
+      0b0111110,
+      0b0011100,
+      0b0110110,
+      0b0100010,
+  };
+
   private final ItemStack output;
   private final ResourceLocation resourceLocation;
   private boolean highlighted = false;
+  private boolean preferred = false;
 
   public OutputWidget(IRecipePair recipePair) {
     super(0, 0, 25, 25, Component.empty());
@@ -51,15 +66,37 @@ public class OutputWidget extends AbstractWidget {
       j += 25;
     }
     PoseStack poseStack = guiGraphics.pose();
-    guiGraphics.blit(AbstractRecipesWidget.WIDGETS, this.getX(), this.getY(), 600,
+    guiGraphics.blit(AbstractRecipesWidget.WIDGETS, this.getX(), this.getY(), 200,
         this.highlighted ? 41 : 16, j, this.width, this.height, 256, 256);
     int k = 4;
     poseStack.pushPose();
-    poseStack.translate(0, 0, 700);
+    poseStack.translate(0, 0, 60);
     guiGraphics.renderItem(this.getOutput(), this.getX() + k, this.getY() + k);
     guiGraphics.renderItemDecorations(minecraft.font, this.getOutput(), this.getX() + k,
         this.getY() + k);
+
+    if (this.preferred) {
+      // Drawn inside the pushed pose so it lands on top of the item rather than under it.
+      int sx = this.getX() + this.width - STAR_SIZE - 2;
+      int sy = this.getY() + 2;
+      drawStar(guiGraphics, sx + 1, sy + 1, STAR_SHADOW);
+      drawStar(guiGraphics, sx, sy, STAR_COLOR);
+    }
     poseStack.popPose();
+  }
+
+  private static void drawStar(GuiGraphics guiGraphics, int x, int y, int color) {
+
+    for (int row = 0; row < STAR.length; row++) {
+      int bits = STAR[row];
+
+      for (int col = 0; col < STAR_SIZE; col++) {
+
+        if ((bits & (1 << (STAR_SIZE - 1 - col))) != 0) {
+          guiGraphics.fill(x + col, y + row, x + col + 1, y + row + 1, color);
+        }
+      }
+    }
   }
 
   public ItemStack getOutput() {
@@ -72,6 +109,18 @@ public class OutputWidget extends AbstractWidget {
 
   public void setHighlighted(boolean highlighted) {
     this.highlighted = highlighted;
+  }
+
+  public boolean isHighlighted() {
+    return this.highlighted;
+  }
+
+  public void setPreferred(boolean preferred) {
+    this.preferred = preferred;
+  }
+
+  public boolean isPreferred() {
+    return this.preferred;
   }
 
   @Override

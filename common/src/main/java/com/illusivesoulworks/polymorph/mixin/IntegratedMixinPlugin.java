@@ -41,6 +41,12 @@ public class IntegratedMixinPlugin implements IMixinConfigPlugin, IMixinErrorHan
   static {
     CLASS_TO_MOD.put("dev.shadowsoffire.fastbench.", PolymorphIntegrations.Mod.FASTWORKBENCH.getId());
     CLASS_TO_MOD.put("dev.shadowsoffire.fastsuite.", PolymorphIntegrations.Mod.FASTSUITE.getId());
+    CLASS_TO_MOD.put("net.p3pp3rf1y.sophisticatedcore.",
+        PolymorphIntegrations.Mod.SOPHISTICATEDCORE.getId());
+    CLASS_TO_MOD.put("com.refinedmods.refinedstorage.", PolymorphIntegrations.Mod.REFINEDSTORAGE.getId());
+    CLASS_TO_MOD.put("com.tom.storagemod.", PolymorphIntegrations.Mod.TOMS_STORAGE.getId());
+    CLASS_TO_MOD.put("com.lothrazar.storagenetwork.", PolymorphIntegrations.Mod.STORAGENETWORK.getId());
+    CLASS_TO_MOD.put("com.lothrazar.cyclic.", PolymorphIntegrations.Mod.CYCLIC.getId());
     CLASS_TO_MOD.put("tfar.fastbench.", PolymorphIntegrations.Mod.QUICKBENCH.getId());
   }
 

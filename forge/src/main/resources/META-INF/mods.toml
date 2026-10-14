@@ -3,7 +3,7 @@ loaderVersion="[41,)"
 license="${license}"
 logoBlur=false
 issueTrackerURL="${issue_tracker}"
-logoFile="${mod_id}_icon.png"
+logoFile="polymorph_icon.png"
 [[mods]]
 modId="${mod_id}"
 version="${version}"
@@ -12,13 +12,26 @@ authors="${mod_author}"
 description='''
 ${mod_description}
 '''
-[[dependencies.polymorph]]
+[[mods]]
+modId="polymorph"
+version="1.2.456"
+displayName="Polymorph (alias)"
+description='''
+Compatibility alias provided by Polymorph+. Lets mods that depend on `polymorph` load against Polymorph+.
+
+Do NOT install upstream Polymorph alongside Polymorph+. Pick one:
+- Keep Polymorph+ (this mod) and REMOVE polymorph-*.jar from your mods folder.
+- Or keep upstream Polymorph and REMOVE polymorph_plus-*.jar.
+
+Both mods inject mixins on the same vanilla menus and cannot coexist.
+'''
+[[dependencies.${mod_id}]]
     modId="forge"
     mandatory=true
     versionRange="${forge_version_range}"
     ordering="NONE"
     side="BOTH"
-[[dependencies.polymorph]]
+[[dependencies.${mod_id}]]
     modId="minecraft"
     mandatory=true
     versionRange="${forge_mc_version_range}"

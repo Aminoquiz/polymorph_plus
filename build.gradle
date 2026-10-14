@@ -14,7 +14,6 @@ subprojects {
         from(rootProject.file("COPYING"))
         from(rootProject.file("COPYING.LESSER"))
         from(rootProject.file("README.md"))
-        from(rootProject.file("CHANGELOG.md"))
         manifest {
             attributes([
                 'Specification-Title'     : mod_name,
@@ -36,7 +35,6 @@ subprojects {
         from(rootProject.file("COPYING"))
         from(rootProject.file("COPYING.LESSER"))
         from(rootProject.file("README.md"))
-        from(rootProject.file("CHANGELOG.md"))
     }
 
     repositories {
@@ -60,6 +58,12 @@ subprojects {
         maven {
             name = 'CurseMaven'
             url = 'https://www.cursemaven.com'
+        }
+
+        maven {
+            name = 'Modrinth'
+            url = 'https://api.modrinth.com/maven'
+            content { includeGroup 'maven.modrinth' }
         }
 
         maven {
@@ -97,9 +101,6 @@ def publishDiscord() {
             cfLinks.add("[Forge](${project(':forge').findProperty('curse_link')})")
         }
 
-        if (project(':quilt').hasProperty('curse_link')) {
-            cfLinks.add("[Quilt](${project(':quilt').findProperty('curse_link')})")
-        }
         def modrinthLinks = new StringJoiner('\\n')
 
         if (project(':fabric').hasProperty('modrinth_link')) {
@@ -110,14 +111,9 @@ def publishDiscord() {
             modrinthLinks.add("[Forge](${project(':forge').findProperty('modrinth_link')})")
         }
 
-        if (project(':quilt').hasProperty('modrinth_link')) {
-            modrinthLinks.add("[Quilt](${project(':quilt').findProperty('modrinth_link')})")
-        }
         println(cfLinks)
         println(modrinthLinks)
-        def changelog = file("CHANGELOG_LATEST.md").getText()
-        changelog = changelog.substring(changelog.indexOf("##"))
-        changelog = changelog.replaceAll("\n","\\\\n")
+        def changelog = ""
 
         if (changelog.length() >= 1024) {
             changelog = changelog.substring(0, changelog.length() - 100)
@@ -207,13 +203,6 @@ tasks.register('publishForge') {
     }
 }
 
-tasks.register('publishQuilt') {
-    dependsOn ordered(':quilt:modrinth', ':quilt:publishCurseForge')
-
-    doLast {
-        publishDiscord()
-    }
-}
 
 tasks.register('publishFabricForge') {
     dependsOn ordered(':fabric:modrinth', ':fabric:publishCurseForge', ':forge:modrinth', 'forge:publishCurseForge')
@@ -223,26 +212,5 @@ tasks.register('publishFabricForge') {
     }
 }
 
-tasks.register('publishForgeQuilt') {
-    dependsOn ordered(':quilt:modrinth', ':quilt:publishCurseForge', ':forge:modrinth', ':forge:publishCurseForge')
 
-    doLast {
-        publishDiscord()
-    }
-}
 
-tasks.register('publishFabricQuilt') {
-    dependsOn ordered(':quilt:modrinth', ':quilt:publishCurseForge', ':fabric:modrinth', ':fabric:publishCurseForge')
-
-    doLast {
-        publishDiscord()
-    }
-}
-
-tasks.register('publishFabricForgeQuilt') {
-    dependsOn ordered(':quilt:modrinth', ':quilt:publishCurseForge', ':fabric:modrinth', ':fabric:publishCurseForge', ':forge:modrinth', ':forge:publishCurseForge')
-
-    doLast {
-        publishDiscord()
-    }
-}
