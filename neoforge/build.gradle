@@ -68,6 +68,8 @@ dependencies {
     if (localJars.isDirectory()) {
         compileOnly fileTree(dir: localJars, include: ['jei-*.jar', 'RoughlyEnoughItems-*.jar'])
     }
+
+    compileOnly fileTree(dir: rootProject.file('../../../external_sources/jars'), include: ["jei/jei-1.21.11-*.jar", "rei/RoughlyEnoughItems-21.11.*.jar"])
     // EMI 1.21.11 / FastWorkbench 1.21.11 not yet wired.
     // compileOnly "dev.shadowsoffire:FastWorkbench:${fastworkbench_version}"
     // compileOnly "dev.emi:emi-xplat-mojmap:${emi_version}"

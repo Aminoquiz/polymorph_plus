@@ -26,6 +26,8 @@
   },
   "refmap": "${mod_id}.refmap.json",
   "client": [
-    "AccessorSmithingScreen"
+    "AccessorSmithingScreen",
+    "MixinAbstractContainerScreen",
+    "MixinAbstractRecipeBookScreen"
   ]
 }

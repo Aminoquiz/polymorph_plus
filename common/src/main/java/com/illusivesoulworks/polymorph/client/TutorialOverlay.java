@@ -131,6 +131,9 @@ public final class TutorialOverlay {
     }
     int boxW = textWidth + PADDING * 2;
     int boxH = lines.size() * font.lineHeight + PADDING * 2;
+    // A tall GUI, such as Occultism's storage controller, pushes the bubble past the window edge.
+    x = Math.max(0, Math.min(x, Minecraft.getInstance().getWindow().getGuiScaledWidth() - boxW));
+    y = Math.max(0, Math.min(y, Minecraft.getInstance().getWindow().getGuiScaledHeight() - boxH));
     gg.fill(x, y, x + boxW, y + boxH, BG_COLOR);
     gg.fill(x, y, x + boxW, y + 1, BORDER_COLOR);
     gg.fill(x, y + boxH - 1, x + boxW, y + boxH, BORDER_COLOR);

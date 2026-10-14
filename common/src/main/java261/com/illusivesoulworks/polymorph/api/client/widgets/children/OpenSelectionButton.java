@@ -33,6 +33,14 @@ public class OpenSelectionButton extends ImageButton {
     this.yOffset = y;
   }
 
+  public int getXOffset() {
+    return this.xOffset;
+  }
+
+  public int getYOffset() {
+    return this.yOffset;
+  }
+
   @Override
   public void renderContents(@Nonnull GuiGraphics graphics, int mouseX, int mouseY,
                               float partialTicks) {

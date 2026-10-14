@@ -49,7 +49,7 @@ public class PolymorphClientEvents {
    * waiting to be overwritten.
    */
   public static void clearPackPriority() {
-    RecipePriority.setPackNamespaces(List.of());
+    RecipePriority.setClientPackNamespaces(List.of());
   }
 
   public static void tick() {
@@ -70,13 +70,31 @@ public class PolymorphClientEvents {
     }
   }
 
+  private static boolean drawnThisFrame;
+
   public static void render(Screen screen, GuiGraphics guiGraphics, int mouseX, int mouseY,
                             float partialTicks) {
 
     if (screen instanceof AbstractContainerScreen) {
+      drawnThisFrame = true;
+      RecipesWidget.revalidate((AbstractContainerScreen<?>) screen);
       RecipesWidget.get().ifPresent(
           recipeController -> recipeController.render(guiGraphics, mouseX, mouseY, partialTicks));
     }
+  }
+
+  /**
+   * End-of-frame fallback for a screen whose render pass skips both mixin hooks. The selector
+   * then lands above the tooltips, which beats not showing it at all.
+   */
+  public static void renderIfMissed(Screen screen, GuiGraphics guiGraphics, int mouseX,
+                                    int mouseY, float partialTicks) {
+
+    if (!drawnThisFrame) {
+      render(screen, guiGraphics, mouseX, mouseY, partialTicks);
+    }
+    drawnThisFrame = false;
+    TutorialOverlay.flush(guiGraphics);
   }
 
   public static boolean mouseClick(Screen screen, double mouseX, double mouseY, int button) {

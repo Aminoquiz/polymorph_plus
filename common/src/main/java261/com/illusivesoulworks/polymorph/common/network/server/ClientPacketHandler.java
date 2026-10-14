@@ -16,7 +16,6 @@ import com.illusivesoulworks.polymorph.client.RecipesWidget;
 import com.illusivesoulworks.polymorph.common.integration.util.RecipeTransfer;
 import com.illusivesoulworks.polymorph.mixin.core.AccessorSmithingScreen;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import net.minecraft.client.Minecraft;
@@ -50,15 +49,8 @@ public class ClientPacketHandler {
     LocalPlayer clientPlayerEntity = Minecraft.getInstance().player;
 
     if (clientPlayerEntity != null) {
-      Optional<IRecipesWidget> maybeWidget = RecipesWidget.get();
-      maybeWidget.ifPresent(
-          widget -> widget.setRecipesList(sort(packet.recipeList().orElse(new HashSet<>())),
-              packet.selected().orElse(null)));
-
-      if (maybeWidget.isEmpty()) {
-        RecipesWidget.enqueueRecipesList(sort(packet.recipeList().orElse(new HashSet<>())),
-            packet.selected().orElse(null));
-      }
+      RecipesWidget.deliver(sort(packet.recipeList().orElse(new HashSet<>())),
+          packet.selected().orElse(null));
     }
   }
 
