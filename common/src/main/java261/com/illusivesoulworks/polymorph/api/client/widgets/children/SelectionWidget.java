@@ -81,6 +81,14 @@ public class SelectionWidget implements Renderable, GuiEventListener {
     this.yOffset = y;
   }
 
+  public int getXOffset() {
+    return this.xOffset;
+  }
+
+  public int getYOffset() {
+    return this.yOffset;
+  }
+
   public void highlightButton(Identifier resourceLocation) {
     this.outputWidgets.forEach(
         widget -> widget.setHighlighted(widget.getResourceLocation().equals(resourceLocation)));
@@ -138,8 +146,11 @@ public class SelectionWidget implements Renderable, GuiEventListener {
     int left;
 
     if (scrolls) {
-      // Wider than the button can carry once the arrows are added, so centre it on the GUI.
-      left = screenLeft + (guiWidth - rowWidth) / 2;
+      // Under the selector button, kept inside the screen's declared width. Centring on that
+      // width put the row off the frame of screens that declare side tabs (Occultism).
+      left = rowWidth <= guiWidth
+          ? clamp(this.x - rowWidth / 2, screenLeft, screenLeft + guiWidth - rowWidth)
+          : screenLeft + (guiWidth - rowWidth) / 2;
     } else {
       int rowXOffset = (int) (-BUTTON_SIZE * Math.floor(visibleCount / 2.0F));
 

@@ -32,38 +32,47 @@ import java.util.Map;
  */
 public final class RecipePriority {
 
-  private static volatile List<String> packNamespaces = List.of();
-  private static volatile Map<String, Integer> packRanks = Map.of();
+  // The integrated server and its client share this class, so each side keeps its own copy: a
+  // client logout (Forge and NeoForge fire one while a singleplayer world is being created) must
+  // not wipe the list the server just loaded from the datapacks.
+  private static volatile Ranks server = Ranks.EMPTY;
+  private static volatile Ranks client = Ranks.EMPTY;
 
   private RecipePriority() {
   }
 
+  /** Server side: the list loaded from the datapacks. */
   public static void setPackNamespaces(List<String> namespaces) {
-    List<String> copy = List.copyOf(namespaces);
-    Map<String, Integer> ranks = new HashMap<>();
-
-    for (int i = 0; i < copy.size(); i++) {
-      ranks.putIfAbsent(copy.get(i), i);
-    }
-    packNamespaces = copy;
-    packRanks = Map.copyOf(ranks);
+    server = Ranks.of(namespaces);
   }
 
   public static List<String> getPackNamespaces() {
-    return packNamespaces;
+    return server.namespaces;
   }
 
   public static boolean hasPackNamespaces() {
-    return !packNamespaces.isEmpty();
+    return !server.namespaces.isEmpty();
+  }
+
+  /** Client side: the list the server pushed on join or after a reload. */
+  public static void setClientPackNamespaces(List<String> namespaces) {
+    client = Ranks.of(namespaces);
+  }
+
+  public static List<String> getClientPackNamespaces() {
+    return client.namespaces;
   }
 
   /**
-   * Rank of a namespace in the pack list. Lower wins; {@link Integer#MAX_VALUE} means the
-   * namespace is not listed and carries no preference at all.
+   * Rank of a namespace in the server's pack list. Lower wins; {@link Integer#MAX_VALUE} means
+   * the namespace is not listed and carries no preference at all.
    */
   public static int packRank(String namespace) {
-    Integer rank = packRanks.get(namespace);
-    return rank == null ? Integer.MAX_VALUE : rank;
+    return server.rank(namespace);
+  }
+
+  public static int packRank(String namespace, boolean clientSide) {
+    return (clientSide ? client : server).rank(namespace);
   }
 
   /**
@@ -105,5 +114,33 @@ public final class RecipePriority {
       return List.of();
     }
     return result;
+  }
+
+  private static final class Ranks {
+
+    static final Ranks EMPTY = new Ranks(List.of(), Map.of());
+
+    final List<String> namespaces;
+    final Map<String, Integer> ranks;
+
+    private Ranks(List<String> namespaces, Map<String, Integer> ranks) {
+      this.namespaces = namespaces;
+      this.ranks = ranks;
+    }
+
+    static Ranks of(List<String> namespaces) {
+      List<String> copy = List.copyOf(namespaces);
+      Map<String, Integer> ranks = new HashMap<>();
+
+      for (int i = 0; i < copy.size(); i++) {
+        ranks.putIfAbsent(copy.get(i), i);
+      }
+      return new Ranks(copy, Map.copyOf(ranks));
+    }
+
+    int rank(String namespace) {
+      Integer rank = this.ranks.get(namespace);
+      return rank == null ? Integer.MAX_VALUE : rank;
+    }
   }
 }

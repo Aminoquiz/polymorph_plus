@@ -49,7 +49,7 @@ public class PolymorphClientEvents {
    * waiting to be overwritten.
    */
   public static void clearPackPriority() {
-    RecipePriority.setPackNamespaces(List.of());
+    RecipePriority.setClientPackNamespaces(List.of());
   }
 
   public static void tick() {
@@ -77,6 +77,7 @@ public class PolymorphClientEvents {
 
     if (screen instanceof AbstractContainerScreen) {
       drawnThisFrame = true;
+      RecipesWidget.revalidate((AbstractContainerScreen<?>) screen);
       RecipesWidget.get().ifPresent(
           recipeController -> recipeController.render(guiGraphics, mouseX, mouseY, partialTicks));
     }
@@ -93,6 +94,7 @@ public class PolymorphClientEvents {
       render(screen, guiGraphics, mouseX, mouseY, partialTicks);
     }
     drawnThisFrame = false;
+    TutorialOverlay.flush(guiGraphics);
   }
 
   public static boolean mouseClick(Screen screen, double mouseX, double mouseY, int button) {

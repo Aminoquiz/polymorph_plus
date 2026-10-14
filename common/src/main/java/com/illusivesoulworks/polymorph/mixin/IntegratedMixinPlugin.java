@@ -55,9 +55,17 @@ public class IntegratedMixinPlugin implements IMixinConfigPlugin, IMixinErrorHan
 
     if (mixinClassName.startsWith(PREFIX)) {
       String modId = mixinClassName.substring(PREFIX.length()).split("\\.")[0];
-      return PolymorphIntegrations.isActive(modId) && Services.PLATFORM.isModFileLoaded(modId);
+      return PolymorphIntegrations.isActive(modId) && Services.PLATFORM.isModFileLoaded(modId)
+          && !hasOwnCompat(modId);
     }
     return true;
+  }
+
+  // Traveler's builds that ship their own Polymorph code already resolve through our API; the
+  // built-in hook is only for builds without it (26.3 11.4.x).
+  private static boolean hasOwnCompat(String modId) {
+    return modId.equals("travelersbackpack") && IntegratedMixinPlugin.class.getClassLoader()
+        .getResource("com/tiviacz/travelersbackpack/compat/polymorph/PolymorphCompat.class") != null;
   }
 
   @Override

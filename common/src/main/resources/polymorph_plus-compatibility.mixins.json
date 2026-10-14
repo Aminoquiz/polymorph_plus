@@ -3,8 +3,10 @@
   "package": "com.illusivesoulworks.polymorph.mixin.integration",
   "compatibilityLevel": "JAVA_16",
   "mixins": [
+    "sophisticatedcore.MixinCraftingUpgradeContainer",
     "jei.MixinPacketRecipeTransfer",
-    "toms_storage.MixinCraftingTerminalBlockEntity"
+    "toms_storage.MixinCraftingTerminalBlockEntity",
+    "travelersbackpack.MixinBackpackBaseMenu"
   ],
   "client": [
     "jei.MixinRecipeTransferUtil"

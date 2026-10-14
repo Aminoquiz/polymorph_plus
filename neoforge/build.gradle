@@ -69,6 +69,8 @@ dependencies {
     if (localJars.isDirectory()) {
         compileOnly fileTree(dir: localJars, include: ["jei-${minecraft_version}-*.jar", "RoughlyEnoughItems-${minecraft_version}.*.jar"])
     }
+
+    compileOnly fileTree(dir: rootProject.file('../../../external_sources/jars'), include: ["jei/jei-26.3-*.jar", "rei/RoughlyEnoughItems-26.3.*.jar"])
     // Extra mods for dev runs. Opt-in: -Pdev_run_mods=<folder of jars>. A dev run does not scan
     // the game directory's mods folder, and 26.x has no additionalRuntimeClasspath.
     def devRunMods = project.findProperty('dev_run_mods')
