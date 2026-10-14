@@ -52,6 +52,8 @@ dependencies {
 
     compileOnly "dev.shadowsoffire:FastWorkbench:${fastworkbench_version}"
     compileOnly "dev.shadowsoffire:Placebo:${placebo_version}"
+    compileOnly "dev.shadowsoffire:FastFurnace:${fastfurnace_version}"
+    compileOnly "dev.shadowsoffire:FastSuite:${fastsuite_version}"
     compileOnly "dev.emi:emi-xplat-mojmap:${emi_version}"
     compileOnly "mezz.jei:jei-1.21-common:${jei_version}"
     compileOnly "me.shedaniel:RoughlyEnoughItems-neoforge:${rei_version}"

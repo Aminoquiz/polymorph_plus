@@ -71,10 +71,11 @@ public class OutputWidget extends AbstractWidget {
         this.getY() + 25 > mouseY && this.getY() <= mouseY) {
       texture = sprite.enabledFocused();
     }
-    guiGraphics.blitSprite(texture, this.getX(), this.getY(), 600, this.width, this.height);
+    guiGraphics.blitSprite(texture, this.getX(), this.getY(), 200, this.width, this.height);
     int k = 4;
     poseStack.pushPose();
-    poseStack.translate(0, 0, 700);
+    // Slot items sit near z 150-170 and tooltips at 400; the selector goes between them.
+    poseStack.translate(0, 0, 60);
     guiGraphics.renderItem(this.getOutput(), this.getX() + k, this.getY() + k);
     guiGraphics.renderItemDecorations(minecraft.font, this.getOutput(), this.getX() + k,
         this.getY() + k);
@@ -85,8 +86,11 @@ public class OutputWidget extends AbstractWidget {
       // the pushed pose so it lands on top of the item rather than under it.
       int sx = this.getX() + this.width - STAR_SIZE - 2;
       int sy = this.getY() + 2;
+      poseStack.pushPose();
+      poseStack.translate(0, 0, 200);
       drawStar(guiGraphics, sx + 1, sy + 1, STAR_SHADOW);
       drawStar(guiGraphics, sx, sy, STAR_COLOR);
+      poseStack.popPose();
     }
     poseStack.popPose();
   }

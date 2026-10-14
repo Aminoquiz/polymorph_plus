@@ -5,7 +5,11 @@
   "mixins": [
     "emi.MixinEmiRecipeFiller",
     "jei.MixinRecipeTransferUtil",
-    "jei.MixinPacketRecipeTransfer"
+    "jei.MixinPacketRecipeTransfer",
+    "sophisticatedcore.MixinCraftingUpgradeContainer",
+    "storagenetwork.MixinContainerNetwork",
+    "cyclic.MixinContainerWorkbench",
+    "toms_storage.MixinCraftingTerminalBlockEntity"
   ],
   "injectors": {
     "defaultRequire": 1,

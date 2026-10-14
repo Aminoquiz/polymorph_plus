@@ -18,6 +18,13 @@ dependencies {
 
     compileOnly "dev.emi:emi-xplat-mojmap:${emi_version}"
     compileOnly "mezz.jei:jei-1.21-common:${jei_version}"
+
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.10.2'
+}
+
+test {
+    useJUnitPlatform()
 }
 
 configurations {

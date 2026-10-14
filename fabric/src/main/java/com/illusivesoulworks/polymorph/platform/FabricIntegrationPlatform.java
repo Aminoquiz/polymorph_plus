@@ -18,16 +18,21 @@
 package com.illusivesoulworks.polymorph.platform;
 
 import com.illusivesoulworks.polymorph.common.integration.AbstractCompatibilityModule;
+import com.illusivesoulworks.polymorph.common.integration.PolymorphIntegrations;
+import com.illusivesoulworks.polymorph.common.integration.quickbench.QuickBenchModule;
+import com.illusivesoulworks.polymorph.common.integration.toms_storage.TomsStorageModule;
 import com.illusivesoulworks.polymorph.platform.services.IIntegrationPlatform;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
-// QuickBench integration dropped (CurseForge CDN 403, mod jar undownloadable).
 public class FabricIntegrationPlatform implements IIntegrationPlatform {
 
   @Override
   public Map<String, Supplier<Supplier<AbstractCompatibilityModule>>> createCompatibilityModules() {
-    return Collections.emptyMap();
+    Map<String, Supplier<Supplier<AbstractCompatibilityModule>>> modules = new HashMap<>();
+    modules.put(PolymorphIntegrations.Mod.QUICKBENCH.getId(), () -> QuickBenchModule::new);
+    modules.put(PolymorphIntegrations.Mod.TOMS_STORAGE.getId(), () -> TomsStorageModule::new);
+    return modules;
   }
 }

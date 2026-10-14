@@ -4,6 +4,7 @@
   "compatibilityLevel": "JAVA_16",
   "mixins": [
     "fastbench.MixinFastBenchUtil",
+    "fastsuite.MixinAuxRecipeManager",
     "roughlyenoughitems.MixinInternalWidgets"
   ],
   "plugin": "com.illusivesoulworks.polymorph.mixin.IntegratedMixinPlugin",

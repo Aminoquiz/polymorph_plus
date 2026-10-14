@@ -79,6 +79,14 @@ public class SelectionWidget implements Renderable, GuiEventListener {
     this.yOffset = y;
   }
 
+  public int getXOffset() {
+    return this.xOffset;
+  }
+
+  public int getYOffset() {
+    return this.yOffset;
+  }
+
   public void highlightButton(ResourceLocation resourceLocation) {
     this.outputWidgets.forEach(
         widget -> widget.setHighlighted(widget.getResourceLocation().equals(resourceLocation)));
@@ -130,14 +138,18 @@ public class SelectionWidget implements Renderable, GuiEventListener {
     int firstVisible = this.scrollOffset;
     int lastVisible = Math.min(size, firstVisible + MAX_VISIBLE) - 1;
     int screenLeft = Services.CLIENT_PLATFORM.getScreenLeft(this.containerScreen);
-    int guiWidth = Services.CLIENT_PLATFORM.getScreenWidth(this.containerScreen);
     boolean scrolls = this.canScroll();
     int rowWidth = visibleCount * BUTTON_SIZE;
     int left;
 
     if (scrolls) {
       // Wider than the button can carry once the arrows are added, so centre it on the GUI.
-      left = screenLeft + (guiWidth - rowWidth) / 2;
+      // Under the selector button, kept inside the screen's declared width. Centring on that
+      // width put the row off the frame of screens that declare side tabs (Occultism).
+      int guiWidth = Services.CLIENT_PLATFORM.getScreenWidth(this.containerScreen);
+      left = rowWidth <= guiWidth
+          ? clamp(this.x - rowWidth / 2, screenLeft, screenLeft + guiWidth - rowWidth)
+          : screenLeft + (guiWidth - rowWidth) / 2;
     } else {
       int rowXOffset = (int) (-BUTTON_SIZE * Math.floor(visibleCount / 2.0F));
 

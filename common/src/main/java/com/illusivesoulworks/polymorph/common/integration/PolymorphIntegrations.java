@@ -126,7 +126,11 @@ public class PolymorphIntegrations {
     QUICKBENCH("quickbench", true, Loader.FABRIC),
     FASTFURNACE("fastfurnace", true, Loader.NEOFORGE),
     FASTWORKBENCH("fastbench", true, Loader.NEOFORGE),
-    FASTSUITE("fastsuite", true, Loader.NEOFORGE);
+    FASTSUITE("fastsuite", true, Loader.NEOFORGE),
+    STORAGENETWORK("storagenetwork", true, Loader.NEOFORGE),
+    CYCLIC("cyclic", true, Loader.NEOFORGE),
+    TOMS_STORAGE("toms_storage", true, Loader.FABRIC, Loader.NEOFORGE),
+    SOPHISTICATEDCORE("sophisticatedcore", true, Loader.NEOFORGE);
 
     private final String id;
     private final boolean defaultValue;

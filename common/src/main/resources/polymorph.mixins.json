@@ -10,6 +10,7 @@
     "AccessorInventoryMenu",
     "AccessorSmithingTransformRecipe",
     "AccessorSmithingTrimRecipe",
+    "MixinAbstractFurnaceBlockEntity",
     "MixinCrafterMenu",
     "MixinCraftingMenu",
     "MixinLevelChunk",
@@ -26,6 +27,7 @@
   },
   "refmap": "${mod_id}.refmap.json",
   "client": [
-    "AccessorSmithingScreen"
+    "AccessorSmithingScreen",
+    "MixinAbstractContainerScreen"
   ]
 }

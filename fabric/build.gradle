@@ -24,7 +24,7 @@ dependencies {
     compileOnly "mezz.jei:jei-1.21-common:${jei_version}"
     modCompileOnly "me.shedaniel:RoughlyEnoughItems-fabric:${rei_version}"
 
-    // QuickBench excluded (CurseForge CDN 403 + QuickBench source files removed from build).
+    modCompileOnly files(rootProject.file('../../../external_sources/jars/quickbench/quickbench-4.4.2+mc.1.21.jar'))
 
     modApi "org.ladysnake.cardinal-components-api:cardinal-components-base:${project.cca_version}"
     modApi "org.ladysnake.cardinal-components-api:cardinal-components-entity:${project.cca_version}"
@@ -60,18 +60,6 @@ loom {
 }
 
 // Modrinth + CurseForge auto-publish dropped (manual upload via Aminoquiz).
-
-// QuickBench source files reference the QuickBench mod which is no longer downloadable
-// (CDN 403). Drop the integration entirely.
-sourceSets.main.java {
-    exclude '**/integration/quickbench/**'
-    exclude '**/mixin/integration/quickbench/**'
-}
-
-tasks.named('compileJava', JavaCompile).configure {
-    exclude '**/integration/quickbench/**'
-    exclude '**/mixin/integration/quickbench/**'
-}
 
 processResources.doLast {
     def compat = new File("${processResources.destinationDir}/${mod_id}-compatibility.fabric.mixins.json")

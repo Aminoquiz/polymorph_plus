@@ -27,7 +27,7 @@ public class ClientEventsListener {
     ClientTickEvents.END_CLIENT_TICK.register(client -> PolymorphClientEvents.tick());
     ScreenEvents.AFTER_INIT.register((client, screen, scaledWidth, scaledHeight) -> {
       PolymorphClientEvents.initScreen(screen);
-      ScreenEvents.afterRender(screen).register(PolymorphClientEvents::render);
+      ScreenEvents.afterRender(screen).register(PolymorphClientEvents::renderIfMissed);
       // allowMouseClick / allowMouseScroll return true to allow, false to block. Our
       // mouseClick / mouseScroll return true when the polymorph widget consumed it
       // (vanilla should be blocked). Invert.
