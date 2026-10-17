@@ -20,16 +20,7 @@ dependencies {
     // IntegratedMixinPlugin uses org.objectweb.asm.tree.ClassNode directly.
     compileOnly group: 'org.ow2.asm', name: 'asm-tree', version: '9.7'
 
-    // JEI compile reference. No maven publication for this line yet, so it is picked up from
-    // a local folder pointed at by local_mod_jars (gradle.properties) and skipped when absent —
-    // the JEI integration sources are excluded from this build anyway.
-    def localJars = file(project.findProperty('local_mod_jars') ?: 'local-mod-jars')
-
-    if (localJars.isDirectory()) {
-        compileOnly fileTree(dir: localJars, include: ['jei-*.jar'])
-    }
-
-    compileOnly fileTree(dir: rootProject.file('../../../external_sources/jars'), include: ["jei/jei-1.21.11-*.jar"])
+    compileOnly "mezz.jei:jei-1.21.11-common-api:${jei_version}"
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.10.2'
     testRuntimeOnly 'com.google.code.gson:gson:2.11.0'
@@ -64,8 +55,6 @@ def forkedFor261 = [
         // RecipeHolder.id() unwrap in payload + integration helper
         'com/illusivesoulworks/polymorph/common/network/client/CPacketBlockEntityListener.java',
         'com/illusivesoulworks/polymorph/common/integration/util/RecipeTransfer.java',
-        // RecipeHolder.id() unwrap in JEI mixin
-        'com/illusivesoulworks/polymorph/mixin/integration/jei/MixinRecipeTransferUtil.java',
         // GuiGraphics#text vs GuiGraphics#drawString: 1.21.11 uses drawString
         'com/illusivesoulworks/polymorph/client/TutorialOverlay.java',
         // CommandSourceStack.hasPermission(int) gone -> Commands.hasPermission(Permissions.X);

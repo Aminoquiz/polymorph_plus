@@ -44,8 +44,6 @@ public interface IPolymorphNetwork {
 
   void sendUpdatePreviewS2C(ServerPlayer player);
 
-  void sendRecipeHandshakeS2C(ServerPlayer player);
-
   /** Pushes the datapack source-priority list so the client ranks conflicts the same way. */
   void sendPackPriorityS2C(ServerPlayer player, List<String> namespaces);
 }

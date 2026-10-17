@@ -61,15 +61,16 @@ tasks.named('jar').configure {
 }
 
 dependencies {
+    compileOnly "mezz.jei:jei-1.21.11-common-api:${jei_version}"
     // JEI + REI compile references. No maven publication for this line yet, so they come from
     // the folder local_mod_jars points at and are skipped when absent.
     def localJars = file(project.findProperty('local_mod_jars') ?: 'local-mod-jars')
 
     if (localJars.isDirectory()) {
-        compileOnly fileTree(dir: localJars, include: ['jei-*.jar', 'RoughlyEnoughItems-*.jar'])
+        compileOnly fileTree(dir: localJars, include: ['RoughlyEnoughItems-*.jar'])
     }
 
-    compileOnly fileTree(dir: rootProject.file('../../../external_sources/jars'), include: ["jei/jei-1.21.11-*.jar", "rei/RoughlyEnoughItems-21.11.*.jar"])
+    compileOnly fileTree(dir: rootProject.file('../../../external_sources/jars'), include: ["rei/RoughlyEnoughItems-21.11.*.jar"])
     // EMI 1.21.11 / FastWorkbench 1.21.11 not yet wired.
     // compileOnly "dev.shadowsoffire:FastWorkbench:${fastworkbench_version}"
     // compileOnly "dev.emi:emi-xplat-mojmap:${emi_version}"

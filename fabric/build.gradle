@@ -11,6 +11,7 @@ repositories {
 }
 
 dependencies {
+    compileOnly "mezz.jei:jei-1.21.11-common-api:${jei_version}"
     minecraft "com.mojang:minecraft:${minecraft_version}"
     mappings loom.officialMojangMappings()
     modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
