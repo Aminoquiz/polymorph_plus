@@ -25,7 +25,6 @@ import com.illusivesoulworks.polymorph.common.network.client.CPacketPlayerPriori
 import com.illusivesoulworks.polymorph.common.network.client.CPacketPlayerRecipeSelection;
 import com.illusivesoulworks.polymorph.common.network.server.SPacketPlayerRecipeSync;
 import com.illusivesoulworks.polymorph.common.network.server.SPacketPackPriority;
-import com.illusivesoulworks.polymorph.common.network.server.SPacketRecipeHandshake;
 import com.illusivesoulworks.polymorph.common.network.server.SPacketRecipesList;
 import com.illusivesoulworks.polymorph.common.network.server.SPacketUpdatePreview;
 import com.illusivesoulworks.polymorph.PolymorphConstants;
@@ -108,10 +107,5 @@ public class PolymorphFabricPacketDistributor implements IPolymorphNetwork {
   @Override
   public void sendUpdatePreviewS2C(ServerPlayer player) {
     ServerPlayNetworking.send(player, SPacketUpdatePreview.INSTANCE);
-  }
-
-  @Override
-  public void sendRecipeHandshakeS2C(ServerPlayer player) {
-    ServerPlayNetworking.send(player, SPacketRecipeHandshake.INSTANCE);
   }
 }

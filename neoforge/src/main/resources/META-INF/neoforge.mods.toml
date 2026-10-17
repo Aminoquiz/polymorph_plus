@@ -54,3 +54,9 @@ Both mods inject mixins on the same vanilla menus and cannot coexist.'''
     versionRange = "[0,1.2.0)"
     ordering = "NONE"
     side = "BOTH"
+[[dependencies.${mod_id}]]
+    modId = "jei"
+    type = "optional"
+    versionRange = "[${jei_version},)"
+    ordering = "NONE"
+    side = "BOTH"

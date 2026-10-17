@@ -4,8 +4,6 @@
   "compatibilityLevel": "JAVA_16",
   "mixins": [
     "emi.MixinEmiRecipeFiller",
-    "jei.MixinRecipeTransferUtil",
-    "jei.MixinPacketRecipeTransfer",
     "sophisticatedcore.MixinCraftingUpgradeContainer",
     "storagenetwork.MixinContainerNetwork",
     "cyclic.MixinContainerWorkbench",
