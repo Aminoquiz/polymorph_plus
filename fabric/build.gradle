@@ -18,6 +18,7 @@ repositories {
 }
 
 dependencies {
+    compileOnly "mezz.jei:jei-26.3-common-api:${jei_version}"
     // -no-remap variant: no mappings configuration; mod* prefixes replaced by plain ones.
     minecraft "com.mojang:minecraft:${minecraft_version}"
     implementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
@@ -96,6 +97,7 @@ processResources {
     inputs.property "issues_url", project.issues_url
     inputs.property "minecraft_version_range_alt", project.minecraft_version_range_alt
     inputs.property "java_version", project.java_version
+    inputs.property "jei_min_version", project.jei_min_version
 
     filesMatching("fabric.mod.json") {
         expand([
@@ -109,6 +111,7 @@ processResources {
                 "issues_url"                 : project.issues_url,
                 "minecraft_version_range_alt": project.minecraft_version_range_alt,
                 "java_version"               : project.java_version,
+                "jei_min_version"            : project.jei_min_version,
         ])
     }
 

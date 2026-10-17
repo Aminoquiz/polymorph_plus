@@ -23,16 +23,6 @@ import net.minecraft.world.item.crafting.RecipeHolder;
  */
 public class RecipeTransfer {
 
-  private static Identifier transfer = null;
-
-  public static void enqueueTransfer(Identifier id) {
-    transfer = id;
-  }
-
-  public static Identifier getTransfer() {
-    return transfer;
-  }
-
   public static void selectRecipe(RecipeHolder<?> recipe) {
     selectRecipe(recipe.id().identifier());
   }

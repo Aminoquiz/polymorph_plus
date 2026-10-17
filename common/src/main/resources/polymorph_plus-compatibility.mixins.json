@@ -4,12 +4,8 @@
   "compatibilityLevel": "JAVA_16",
   "mixins": [
     "sophisticatedcore.MixinCraftingUpgradeContainer",
-    "jei.MixinPacketRecipeTransfer",
     "toms_storage.MixinCraftingTerminalBlockEntity",
     "travelersbackpack.MixinBackpackBaseMenu"
-  ],
-  "client": [
-    "jei.MixinRecipeTransferUtil"
   ],
   "injectors": {
     "defaultRequire": 1,

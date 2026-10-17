@@ -3,7 +3,6 @@ package com.illusivesoulworks.polymorph.common.network;
 import com.illusivesoulworks.polymorph.common.network.server.SPacketHighlightRecipe;
 import com.illusivesoulworks.polymorph.common.network.server.SPacketPackPriority;
 import com.illusivesoulworks.polymorph.common.network.server.SPacketPlayerRecipeSync;
-import com.illusivesoulworks.polymorph.common.network.server.SPacketRecipeHandshake;
 import com.illusivesoulworks.polymorph.common.network.server.SPacketRecipesList;
 import com.illusivesoulworks.polymorph.common.network.server.SPacketUpdatePreview;
 import net.minecraft.network.chat.Component;
@@ -43,9 +42,5 @@ public class ClientPayloadHandler {
 
   public void handlePacket(final SPacketPackPriority packet, final IPayloadContext ctx) {
     handleData(ctx, () -> SPacketPackPriority.handle(packet));
-  }
-
-  public void handlePacket(SPacketRecipeHandshake packet, final IPayloadContext ctx) {
-    handleData(ctx, () -> SPacketRecipeHandshake.handle(packet));
   }
 }

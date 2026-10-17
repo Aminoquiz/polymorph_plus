@@ -62,15 +62,16 @@ tasks.named('jar').configure {
 }
 
 dependencies {
+    compileOnly "mezz.jei:jei-26.3-common-api:${jei_version}"
     // JEI + REI compile references. No 26.x maven publication yet, so they come from the
     // folder local_mod_jars points at and are skipped when absent.
     def localJars = file(project.findProperty('local_mod_jars') ?: 'local-mod-jars')
 
     if (localJars.isDirectory()) {
-        compileOnly fileTree(dir: localJars, include: ["jei-${minecraft_version}-*.jar", "RoughlyEnoughItems-${minecraft_version}.*.jar"])
+        compileOnly fileTree(dir: localJars, include: ["RoughlyEnoughItems-${minecraft_version}.*.jar"])
     }
 
-    compileOnly fileTree(dir: rootProject.file('../../../external_sources/jars'), include: ["jei/jei-26.3-*.jar", "rei/RoughlyEnoughItems-26.3.*.jar"])
+    compileOnly fileTree(dir: rootProject.file('../../../external_sources/jars'), include: ["rei/RoughlyEnoughItems-26.3.*.jar"])
     // Extra mods for dev runs. Opt-in: -Pdev_run_mods=<folder of jars>. A dev run does not scan
     // the game directory's mods folder, and 26.x has no additionalRuntimeClasspath.
     def devRunMods = project.findProperty('dev_run_mods')
