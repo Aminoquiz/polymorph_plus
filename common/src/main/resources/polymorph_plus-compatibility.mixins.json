@@ -4,8 +4,6 @@
   "compatibilityLevel": "JAVA_16",
   "mixins": [
     "sophisticatedcore.MixinCraftingUpgradeContainer",
-    "jei.MixinRecipeTransferUtil",
-    "jei.MixinPacketRecipeTransfer",
     "toms_storage.MixinCraftingTerminalBlockEntity"
   ],
   "injectors": {

@@ -62,15 +62,16 @@ tasks.named('jar').configure {
 }
 
 dependencies {
+    compileOnly "mezz.jei:jei-26.2-common-api:${jei_version}"
     // JEI + REI compile references. No 26.x maven publication yet, so they come from the
     // folder local_mod_jars points at and are skipped when absent.
     def localJars = file(project.findProperty('local_mod_jars') ?: 'local-mod-jars')
 
     if (localJars.isDirectory()) {
-        compileOnly fileTree(dir: localJars, include: ['jei-*.jar', 'RoughlyEnoughItems-*.jar'])
+        compileOnly fileTree(dir: localJars, include: ['RoughlyEnoughItems-*.jar'])
     }
 
-    compileOnly fileTree(dir: rootProject.file('../../../external_sources/jars'), include: ["jei/jei-26.2-*.jar", "rei/RoughlyEnoughItems-26.2.*.jar"])
+    compileOnly fileTree(dir: rootProject.file('../../../external_sources/jars'), include: ["rei/RoughlyEnoughItems-26.2.*.jar"])
     // EMI 26.x not yet published.
     // compileOnly "dev.emi:emi-neoforge:${emi_version}"
 }
