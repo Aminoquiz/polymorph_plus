@@ -69,13 +69,14 @@ tasks.named('jar').configure {
 }
 
 dependencies {
+    compileOnly "mezz.jei:jei-26.1.2-common-api:${jei_version}"
     // JEI, REI and FastWorkbench compile references. No 26.x maven publication yet, so they come
     // from the folder local_mod_jars points at and are skipped when absent.
     if (localModJars.isDirectory()) {
         compileOnly fileTree(dir: localModJars,
-                include: ['jei-*.jar', 'RoughlyEnoughItems-*.jar', 'FastWorkbench-*.jar'])
+                include: ['RoughlyEnoughItems-*.jar', 'FastWorkbench-*.jar'])
     }
-    compileOnly fileTree(dir: rootProject.file('../../../external_sources/jars'), include: ["jei/jei-26.1.2-*.jar", "rei/RoughlyEnoughItems-26.1.*.jar", "fastworkbench/FastWorkbench-26.1.2-*.jar", "fastfurnace/FastFurnace-26.1.2-*.jar", "fastsuite/FastSuite-26.1.2-*.jar"])
+    compileOnly fileTree(dir: rootProject.file('../../../external_sources/jars'), include: ["rei/RoughlyEnoughItems-26.1.*.jar", "fastworkbench/FastWorkbench-26.1.2-*.jar", "fastfurnace/FastFurnace-26.1.2-*.jar", "fastsuite/FastSuite-26.1.2-*.jar"])
     // Extra mods for dev runs. Opt-in: -Pdev_run_mods=<folder of jars>. A dev run does not scan
     // the game directory's mods folder, and 26.x has no additionalRuntimeClasspath.
     def devRunMods = project.findProperty('dev_run_mods')

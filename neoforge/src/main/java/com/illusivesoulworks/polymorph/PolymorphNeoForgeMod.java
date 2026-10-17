@@ -30,7 +30,6 @@ import com.illusivesoulworks.polymorph.common.network.client.CPacketPlayerRecipe
 import com.illusivesoulworks.polymorph.common.network.server.SPacketHighlightRecipe;
 import com.illusivesoulworks.polymorph.common.network.server.SPacketPackPriority;
 import com.illusivesoulworks.polymorph.common.network.server.SPacketPlayerRecipeSync;
-import com.illusivesoulworks.polymorph.common.network.server.SPacketRecipeHandshake;
 import com.illusivesoulworks.polymorph.common.network.server.SPacketRecipesList;
 import com.illusivesoulworks.polymorph.common.network.server.SPacketUpdatePreview;
 import net.neoforged.bus.api.IEventBus;
@@ -76,8 +75,6 @@ public class PolymorphNeoForgeMod {
     registrar.playToClient(SPacketPlayerRecipeSync.TYPE, SPacketPlayerRecipeSync.STREAM_CODEC,
         ClientPayloadHandler.getInstance()::handlePacket);
     registrar.playToClient(SPacketUpdatePreview.TYPE, SPacketUpdatePreview.STREAM_CODEC,
-        ClientPayloadHandler.getInstance()::handlePacket);
-    registrar.playToClient(SPacketRecipeHandshake.TYPE, SPacketRecipeHandshake.STREAM_CODEC,
         ClientPayloadHandler.getInstance()::handlePacket);
 
     registrar.playToServer(CPacketPersistentRecipeSelection.TYPE,
