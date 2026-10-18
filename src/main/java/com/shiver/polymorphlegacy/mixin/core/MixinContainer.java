@@ -5,10 +5,12 @@ import com.shiver.polymorphlegacy.api.CraftingContextProvider;
 import com.shiver.polymorphlegacy.crafting.CraftingState;
 import com.shiver.polymorphlegacy.crafting.CraftingStateHolder;
 import com.shiver.polymorphlegacy.crafting.CraftingService;
+import com.shiver.polymorphlegacy.crafting.BrewingService;
 import com.shiver.polymorphlegacy.crafting.FurnaceService;
 import java.util.List;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
+import net.minecraft.inventory.ContainerBrewingStand;
 import net.minecraft.inventory.ContainerFurnace;
 import net.minecraft.inventory.IContainerListener;
 import net.minecraft.inventory.InventoryCrafting;
@@ -43,6 +45,8 @@ public abstract class MixinContainer implements CraftingStateHolder {
             }
         } else if ((Object) this instanceof ContainerFurnace) {
             FurnaceService.detectChanges((ContainerFurnace) (Object) this, listeners);
+        } else if ((Object) this instanceof ContainerBrewingStand) {
+            BrewingService.detectChanges((ContainerBrewingStand) (Object) this, listeners);
         }
     }
 

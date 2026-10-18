@@ -46,6 +46,7 @@ dependencies {
     implementation rfg.deobf("curse.maven:had-enough-items-557549:8648715")
     compileOnly rfg.deobf("curse.maven:mantle-74924:2713386")
     compileOnly rfg.deobf("curse.maven:tinkers-antique-1242239:8666425")
+    compileOnly rfg.deobf("curse.maven:crafting-station-318551:3101596")
     // Example - Deobfuscating dependencies:
     // rfg.deobf('curse.maven:had-enough-items-557549:4543375')
     // By wrapping a dependency descriptor in rfg.deobf() method call, the dependency is queued for deobfuscation

@@ -13,6 +13,7 @@ import javax.annotation.Nullable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.inventory.Container;
+import net.minecraft.inventory.ContainerBrewingStand;
 import net.minecraft.inventory.ContainerFurnace;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
@@ -48,6 +49,10 @@ public final class ClientRecipes {
             output = context.getOutputSlot();
         } else if (gui.inventorySlots instanceof ContainerFurnace) {
             output = gui.inventorySlots.getSlot(2);
+        } else if (gui.inventorySlots instanceof ContainerBrewingStand) {
+            // The overlay puts its button 22 px above this slot, so it lands at (124, 17), right of the brew arrow.
+            Slot reagent = gui.inventorySlots.getSlot(3);
+            output = new Slot(reagent.inventory, reagent.getSlotIndex(), 124, 39);
         } else {
             return;
         }

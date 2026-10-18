@@ -22,10 +22,33 @@ public final class PolymorphClientConfig {
     private static boolean pinSelector;
     private static int tutorialStep;
     private static boolean scrollCycle = true;
+    private static int buttonOffsetX;
+    private static int buttonOffsetY;
+    private static float buttonScale = 1.0F;
     private static List<String> priorityNamespaces = new ArrayList<>();
     private static List<String> priorityRecipes = new ArrayList<>();
 
     private PolymorphClientConfig() {
+    }
+
+    /**
+     * Hand-edited shift of the selector button (and the row it opens) from its spot above the
+     * output slot, for inventory mods that draw over that spot.
+     */
+    public static int getButtonOffsetX() {
+        load();
+        return buttonOffsetX;
+    }
+
+    public static int getButtonOffsetY() {
+        load();
+        return buttonOffsetY;
+    }
+
+    /** Size factor of the 16x16 selector button, clamped to 0.5..4. */
+    public static float getButtonScale() {
+        load();
+        return buttonScale;
     }
 
     public static boolean isPinSelector() {
@@ -120,6 +143,16 @@ public final class PolymorphClientConfig {
             if (obj.has("scrollCycleOnOutput")) {
                 scrollCycle = obj.get("scrollCycleOnOutput").getAsBoolean();
             }
+            if (obj.has("buttonOffsetX")) {
+                buttonOffsetX = obj.get("buttonOffsetX").getAsInt();
+            }
+            if (obj.has("buttonOffsetY")) {
+                buttonOffsetY = obj.get("buttonOffsetY").getAsInt();
+            }
+            if (obj.has("buttonScale")) {
+                float scale = obj.get("buttonScale").getAsFloat();
+                buttonScale = Float.isNaN(scale) ? 1.0F : Math.max(0.5F, Math.min(4.0F, scale));
+            }
             if (obj.has("priorityNamespaces")) {
                 priorityNamespaces = trim(RecipePriority.parse(obj.get("priorityNamespaces").toString()),
                         PlayerPreferences.MAX_NAMESPACES);
@@ -138,6 +171,9 @@ public final class PolymorphClientConfig {
         obj.addProperty("pinSelector", pinSelector);
         obj.addProperty("tutorialStep", tutorialStep);
         obj.addProperty("scrollCycleOnOutput", scrollCycle);
+        obj.addProperty("buttonOffsetX", buttonOffsetX);
+        obj.addProperty("buttonOffsetY", buttonOffsetY);
+        obj.addProperty("buttonScale", buttonScale);
         JsonArray namespaces = new JsonArray();
         priorityNamespaces.forEach(namespaces::add);
         obj.add("priorityNamespaces", namespaces);

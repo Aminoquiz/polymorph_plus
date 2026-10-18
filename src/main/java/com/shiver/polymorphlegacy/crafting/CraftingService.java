@@ -74,6 +74,10 @@ public final class CraftingService {
             FurnaceService.openView(player, viewId);
             return;
         }
+        if (BrewingService.isBrewingStand(player, windowId)) {
+            BrewingService.openView(player, viewId);
+            return;
+        }
         CraftingContext context = currentContext(player, windowId);
         if (context == null || viewId == 0) {
             return;
@@ -85,6 +89,9 @@ public final class CraftingService {
     public static boolean select(EntityPlayerMP player, int windowId, int viewId, ResourceLocation id) {
         if (FurnaceService.isFurnace(player, windowId)) {
             return FurnaceService.select(player, viewId, id);
+        }
+        if (BrewingService.isBrewingStand(player, windowId)) {
+            return BrewingService.select(player, viewId, id);
         }
         CraftingContext context = currentContext(player, windowId);
         if (context == null || viewId == 0 || state(context).getViewId() != viewId) {

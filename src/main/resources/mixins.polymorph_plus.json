@@ -4,6 +4,7 @@
   "package": "com.shiver.polymorphlegacy.mixin.core",
   "refmap": "mixins.polymorph_plus.refmap.json",
   "compatibilityLevel": "JAVA_8",
-  "mixins": ["AccessorContainerFurnace", "MixinContainer", "MixinSlotCrafting", "MixinTileEntityFurnace"],
+  "mixins": ["AccessorContainerBrewingStand", "AccessorContainerFurnace", "AccessorMixPredicate", "AccessorPotionHelper",
+    "MixinContainer", "MixinSlotCrafting", "MixinTileEntityBrewingStand", "MixinTileEntityFurnace"],
   "injectors": { "defaultRequire": 1 }
 }

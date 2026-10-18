@@ -115,7 +115,9 @@ public final class CraftingOverlay {
     }
 
     private void layout() {
-        button = new Rectangle(left() + outputSlot.xPos, top() + outputSlot.yPos - 22, 16, 16);
+        int size = Math.round(16 * PolymorphClientConfig.getButtonScale());
+        button = new Rectangle(left() + outputSlot.xPos + PolymorphClientConfig.getButtonOffsetX(),
+                top() + outputSlot.yPos - 22 + PolymorphClientConfig.getButtonOffsetY(), size, size);
         scroll = Math.max(0, Math.min(scroll, maxScroll()));
         int visible = Math.max(1, Math.min(MAX_VISIBLE, choices.size()));
         int width = visible * SIZE;
@@ -124,13 +126,13 @@ public final class CraftingOverlay {
         int guiLeft = gui.getGuiLeft();
         int guiWidth = gui.getXSize();
         int x = width <= guiWidth
-                ? clamp(button.x + 8 - width / 2, guiLeft, guiLeft + guiWidth - width)
+                ? clamp(button.x + button.width / 2 - width / 2, guiLeft, guiLeft + guiWidth - width)
                 : guiLeft + (guiWidth - width) / 2;
         x = clamp(x, margin, gui.width - width - margin);
         // a scrolling row sits above the GUI's top edge, so it never covers the title (as in the other versions)
         int y = canScroll() && gui.getGuiTop() - SIZE - 1 >= 0 ? gui.getGuiTop() - SIZE - 1 : button.y - SIZE - 4;
         if (y < 4) {
-            y = button.y + 20;
+            y = button.y + button.height + 4;
         }
         row = new Rectangle(x, clamp(y, 4, gui.height - SIZE - 4), width, SIZE);
         prevArrow = new Rectangle(row.x - ARROW_GAP - ARROW_WIDTH, row.y, ARROW_WIDTH, SIZE);
@@ -194,10 +196,10 @@ public final class CraftingOverlay {
         GlStateManager.translate(0, 0, 400);
         GlStateManager.disableDepth();
         GlStateManager.disableLighting();
-        sprite(button.contains(mouseX, mouseY) ? SELECTOR_HOVER : SELECTOR, button.x, button.y, 16);
+        sprite(button.contains(mouseX, mouseY) ? SELECTOR_HOVER : SELECTOR, button.x, button.y, button.width);
         if (pinned) {
-            Gui.drawRect(button.x + 11, button.y, button.x + 16, button.y + 5, 0xFF202020);
-            Gui.drawRect(button.x + 12, button.y + 1, button.x + 15, button.y + 4, 0xFFFFD000);
+            Gui.drawRect(button.x + button.width - 5, button.y, button.x + button.width, button.y + 5, 0xFF202020);
+            Gui.drawRect(button.x + button.width - 4, button.y + 1, button.x + button.width - 1, button.y + 4, 0xFFFFD000);
         }
         if (expanded) {
             RenderItem renderer = mc.getRenderItem();
