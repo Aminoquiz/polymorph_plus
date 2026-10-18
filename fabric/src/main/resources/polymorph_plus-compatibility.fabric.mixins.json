@@ -3,6 +3,9 @@
   "package": "com.illusivesoulworks.polymorph.mixin.integration",
   "compatibilityLevel": "JAVA_16",
   "mixins": [],
+  "client": [
+    "roughlyenoughitems.MixinInternalWidgets"
+  ],
   "plugin": "com.illusivesoulworks.polymorph.mixin.IntegratedMixinPlugin",
   "minVersion": "0.8"
 }

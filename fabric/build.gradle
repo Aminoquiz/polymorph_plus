@@ -32,23 +32,17 @@ dependencies {
     // Optional integrations. Re-enable when 1.21.8 builds are wired.
     // compileOnly "dev.emi:emi-xplat-mojmap:${emi_version}"
     // compileOnly "mezz.jei:jei-1.21-common:${jei_version}"
-    // modCompileOnly "me.shedaniel:RoughlyEnoughItems-fabric:${rei_version}"
+    compileOnly "mezz.jei:jei-1.21.8-common:${jei_version}"
+    modCompileOnly "me.shedaniel:RoughlyEnoughItems-fabric:${rei_version}"
     // modCompileOnly "curse.maven:quickbench-914551:5075002"
 }
 
 sourceSets.main.java {
     exclude 'com/illusivesoulworks/polymorph/common/integration/quickbench/**'
     exclude 'com/illusivesoulworks/polymorph/mixin/integration/quickbench/**'
-    exclude 'com/illusivesoulworks/polymorph/mixin/integration/roughlyenoughitems/**'
-    exclude 'com/illusivesoulworks/polymorph/mixin/integration/jei/**'
-    exclude 'com/illusivesoulworks/polymorph/integration/jei/**'
 }
 
 tasks.named('javadoc', Javadoc).configure {
-    exclude '**/mixin/integration/jei/**'
-    exclude '**/integration/jei/**'
-    exclude '**/mixin/integration/roughlyenoughitems/**'
-    exclude '**/integration/roughlyenoughitems/**'
     exclude '**/integration/quickbench/**'
     exclude '**/mixin/integration/quickbench/**'
     exclude '**/mixin/integration/emi/**'
@@ -56,10 +50,6 @@ tasks.named('javadoc', Javadoc).configure {
 }
 
 tasks.named('compileJava', JavaCompile).configure {
-    exclude '**/mixin/integration/jei/**'
-    exclude '**/integration/jei/**'
-    exclude '**/mixin/integration/roughlyenoughitems/**'
-    exclude '**/integration/roughlyenoughitems/**'
     exclude '**/integration/quickbench/**'
     exclude '**/mixin/integration/quickbench/**'
     exclude '**/mixin/integration/emi/**'
@@ -97,6 +87,6 @@ processResources {
 processResources.doLast {
     def compat = new File("${processResources.destinationDir}/polymorph_plus-compatibility.mixins.json")
     compat.parentFile.mkdirs()
-    compat.text = '{"required":false,"package":"com.illusivesoulworks.polymorph.mixin.integration","compatibilityLevel":"JAVA_16","mixins":["toms_storage.MixinCraftingTerminalBlockEntity", "travelersbackpack.MixinBackpackBaseMenu"],"injectors":{"defaultRequire":1},"plugin":"com.illusivesoulworks.polymorph.mixin.IntegratedMixinPlugin","minVersion":"0.8"}'
+    compat.text = '{"required":false,"package":"com.illusivesoulworks.polymorph.mixin.integration","compatibilityLevel":"JAVA_16","mixins":["craftingslots.MixinCustomCraftingMenu", "jei.MixinRecipeTransferUtilFabric", "toms_storage.MixinCraftingTerminalBlockEntity", "travelersbackpack.MixinBackpackBaseMenu"],"injectors":{"defaultRequire":1},"plugin":"com.illusivesoulworks.polymorph.mixin.IntegratedMixinPlugin","minVersion":"0.8"}'
 }
 

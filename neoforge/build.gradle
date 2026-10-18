@@ -36,7 +36,6 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 sourceSets.main.java {
     exclude 'com/illusivesoulworks/polymorph/common/integration/fastbench/**'
     exclude 'com/illusivesoulworks/polymorph/mixin/integration/fastbench/**'
-    exclude 'com/illusivesoulworks/polymorph/mixin/integration/roughlyenoughitems/**'
 }
 
 def at = file('src/main/resources/META-INF/accesstransformer.cfg')
@@ -59,5 +58,6 @@ dependencies {
     // compileOnly "dev.shadowsoffire:Placebo:${placebo_version}"
     // compileOnly "dev.emi:emi-xplat-mojmap:${emi_version}"
     // compileOnly "mezz.jei:jei-1.21-common:${jei_version}"
-    // compileOnly "me.shedaniel:RoughlyEnoughItems-neoforge:${rei_version}"
+    compileOnly "mezz.jei:jei-1.21.8-common:${jei_version}"
+    compileOnly "me.shedaniel:RoughlyEnoughItems-neoforge:${rei_version}"
 }

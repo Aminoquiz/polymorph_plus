@@ -30,12 +30,14 @@ public class TravelersBackpackRecipesWidget extends PlayerRecipesWidget {
   @Override
   public void initChildWidgets() {
     super.initChildWidgets();
-    this.openButton.setOffsets(this.getXPos(), this.getYPos() + BUTTON_Y_SHIFT);
+    this.openButton.setOffsets(this.getXPos() + PolymorphClientConfig.getButtonOffsetX(),
+        this.getYPos() + BUTTON_Y_SHIFT + PolymorphClientConfig.getButtonOffsetY());
   }
 
   @Override
   protected void resetWidgetOffsets() {
     super.resetWidgetOffsets();
-    this.openButton.setOffsets(this.getXPos(), this.getYPos() + BUTTON_Y_SHIFT);
+    this.openButton.setOffsets(this.getXPos() + PolymorphClientConfig.getButtonOffsetX(),
+        this.getYPos() + BUTTON_Y_SHIFT + PolymorphClientConfig.getButtonOffsetY());
   }
 }

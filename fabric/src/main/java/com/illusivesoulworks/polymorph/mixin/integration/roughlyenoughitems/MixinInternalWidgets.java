@@ -17,7 +17,8 @@ public class MixinInternalWidgets {
 
   @Inject(
       at = @At("HEAD"),
-      method = "lambda$createAutoCraftingButtonWidget$0"
+      method = "lambda$createAutoCraftingButtonWidget$0",
+      require = 0
   )
   private static void polymorph$create(Supplier<Display> displaySupplier,
                                        Supplier<Collection<ResourceLocation>> idsSupplier,

@@ -98,7 +98,7 @@ public abstract class AbstractRecipeData<E> implements IRecipeData<E> {
       Identifier id = entry.id().identifier();
       ItemStack output = recipe.assemble(recipeInput, level.registryAccess());
 
-      if (output.isEmpty()) {
+      if (output == null || output.isEmpty()) {
         continue;
       }
 

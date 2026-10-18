@@ -22,6 +22,7 @@ dependencies {
 
     // JEI / EMI / REI compile references — uncomment when 26.1.2 builds are published.
     // compileOnly "mezz.jei:jei-26.1-common:${jei_version}"
+    compileOnly "mezz.jei:jei-1.21.8-common:${jei_version}"
     // compileOnly "dev.emi:emi-xplat-mojmap:${emi_version}"
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.10.2'
@@ -78,8 +79,6 @@ def forkedFor261 = [
         'com/illusivesoulworks/polymorph/api/client/widgets/children/SelectionWidget.java',
         // 1.21.11 also forks TutorialOverlay (drawString vs text).
         'com/illusivesoulworks/polymorph/client/TutorialOverlay.java',
-        // JEI mixin fork intentionally left out: 1.21.8 has no JEI compileOnly wired.
-        // 'com/illusivesoulworks/polymorph/mixin/integration/jei/MixinRecipeTransferUtil.java',
 ]
 
 // Integration mixins for optional mods (EMI / JEI) that we don't compile against in the
