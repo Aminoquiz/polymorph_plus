@@ -83,6 +83,9 @@ minecraft {
 sourceSets.main.resources.srcDir 'src/generated/resources'
 
 dependencies {
+    compileOnly fg.deobf("mezz.jei:jei-1.18.2-forge-api:${jei_version}")
+    compileOnly "mezz.jei:jei-1.18.2-common-api:${jei_version}"
+    testCompileOnly "mezz.jei:jei-1.18.2-common-api:${jei_version}"
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
     compileOnly project(":common")
 	annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
