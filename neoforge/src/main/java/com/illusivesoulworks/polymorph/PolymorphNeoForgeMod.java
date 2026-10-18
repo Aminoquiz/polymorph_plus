@@ -18,6 +18,9 @@
 package com.illusivesoulworks.polymorph;
 
 import com.illusivesoulworks.polymorph.api.PolymorphApi;
+import com.illusivesoulworks.polymorph.common.brewing.BrewingCandidates;
+import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.common.brewing.IBrewingRecipe;
 import com.illusivesoulworks.polymorph.client.ClientEventsListener;
 import com.illusivesoulworks.polymorph.common.CommonEventsListener;
 import com.illusivesoulworks.polymorph.common.PolymorphNeoForgeCapabilities;
@@ -45,6 +48,16 @@ public class PolymorphNeoForgeMod {
 
   public PolymorphNeoForgeMod(IEventBus eventBus) {
     PolymorphCommonMod.init();
+    BrewingCandidates.extraSource = (brewing, bottle, reagent, out) -> {
+
+      for (IBrewingRecipe recipe : brewing.getRecipes()) {
+        ItemStack output = recipe.getOutput(bottle, reagent);
+
+        if (!output.isEmpty()) {
+          out.add(output);
+        }
+      }
+    };
     PolymorphNeoForgeCapabilities.setup(eventBus);
     eventBus.addListener(this::setup);
     eventBus.addListener(this::clientSetup);

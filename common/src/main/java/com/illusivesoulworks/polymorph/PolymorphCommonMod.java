@@ -19,6 +19,7 @@ package com.illusivesoulworks.polymorph;
 
 import com.illusivesoulworks.polymorph.api.PolymorphApi;
 import com.illusivesoulworks.polymorph.client.PolymorphWidgetsImpl;
+import com.illusivesoulworks.polymorph.common.capability.BrewingStandRecipeData;
 import com.illusivesoulworks.polymorph.common.capability.CrafterRecipeData;
 import com.illusivesoulworks.polymorph.common.capability.FurnaceRecipeData;
 import com.illusivesoulworks.polymorph.common.integration.PolymorphIntegrations;
@@ -26,6 +27,7 @@ import net.minecraft.world.Container;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BrewingStandBlockEntity;
 import net.minecraft.world.level.block.entity.CrafterBlockEntity;
 
 public class PolymorphCommonMod {
@@ -41,6 +43,8 @@ public class PolymorphCommonMod {
         return new FurnaceRecipeData((AbstractFurnaceBlockEntity) blockEntity);
       } else if (blockEntity instanceof CrafterBlockEntity) {
         return new CrafterRecipeData((CrafterBlockEntity) blockEntity);
+      } else if (blockEntity instanceof BrewingStandBlockEntity brewingStand) {
+        return new BrewingStandRecipeData(brewingStand);
       }
       return null;
     });

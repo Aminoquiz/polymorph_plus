@@ -120,6 +120,7 @@ public class PolymorphIntegrations {
   }
 
   public enum Mod {
+    CRAFTINGSLOTS("craftingslots", true, Loader.FABRIC, Loader.NEOFORGE),
     REI("roughlyenoughitems", true, Loader.FABRIC, Loader.NEOFORGE),
     JEI("jei", true, Loader.FABRIC, Loader.FORGE, Loader.NEOFORGE),
     EMI("emi", true, Loader.FABRIC, Loader.NEOFORGE),

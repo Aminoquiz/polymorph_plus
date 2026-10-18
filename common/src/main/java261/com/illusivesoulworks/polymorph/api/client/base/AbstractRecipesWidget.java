@@ -71,13 +71,15 @@ public abstract class AbstractRecipesWidget implements IRecipesWidget {
   public void initChildWidgets() {
     this.anchorX = this.getXPos();
     this.anchorY = this.getYPos();
-    int x = Services.CLIENT_PLATFORM.getScreenLeft(this.containerScreen) + this.getXPos();
-    int y = Services.CLIENT_PLATFORM.getScreenTop(this.containerScreen) + this.getYPos();
+    int bx = this.getXPos() + PolymorphClientConfig.getButtonOffsetX();
+    int by = this.getYPos() + PolymorphClientConfig.getButtonOffsetY();
+    int x = Services.CLIENT_PLATFORM.getScreenLeft(this.containerScreen) + bx;
+    int y = Services.CLIENT_PLATFORM.getScreenTop(this.containerScreen) + by;
     this.selectionWidget =
-        new SelectionWidget(x + this.xOffset, y + this.yOffset, this.getXPos() + this.xOffset,
-            this.getYPos() + this.yOffset, this.getOutputSprites(), this::selectRecipe,
+        new SelectionWidget(x + this.xOffset, y + this.yOffset, bx + this.xOffset,
+            by + this.yOffset, this.getOutputSprites(), this::selectRecipe,
             this.containerScreen);
-    this.openButton = new OpenSelectionButton(this.containerScreen, this.getXPos(), this.getYPos(),
+    this.openButton = new OpenSelectionButton(this.containerScreen, bx, by,
         this.getSelectorSprites(),
         clickWidget -> this.selectionWidget.setActive(!this.selectionWidget.isActive()));
     this.openButton.visible = this.selectionWidget.getOutputWidgets().size() > 1;
@@ -160,8 +162,8 @@ public abstract class AbstractRecipesWidget implements IRecipesWidget {
 
   private boolean isOverOpenButton(double mouseX, double mouseY) {
     return this.openButton != null && this.openButton.visible
-        && mouseX >= this.openButton.getX() && mouseX < this.openButton.getX() + 16
-        && mouseY >= this.openButton.getY() && mouseY < this.openButton.getY() + 16;
+        && mouseX >= this.openButton.getX() && mouseX < this.openButton.getX() + this.openButton.getWidth()
+        && mouseY >= this.openButton.getY() && mouseY < this.openButton.getY() + this.openButton.getHeight();
   }
 
   public WidgetSprites getSelectorSprites() {
@@ -235,7 +237,7 @@ public abstract class AbstractRecipesWidget implements IRecipesWidget {
     this.selectionWidget.extractRenderState(guiGraphics, mouseX, mouseY, renderPartialTicks);
     this.openButton.extractRenderState(guiGraphics, mouseX, mouseY, renderPartialTicks);
     if (PolymorphClientConfig.isPinSelector() && this.openButton.visible) {
-      int bx = this.openButton.getX();
+      int bx = this.openButton.getX() + this.openButton.getWidth() - 16;
       int by = this.openButton.getY();
       guiGraphics.fill(bx + 11, by, bx + 16, by + 5, 0xFF202020);
       guiGraphics.fill(bx + 12, by + 1, bx + 15, by + 4, 0xFFFFD000);
