@@ -6,7 +6,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.SortedSet;
 import javax.annotation.Nonnull;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
@@ -15,8 +18,6 @@ import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
 
 // Delegates every IBlockEntityRecipeData method to the inner recipeData so that loader
 // agnostic state (selected recipe, listener list) lives on a single object. Without these
@@ -30,14 +31,6 @@ public class WrappedRecipeDataComponent<M extends BlockEntity>
   public WrappedRecipeDataComponent(IBlockEntityRecipeData recipeData) {
     super((M) recipeData.getOwner());
     this.recipeData = recipeData;
-  }
-
-  @Override
-  public void readData(ValueInput readView) {
-  }
-
-  @Override
-  public void writeData(ValueOutput writeView) {
   }
 
   @Override
@@ -74,6 +67,32 @@ public class WrappedRecipeDataComponent<M extends BlockEntity>
   @Override
   public void setSelectedRecipe(RecipeHolder<?> recipe) {
     this.recipeData.setSelectedRecipe(recipe);
+  }
+
+  @Override
+  public Identifier getSelectedRecipeId() {
+    return this.recipeData.getSelectedRecipeId();
+  }
+
+  @Override
+  public void setSelectedRecipeId(Identifier id) {
+    this.recipeData.setSelectedRecipeId(id);
+  }
+
+  @Override
+  public void chooseRecipe(Identifier id) {
+    this.recipeData.chooseRecipe(id);
+  }
+
+  @Override
+  public void readNBT(HolderLookup.Provider provider, CompoundTag compoundTag) {
+    this.recipeData.readNBT(provider, compoundTag);
+  }
+
+  @Nonnull
+  @Override
+  public CompoundTag writeNBT(HolderLookup.Provider provider) {
+    return this.recipeData.writeNBT(provider);
   }
 
   @Override

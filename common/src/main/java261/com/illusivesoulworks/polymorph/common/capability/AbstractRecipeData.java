@@ -100,7 +100,7 @@ public abstract class AbstractRecipeData<E> implements IRecipeData<E> {
       // the only path to a result preview; CustomRecipes already needed assemble anyway.
       ItemStack output = recipe.assemble(recipeInput);
 
-      if (output.isEmpty()) {
+      if (output == null || output.isEmpty()) {
         continue;
       }
 
