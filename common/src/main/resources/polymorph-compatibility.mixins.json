@@ -7,6 +7,10 @@
     "sophisticatedcore.MixinCraftingUpgradeContainer",
     "storagenetwork.MixinContainerNetwork",
     "cyclic.MixinContainerWorkbench",
+    "craftingslots.MixinCustomCraftingMenu",
+    "craftingstation.MixinCraftingStationBlockEntity",
+    "ironfurnaces.MixinBlockIronFurnaceTileBase",
+    "betterfurnacesreforged.MixinSmeltingBlockEntity",
     "toms_storage.MixinCraftingTerminalBlockEntity"
   ],
   "injectors": {

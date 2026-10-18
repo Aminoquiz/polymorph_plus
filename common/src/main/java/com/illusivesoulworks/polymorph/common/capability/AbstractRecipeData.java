@@ -103,7 +103,7 @@ public abstract class AbstractRecipeData<E> implements IRecipeData<E> {
         output = recipe.assemble(recipeInput, registryAccess);
       }
 
-      if (output.isEmpty()) {
+      if (output == null || output.isEmpty()) {
         continue;
       }
 

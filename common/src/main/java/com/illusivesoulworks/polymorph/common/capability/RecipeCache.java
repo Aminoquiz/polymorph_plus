@@ -35,7 +35,7 @@ public class RecipeCache {
       for (int i = 0; i < this.entries.length; i++) {
         Entry<?, ?> entry = this.entries[i];
 
-        if (entry != null && entry.matches(recipeInput)) {
+        if (entry != null && entry.type == recipeType && entry.matches(recipeInput)) {
           this.moveEntryToFront(i);
           return (List<RecipeHolder<T>>) (Object) entry.recipes;
         }
@@ -58,7 +58,7 @@ public class RecipeCache {
                                                                                      I recipeInput) {
     List<RecipeHolder<T>> list =
         level.getRecipeManager().getRecipesFor(recipeType, recipeInput, level);
-    this.insert(recipeInput, list);
+    this.insert(recipeType, recipeInput, list);
     return list;
   }
 
@@ -71,7 +71,7 @@ public class RecipeCache {
     }
   }
 
-  private <I extends RecipeInput, T extends Recipe<I>> void insert(I recipeInput,
+  private <I extends RecipeInput, T extends Recipe<I>> void insert(RecipeType<T> recipeType, I recipeInput,
                                                                    List<RecipeHolder<T>> recipes) {
     NonNullList<ItemStack> list = NonNullList.withSize(recipeInput.size(), ItemStack.EMPTY);
 
@@ -87,6 +87,7 @@ public class RecipeCache {
     } else {
       entry = new Entry<>(list, recipeInput.size(), recipes);
     }
+    entry.type = recipeType;
     this.entries[0] = entry;
   }
 
@@ -118,6 +119,7 @@ public class RecipeCache {
     private final NonNullList<ItemStack> key;
     private final int size;
     private final List<RecipeHolder<T>> recipes;
+    private RecipeType<?> type;
 
     public Entry(NonNullList<ItemStack> list, int size, List<RecipeHolder<T>> recipes) {
       this.key = list;

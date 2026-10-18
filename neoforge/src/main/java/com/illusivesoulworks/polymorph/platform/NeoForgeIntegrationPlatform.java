@@ -24,7 +24,11 @@ import com.illusivesoulworks.polymorph.common.integration.fastfurnace.FastFurnac
 import com.illusivesoulworks.polymorph.common.integration.sophisticatedcore.SophisticatedCoreModule;
 import com.illusivesoulworks.polymorph.common.integration.toms_storage.TomsStorageModule;
 import com.illusivesoulworks.polymorph.common.integration.storagenetwork.StorageNetworkModule;
+import com.illusivesoulworks.polymorph.common.integration.craftingslots.CraftingSlotsModule;
 import com.illusivesoulworks.polymorph.common.integration.cyclic.CyclicModule;
+import com.illusivesoulworks.polymorph.common.integration.craftingstation.CraftingStationModule;
+import com.illusivesoulworks.polymorph.common.integration.ironfurnaces.IronFurnacesModule;
+import com.illusivesoulworks.polymorph.common.integration.betterfurnacesreforged.BetterFurnacesModule;
 import com.illusivesoulworks.polymorph.platform.services.IIntegrationPlatform;
 import java.util.HashMap;
 import java.util.Map;
@@ -40,6 +44,10 @@ public class NeoForgeIntegrationPlatform implements IIntegrationPlatform {
     result.put(PolymorphIntegrations.Mod.TOMS_STORAGE.getId(), () -> TomsStorageModule::new);
     result.put(PolymorphIntegrations.Mod.STORAGENETWORK.getId(), () -> StorageNetworkModule::new);
     result.put(PolymorphIntegrations.Mod.CYCLIC.getId(), () -> CyclicModule::new);
+    result.put(PolymorphIntegrations.Mod.CRAFTINGSLOTS.getId(), () -> CraftingSlotsModule::new);
+    result.put(PolymorphIntegrations.Mod.CRAFTINGSTATION.getId(), () -> CraftingStationModule::new);
+    result.put(PolymorphIntegrations.Mod.IRONFURNACES.getId(), () -> IronFurnacesModule::new);
+    result.put(PolymorphIntegrations.Mod.BETTERFURNACES.getId(), () -> BetterFurnacesModule::new);
     result.put(PolymorphIntegrations.Mod.SOPHISTICATEDCORE.getId(),
         () -> SophisticatedCoreModule::new);
     return result;
