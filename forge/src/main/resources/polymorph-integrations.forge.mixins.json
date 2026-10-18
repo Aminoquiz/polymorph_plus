@@ -4,13 +4,17 @@
   "compatibilityLevel": "JAVA_16",
   "refmap": "polymorph.refmap.json",
   "mixins": [
+    "craftingcraft.MixinCustomCraftingMenu",
+    "forge.MixinBrewingRecipeRegistry",
     "sophisticatedcore.MixinCraftingUpgradeContainer",
     "fastbench.PolymorphMixinFastBenchUtil",
     "fastsuite.PolymorphMixinAuxRecipeManager",
     "storagenetwork.MixinContainerNetwork",
     "cyclic.MixinContainerWorkbench",
     "refinedstorage.MixinGridNetworkNode",
-    "toms_storage.MixinCraftingTerminalBlockEntity"
+    "toms_storage.MixinCraftingTerminalBlockEntity",
+    "ironfurnaces.MixinBlockIronFurnaceTileBase",
+    "betterfurnacesreforged.MixinSmeltingBlockEntity"
   ],
   "plugin": "com.illusivesoulworks.polymorph.mixin.IntegratedMixinPlugin",
   "minVersion": "0.8",

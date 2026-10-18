@@ -4,6 +4,8 @@
   "package": "com.illusivesoulworks.polymorph.mixin.core",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "AccessorPotionBrewingMix",
+    "MixinPotionBrewing",
     "MixinServerPlayer"
   ],
   "client": [

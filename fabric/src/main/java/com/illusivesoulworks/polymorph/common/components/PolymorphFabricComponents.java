@@ -18,6 +18,7 @@
 package com.illusivesoulworks.polymorph.common.components;
 
 import com.illusivesoulworks.polymorph.api.PolymorphApi;
+import com.illusivesoulworks.polymorph.common.integration.betterfurnacesreforged.BetterFurnacesModule;
 import dev.onyxstudios.cca.api.v3.block.BlockComponentFactoryRegistry;
 import dev.onyxstudios.cca.api.v3.block.BlockComponentInitializer;
 import dev.onyxstudios.cca.api.v3.component.ComponentKey;
@@ -36,6 +37,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BrewingStandBlockEntity;
 
 public class PolymorphFabricComponents implements BlockComponentInitializer,
     EntityComponentInitializer, ItemComponentInitializer {
@@ -76,6 +78,14 @@ public class PolymorphFabricComponents implements BlockComponentInitializer,
   public void registerBlockComponentFactories(@Nonnull BlockComponentFactoryRegistry registry) {
     registerBlockEntity(AbstractFurnaceBlockEntity.class,
         blockEntity -> new FurnaceRecipeDataComponent((AbstractFurnaceBlockEntity) blockEntity));
+    registerBlockEntity(BrewingStandBlockEntity.class,
+        blockEntity -> new BrewingStandRecipeDataComponent((BrewingStandBlockEntity) blockEntity));
+
+    if (BetterFurnacesModule.BLOCK_ENTITY != null
+        && BlockEntity.class.isAssignableFrom(BetterFurnacesModule.BLOCK_ENTITY)) {
+      registerBlockEntity(BetterFurnacesModule.BLOCK_ENTITY.asSubclass(BlockEntity.class),
+          blockEntity -> new SlotRecipeDataComponent(blockEntity, BetterFurnacesModule::getInput));
+    }
 
     for (Map.Entry<Class<? extends BlockEntity>, Function<BlockEntity, AbstractBlockEntityRecipeDataComponent<?>>> entry : BLOCK_ENTITY_2_RECIPE_DATA.entrySet()) {
       registry.registerFor(entry.getKey(), BLOCK_ENTITY_RECIPE_DATA,

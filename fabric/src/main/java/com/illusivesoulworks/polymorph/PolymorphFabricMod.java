@@ -17,6 +17,9 @@
 
 package com.illusivesoulworks.polymorph;
 
+import com.illusivesoulworks.polymorph.common.brewing.BrewingCandidates;
+import com.illusivesoulworks.polymorph.mixin.core.AccessorPotionBrewingMix;
+import net.minecraft.world.item.crafting.Ingredient;
 import com.illusivesoulworks.polymorph.common.CommonEventsListener;
 import com.illusivesoulworks.polymorph.common.PolymorphFabricNetwork;
 import com.illusivesoulworks.polymorph.common.components.PolymorphFabricComponents;
@@ -31,6 +34,22 @@ public class PolymorphFabricMod implements ModInitializer {
     PolymorphCommonMod.init();
     PolymorphCommonMod.setup();
     PolymorphFabricNetwork.setup();
+    BrewingCandidates.setup(new BrewingCandidates.MixReader() {
+      @Override
+      public Object from(Object mix) {
+        return ((AccessorPotionBrewingMix) mix).getFrom();
+      }
+
+      @Override
+      public Ingredient ingredient(Object mix) {
+        return ((AccessorPotionBrewingMix) mix).getIngredient();
+      }
+
+      @Override
+      public Object to(Object mix) {
+        return ((AccessorPotionBrewingMix) mix).getTo();
+      }
+    }, null);
     PolymorphFabricComponents.setup();
     CommandRegistrationCallback.EVENT.register(
         (dispatcher, registryAccess, environment) -> PolymorphCommands.register(dispatcher));

@@ -95,6 +95,8 @@ repositories {
 sourceSets.main.resources.srcDir 'src/generated/resources'
 
 dependencies {
+    compileOnly fg.deobf("mezz.jei:jei-1.20.1-forge-api:${jei_version}")
+    compileOnly "mezz.jei:jei-1.20.1-common-api:${jei_version}"
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
     compileOnly project(":common")
 	annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
@@ -105,6 +107,7 @@ dependencies {
     compileOnly fg.deobf("dev.shadowsoffire:Placebo:${placebo_version}")
     compileOnly fg.deobf("maven.modrinth:toms-storage:${toms_storage_version}")
     testCompileOnly fg.deobf("maven.modrinth:toms-storage:${toms_storage_version}")
+    testCompileOnly "mezz.jei:jei-1.20.1-common-api:${jei_version}"
 
     implementation fg.deobf(group: 'com.illusivesoulworks.spectrelib', name: 'spectrelib-forge', version: "${spectrelib_range}")
     jarJar (group: 'com.illusivesoulworks.spectrelib', name: 'spectrelib-forge', version: "${spectrelib_range}") {

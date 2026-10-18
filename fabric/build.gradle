@@ -13,9 +13,15 @@ repositories {
         name = 'Ladysnake Mods'
         url = 'https://maven.ladysnake.org/releases'
     }
+    maven {
+        name = 'Architectury'
+        url = 'https://maven.architectury.dev/'
+    }
 }
 
 dependencies {
+    modCompileOnly("me.shedaniel:RoughlyEnoughItems-fabric:${rei_version}") { transitive = false }
+    modCompileOnly "mezz.jei:jei-1.20.1-fabric-api:${jei_version}"
     minecraft "com.mojang:minecraft:${minecraft_version}"
     mappings(loom.layered {
         officialMojangMappings()

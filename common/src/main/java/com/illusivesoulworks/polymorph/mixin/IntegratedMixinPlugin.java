@@ -48,6 +48,10 @@ public class IntegratedMixinPlugin implements IMixinConfigPlugin, IMixinErrorHan
     CLASS_TO_MOD.put("com.lothrazar.storagenetwork.", PolymorphIntegrations.Mod.STORAGENETWORK.getId());
     CLASS_TO_MOD.put("com.lothrazar.cyclic.", PolymorphIntegrations.Mod.CYCLIC.getId());
     CLASS_TO_MOD.put("tfar.fastbench.", PolymorphIntegrations.Mod.QUICKBENCH.getId());
+    CLASS_TO_MOD.put("net.blay09.mods.craftingcraft.", PolymorphIntegrations.Mod.CRAFTINGCRAFT.getId());
+    CLASS_TO_MOD.put("me.shedaniel.rei.", PolymorphIntegrations.Mod.REI.getId());
+    CLASS_TO_MOD.put("ironfurnaces.", PolymorphIntegrations.Mod.IRONFURNACES.getId());
+    CLASS_TO_MOD.put("wily.betterfurnaces.", PolymorphIntegrations.Mod.BETTERFURNACES.getId());
   }
 
   @Override
