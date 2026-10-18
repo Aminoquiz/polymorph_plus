@@ -18,6 +18,11 @@ public class CraftingRecipeWrapper extends RecipeWrapper {
   }
 
   @Override
+  protected boolean isOrdered() {
+    return this.shaped;
+  }
+
+  @Override
   public boolean conflicts(RecipeWrapper pOther) {
     return super.conflicts(pOther) && isSameShape((CraftingRecipeWrapper) pOther);
   }

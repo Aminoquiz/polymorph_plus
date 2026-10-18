@@ -9,6 +9,7 @@ package com.illusivesoulworks.polymorph.common.network.client;
 
 import com.illusivesoulworks.polymorph.api.PolymorphApi;
 import com.illusivesoulworks.polymorph.api.common.capability.IBlockEntityRecipeData;
+import com.illusivesoulworks.polymorph.common.brewing.IBrewingResolver;
 import com.illusivesoulworks.polymorph.common.integration.PolymorphIntegrations;
 import java.util.Optional;
 import javax.annotation.Nonnull;
@@ -53,6 +54,16 @@ public record CPacketPersistentRecipeSelection(Identifier recipe) implements
     }
     ResourceKey<Recipe<?>> key = ResourceKey.create(Registries.RECIPE, packet.recipe);
     Optional<RecipeHolder<?>> maybeRecipe = rm.byKey(key);
+    if (maybeRecipe.isEmpty()) {
+      IBlockEntityRecipeData brewingData =
+          PolymorphApi.getInstance().getBlockEntityRecipeData(player.containerMenu);
+
+      // Brewing mixes below 26.3 are not recipes: their ids are synthesized from the output.
+      if (brewingData instanceof IBrewingResolver) {
+        brewingData.chooseRecipe(packet.recipe);
+      }
+      return;
+    }
     maybeRecipe.ifPresent(recipe -> {
       AbstractContainerMenu container = player.containerMenu;
       IBlockEntityRecipeData recipeData =

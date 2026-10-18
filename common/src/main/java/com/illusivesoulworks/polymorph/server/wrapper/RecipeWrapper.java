@@ -34,6 +34,57 @@ public class RecipeWrapper {
     return this.ingredients;
   }
 
+  protected boolean isOrdered() {
+    return true;
+  }
+
+  private boolean sameIngredients(RecipeWrapper pOther) {
+    List<IngredientWrapper> mine = this.getIngredients();
+    List<IngredientWrapper> others = pOther.getIngredients();
+
+    if (mine.size() != others.size()) {
+      return false;
+    }
+
+    if (this.isOrdered() && pOther.isOrdered()) {
+
+      for (int i = 0; i < others.size(); i++) {
+
+        if (!others.get(i).matches(mine.get(i))) {
+          return false;
+        }
+      }
+      return true;
+    }
+    int[] owner = new int[others.size()];
+    java.util.Arrays.fill(owner, -1);
+
+    for (int i = 0; i < mine.size(); i++) {
+
+      if (!assign(i, mine, others, owner, new boolean[others.size()])) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  private static boolean assign(int i, List<IngredientWrapper> mine,
+                                List<IngredientWrapper> others, int[] owner, boolean[] seen) {
+
+    for (int j = 0; j < others.size(); j++) {
+
+      if (!seen[j] && others.get(j).matches(mine.get(i))) {
+        seen[j] = true;
+
+        if (owner[j] < 0 || assign(owner[j], mine, others, owner, seen)) {
+          owner[j] = i;
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
   public boolean conflicts(RecipeWrapper pOther) {
 
     if (pOther == null) {
@@ -43,15 +94,7 @@ public class RecipeWrapper {
     } else if (this.ingredients.size() != pOther.getIngredients().size()) {
       return false;
     } else {
-      List<IngredientWrapper> otherIngredients = pOther.getIngredients();
-
-      for (int i = 0; i < otherIngredients.size(); i++) {
-
-        if (!otherIngredients.get(i).matches(this.getIngredients().get(i))) {
-          return false;
-        }
-      }
-      return true;
+      return this.sameIngredients(pOther);
     }
   }
 }
