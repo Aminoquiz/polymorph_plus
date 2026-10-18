@@ -45,6 +45,8 @@ public class IntegratedMixinPlugin implements IMixinConfigPlugin, IMixinErrorHan
         PolymorphIntegrations.Mod.TRAVELERSBACKPACK.getId());
     CLASS_TO_MOD.put("com.lothrazar.storagenetwork.", PolymorphIntegrations.Mod.STORAGENETWORK.getId());
     CLASS_TO_MOD.put("com.lothrazar.cyclic.", PolymorphIntegrations.Mod.CYCLIC.getId());
+    CLASS_TO_MOD.put("mezz.jei.", PolymorphIntegrations.Mod.JEI.getId());
+    CLASS_TO_MOD.put("me.shedaniel.rei.", PolymorphIntegrations.Mod.ROUGHLYENOUGHITEMS.getId());
   }
 
   @Override

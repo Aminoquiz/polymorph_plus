@@ -90,6 +90,7 @@ dependencies {
     implementation fg.deobf("curse.maven:fastworkbench-288885:${file_fastworkbench}")
     implementation fg.deobf("curse.maven:fastfurnace-299540:${file_fastfurnace}")
     implementation fg.deobf("curse.maven:placebo-283644:${file_placebo}")
+    compileOnly fg.deobf("mezz.jei:jei-1.16.5:${jei_version}")
 }
 
 // Forge 36 keeps MCP class names (only members take the official names), while common and

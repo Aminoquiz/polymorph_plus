@@ -171,7 +171,7 @@ public abstract class AbstractRecipeData<E> implements IRecipeData<E> {
         output = entry.assemble(inventory);
       }
 
-      if (output.isEmpty()) {
+      if (output == null || output.isEmpty()) {
         continue;
       }
       newDataset.add(new RecipePair(id, output));

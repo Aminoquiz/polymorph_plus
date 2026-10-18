@@ -67,12 +67,14 @@ public abstract class AbstractRecipesWidget implements IRecipesWidget {
   public void initChildWidgets() {
     this.anchorX = this.getXPos();
     this.anchorY = this.getYPos();
-    int x = Services.CLIENT_PLATFORM.getScreenLeft(this.containerScreen) + this.getXPos();
-    int y = Services.CLIENT_PLATFORM.getScreenTop(this.containerScreen) + this.getYPos();
+    int bx = this.getXPos() + PolymorphClientConfig.getButtonOffsetX();
+    int by = this.getYPos() + PolymorphClientConfig.getButtonOffsetY();
+    int x = Services.CLIENT_PLATFORM.getScreenLeft(this.containerScreen) + bx;
+    int y = Services.CLIENT_PLATFORM.getScreenTop(this.containerScreen) + by;
     this.selectionWidget =
-        new SelectionWidget(x + this.xOffset, y + this.yOffset, this.getXPos() + this.xOffset,
-            this.getYPos() + this.yOffset, this::selectRecipe, this.containerScreen);
-    this.openButton = new OpenSelectionButton(this.containerScreen, this.getXPos(), this.getYPos(),
+        new SelectionWidget(x + this.xOffset, y + this.yOffset, bx + this.xOffset,
+            by + this.yOffset, this::selectRecipe, this.containerScreen);
+    this.openButton = new OpenSelectionButton(this.containerScreen, bx, by,
         clickWidget -> this.selectionWidget.setActive(!this.selectionWidget.isActive()));
     this.openButton.visible = this.selectionWidget.getOutputWidgets().size() > 1;
     this.applyPinState();
@@ -141,8 +143,8 @@ public abstract class AbstractRecipesWidget implements IRecipesWidget {
 
   private boolean isOverOpenButton(double mouseX, double mouseY) {
     return this.openButton != null && this.openButton.visible
-        && mouseX >= this.openButton.x && mouseX < this.openButton.x + 16
-        && mouseY >= this.openButton.y && mouseY < this.openButton.y + 16;
+        && mouseX >= this.openButton.x && mouseX < this.openButton.x + this.openButton.getWidth()
+        && mouseY >= this.openButton.y && mouseY < this.openButton.y + this.openButton.getWidth();
   }
 
   // Moves by the anchor shift only, so offsets a subclass set in initChildWidgets (Traveler's
@@ -207,7 +209,7 @@ public abstract class AbstractRecipesWidget implements IRecipesWidget {
     this.openButton.render(poseStack, mouseX, mouseY, renderPartialTicks);
 
     if (PolymorphClientConfig.isPinSelector() && this.openButton.visible) {
-      int bx = this.openButton.x;
+      int bx = this.openButton.x + this.openButton.getWidth() - 16;
       int by = this.openButton.y;
       GuiComponent.fill(poseStack, bx + 11, by, bx + 16, by + 5, 0xFF202020);
       GuiComponent.fill(poseStack, bx + 12, by + 1, bx + 15, by + 4, 0xFFFFD000);

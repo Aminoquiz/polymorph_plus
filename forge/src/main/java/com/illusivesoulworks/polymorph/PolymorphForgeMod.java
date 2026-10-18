@@ -21,6 +21,15 @@ import com.illusivesoulworks.polymorph.client.ClientEventsListener;
 import com.illusivesoulworks.polymorph.common.CommonEventsListener;
 import com.illusivesoulworks.polymorph.common.PolymorphForgeCapabilities;
 import com.illusivesoulworks.polymorph.common.PolymorphForgeNetwork;
+import com.illusivesoulworks.polymorph.common.brewing.BrewingCandidates;
+import com.illusivesoulworks.polymorph.mixin.integration.forge.AccessorMixPredicate;
+import java.util.ArrayList;
+import java.util.List;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraftforge.common.brewing.BrewingRecipeRegistry;
+import net.minecraftforge.common.brewing.IBrewingRecipe;
+import net.minecraftforge.common.brewing.VanillaBrewingRecipe;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
@@ -41,6 +50,33 @@ public class PolymorphForgeMod {
   private void setup(final FMLCommonSetupEvent evt) {
     PolymorphCommonMod.setup();
     PolymorphForgeNetwork.setup();
+    BrewingCandidates.setup(new BrewingCandidates.MixReader() {
+      @Override
+      public Object from(Object mix) {
+        return ((AccessorMixPredicate) mix).getFrom().get();
+      }
+
+      @Override
+      public Ingredient ingredient(Object mix) {
+        return ((AccessorMixPredicate) mix).getIngredient();
+      }
+
+      @Override
+      public Object to(Object mix) {
+        return ((AccessorMixPredicate) mix).getTo().get();
+      }
+    }, (bottle, reagent) -> {
+      List<ItemStack> outputs = new ArrayList<>();
+
+      for (IBrewingRecipe recipe : BrewingRecipeRegistry.getRecipes()) {
+
+        if (!(recipe instanceof VanillaBrewingRecipe) && recipe.isInput(bottle) &&
+            recipe.isIngredient(reagent)) {
+          outputs.add(recipe.getOutput(bottle, reagent));
+        }
+      }
+      return outputs;
+    });
     PolymorphForgeCapabilities.register();
     MinecraftForge.EVENT_BUS.register(new CommonEventsListener());
   }

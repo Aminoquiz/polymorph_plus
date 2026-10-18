@@ -6,6 +6,9 @@
     "toms_storage.MixinCraftingTerminalBlockEntity",
     "travelersbackpack.MixinTravelersBackpackBaseScreenHandler"
   ],
+  "client": [
+    "roughlyenoughitems.MixinInternalWidgets"
+  ],
   "plugin": "com.illusivesoulworks.polymorph.mixin.IntegratedMixinPlugin",
   "minVersion": "0.8",
   "injectors": {

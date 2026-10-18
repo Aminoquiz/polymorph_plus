@@ -20,12 +20,14 @@ package com.illusivesoulworks.polymorph;
 import com.illusivesoulworks.polymorph.api.PolymorphApi;
 import com.illusivesoulworks.polymorph.api.common.base.IPolymorphCommon;
 import com.illusivesoulworks.polymorph.client.impl.PolymorphClient;
+import com.illusivesoulworks.polymorph.common.capability.BrewingStandRecipeData;
 import com.illusivesoulworks.polymorph.common.capability.FurnaceRecipeData;
 import com.illusivesoulworks.polymorph.common.integration.PolymorphIntegrations;
 import net.minecraft.world.Container;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BrewingStandBlockEntity;
 
 public class PolymorphCommonMod {
 
@@ -38,6 +40,8 @@ public class PolymorphCommonMod {
     commonApi.registerBlockEntity2RecipeData(blockEntity -> {
       if (blockEntity instanceof AbstractFurnaceBlockEntity) {
         return new FurnaceRecipeData((AbstractFurnaceBlockEntity) blockEntity);
+      } else if (blockEntity instanceof BrewingStandBlockEntity) {
+        return new BrewingStandRecipeData((BrewingStandBlockEntity) blockEntity);
       }
       return null;
     });

@@ -158,7 +158,9 @@ public class PolymorphIntegrations {
     CYCLIC("cyclic", true, Loader.FORGE),
     REFINEDSTORAGE("refinedstorage", true, Loader.FORGE),
     TOMS_STORAGE("toms_storage", true, Loader.FABRIC, Loader.FORGE),
-    TRAVELERSBACKPACK("travelersbackpack", true, Loader.FABRIC, Loader.FORGE);
+    TRAVELERSBACKPACK("travelersbackpack", true, Loader.FABRIC, Loader.FORGE),
+    JEI("jei", true, Loader.FORGE),
+    ROUGHLYENOUGHITEMS("roughlyenoughitems", true, Loader.FABRIC);
 
     private final String id;
     private final boolean defaultValue;

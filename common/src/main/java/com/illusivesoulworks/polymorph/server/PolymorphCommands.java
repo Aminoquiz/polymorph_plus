@@ -233,6 +233,52 @@ public class PolymorphCommands {
       return this.ingredients;
     }
 
+    protected boolean isOrdered() {
+      return true;
+    }
+
+    private boolean sameIngredients(RecipeWrapper pOther) {
+      List<IngredientWrapper> others = pOther.getIngredients();
+
+      if (this.isOrdered() && pOther.isOrdered()) {
+
+        for (int i = 0; i < others.size(); i++) {
+
+          if (!others.get(i).matches(this.getIngredients().get(i))) {
+            return false;
+          }
+        }
+        return true;
+      }
+      int[] owner = new int[others.size()];
+      java.util.Arrays.fill(owner, -1);
+
+      for (int i = 0; i < others.size(); i++) {
+
+        if (!this.assign(i, others, owner, new boolean[others.size()])) {
+          return false;
+        }
+      }
+      return true;
+    }
+
+    private boolean assign(int i, List<IngredientWrapper> others, int[] owner, boolean[] seen) {
+      IngredientWrapper mine = this.getIngredients().get(i);
+
+      for (int j = 0; j < others.size(); j++) {
+
+        if (!seen[j] && others.get(j).matches(mine)) {
+          seen[j] = true;
+
+          if (owner[j] == -1 || this.assign(owner[j], others, owner, seen)) {
+            owner[j] = i;
+            return true;
+          }
+        }
+      }
+      return false;
+    }
+
     public boolean conflicts(RecipeWrapper pOther) {
 
       if (pOther == null) {
@@ -242,15 +288,7 @@ public class PolymorphCommands {
       } else if (this.ingredients.size() != pOther.getIngredients().size()) {
         return false;
       } else {
-        List<IngredientWrapper> otherIngredients = pOther.getIngredients();
-
-        for (int i = 0; i < otherIngredients.size(); i++) {
-
-          if (!otherIngredients.get(i).matches(this.getIngredients().get(i))) {
-            return false;
-          }
-        }
-        return true;
+        return this.sameIngredients(pOther);
       }
     }
   }
@@ -285,6 +323,11 @@ public class PolymorphCommands {
     }
 
     public boolean isShaped() {
+      return this.shaped;
+    }
+
+    @Override
+    protected boolean isOrdered() {
       return this.shaped;
     }
 
