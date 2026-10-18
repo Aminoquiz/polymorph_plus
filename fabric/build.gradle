@@ -124,5 +124,5 @@ processResources {
 processResources.doLast {
     def compat = new File("${processResources.destinationDir}/polymorph_plus-compatibility.mixins.json")
     compat.parentFile.mkdirs()
-    compat.text = '{"required":false,"package":"com.illusivesoulworks.polymorph.mixin.integration","compatibilityLevel":"JAVA_16","mixins":["toms_storage.MixinCraftingTerminalBlockEntity"],"injectors":{"defaultRequire":1},"plugin":"com.illusivesoulworks.polymorph.mixin.IntegratedMixinPlugin","minVersion":"0.8"}'
+    compat.text = '{"required":false,"package":"com.illusivesoulworks.polymorph.mixin.integration","compatibilityLevel":"JAVA_16","mixins":["craftingslots.MixinCustomCraftingMenu", "toms_storage.MixinCraftingTerminalBlockEntity"],"injectors":{"defaultRequire":1},"plugin":"com.illusivesoulworks.polymorph.mixin.IntegratedMixinPlugin","minVersion":"0.8"}'
 }

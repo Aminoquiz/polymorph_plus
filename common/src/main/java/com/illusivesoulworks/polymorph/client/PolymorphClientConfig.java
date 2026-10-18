@@ -23,6 +23,9 @@ public final class PolymorphClientConfig {
   private static final String KEY_PIN = "pinSelector";
   private static final String KEY_TUTORIAL_STEP = "tutorialStep";
   private static final String KEY_SCROLL_CYCLE = "scrollCycleOnOutput";
+  private static final String KEY_BUTTON_X = "buttonOffsetX";
+  private static final String KEY_BUTTON_Y = "buttonOffsetY";
+  private static final String KEY_BUTTON_SCALE = "buttonScale";
   private static final String KEY_PRIORITY = "priorityNamespaces";
   private static final String KEY_PRIORITY_RECIPES = "priorityRecipes";
   private static final int MAX_PRIORITY_ENTRIES = 64;
@@ -33,6 +36,9 @@ public final class PolymorphClientConfig {
   private static Boolean pinSelector;
   private static Integer tutorialStep;
   private static Boolean scrollCycle;
+  private static Integer buttonOffsetX;
+  private static Integer buttonOffsetY;
+  private static Float buttonScale;
   private static List<String> priorityNamespaces;
   private static List<String> priorityRecipes;
 
@@ -174,6 +180,32 @@ public final class PolymorphClientConfig {
     return index < 0 ? Integer.MAX_VALUE : index;
   }
 
+  /**
+   * Hand-edited shift of the selector button (and the list it opens) from where each screen
+   * places it, for inventory mods that draw over that spot (Inventorio).
+   */
+  public static int getButtonOffsetX() {
+    if (buttonOffsetX == null) {
+      load();
+    }
+    return buttonOffsetX;
+  }
+
+  public static int getButtonOffsetY() {
+    if (buttonOffsetY == null) {
+      load();
+    }
+    return buttonOffsetY;
+  }
+
+  /** Size factor of the 16x16 selector button, clamped to 0.5..4. */
+  public static float getButtonScale() {
+    if (buttonScale == null) {
+      load();
+    }
+    return buttonScale;
+  }
+
   public static int getTutorialStep() {
     if (tutorialStep == null) {
       load();
@@ -194,6 +226,9 @@ public final class PolymorphClientConfig {
     pinSelector = Boolean.FALSE;
     tutorialStep = 0;
     scrollCycle = Boolean.TRUE;
+    buttonOffsetX = 0;
+    buttonOffsetY = 0;
+    buttonScale = 1.0F;
     priorityNamespaces = new ArrayList<>();
     priorityRecipes = new ArrayList<>();
     Path p = path();
@@ -210,6 +245,16 @@ public final class PolymorphClientConfig {
       }
       if (obj.has(KEY_SCROLL_CYCLE)) {
         scrollCycle = obj.get(KEY_SCROLL_CYCLE).getAsBoolean();
+      }
+      if (obj.has(KEY_BUTTON_X)) {
+        buttonOffsetX = obj.get(KEY_BUTTON_X).getAsInt();
+      }
+      if (obj.has(KEY_BUTTON_Y)) {
+        buttonOffsetY = obj.get(KEY_BUTTON_Y).getAsInt();
+      }
+      if (obj.has(KEY_BUTTON_SCALE)) {
+        float scale = obj.get(KEY_BUTTON_SCALE).getAsFloat();
+        buttonScale = Float.isNaN(scale) ? 1.0F : Math.max(0.5F, Math.min(4.0F, scale));
       }
       if (obj.has(KEY_PRIORITY)) {
         priorityNamespaces =
@@ -229,6 +274,9 @@ public final class PolymorphClientConfig {
     obj.addProperty(KEY_PIN, Boolean.TRUE.equals(pinSelector));
     obj.addProperty(KEY_TUTORIAL_STEP, tutorialStep == null ? 0 : tutorialStep);
     obj.addProperty(KEY_SCROLL_CYCLE, scrollCycle == null || Boolean.TRUE.equals(scrollCycle));
+    obj.addProperty(KEY_BUTTON_X, buttonOffsetX == null ? 0 : buttonOffsetX);
+    obj.addProperty(KEY_BUTTON_Y, buttonOffsetY == null ? 0 : buttonOffsetY);
+    obj.addProperty(KEY_BUTTON_SCALE, buttonScale == null ? 1.0F : buttonScale);
     JsonArray priority = new JsonArray();
 
     if (priorityNamespaces != null) {

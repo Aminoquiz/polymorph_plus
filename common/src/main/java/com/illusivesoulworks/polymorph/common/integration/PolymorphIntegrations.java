@@ -120,6 +120,7 @@ public class PolymorphIntegrations {
   }
 
   public enum Mod {
+    CRAFTINGSLOTS("craftingslots", true, Loader.FABRIC, Loader.NEOFORGE),
     REI("roughlyenoughitems", true, Loader.FABRIC, Loader.NEOFORGE),
     JEI("jei", true, Loader.FABRIC, Loader.FORGE, Loader.NEOFORGE),
     EMI("emi", true, Loader.FABRIC, Loader.NEOFORGE),
@@ -129,6 +130,7 @@ public class PolymorphIntegrations {
     FASTSUITE("fastsuite", true, Loader.NEOFORGE),
     STORAGENETWORK("storagenetwork", true, Loader.NEOFORGE),
     CYCLIC("cyclic", true, Loader.NEOFORGE),
+    IRONFURNACES("ironfurnaces", true, Loader.NEOFORGE),
     SOPHISTICATEDCORE("sophisticatedcore", true, Loader.NEOFORGE),
     TOMS_STORAGE("toms_storage", true, Loader.FABRIC, Loader.NEOFORGE);
 

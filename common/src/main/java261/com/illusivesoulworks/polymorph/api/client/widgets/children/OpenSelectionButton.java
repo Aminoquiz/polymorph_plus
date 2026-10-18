@@ -7,6 +7,7 @@
  */
 package com.illusivesoulworks.polymorph.api.client.widgets.children;
 
+import com.illusivesoulworks.polymorph.client.PolymorphClientConfig;
 import com.illusivesoulworks.polymorph.platform.Services;
 import javax.annotation.Nonnull;
 import net.minecraft.client.Minecraft;
@@ -23,10 +24,14 @@ public class OpenSelectionButton extends ImageButton {
 
   public OpenSelectionButton(AbstractContainerScreen<?> containerScreen, int x, int y,
                              WidgetSprites sprites, OnPress onPress) {
-    super(0, 0, 16, 16, sprites, onPress);
+    super(0, 0, size(), size(), sprites, onPress);
     this.containerScreen = containerScreen;
     this.xOffset = x;
     this.yOffset = y;
+  }
+
+  private static int size() {
+    return Math.round(16 * PolymorphClientConfig.getButtonScale());
   }
 
   public void setOffsets(int x, int y) {

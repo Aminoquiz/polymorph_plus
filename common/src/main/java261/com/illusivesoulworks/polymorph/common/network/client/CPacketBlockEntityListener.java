@@ -9,6 +9,7 @@ package com.illusivesoulworks.polymorph.common.network.client;
 
 import com.illusivesoulworks.polymorph.api.PolymorphApi;
 import com.illusivesoulworks.polymorph.api.common.capability.IBlockEntityRecipeData;
+import com.illusivesoulworks.polymorph.common.brewing.IBrewingResolver;
 import com.illusivesoulworks.polymorph.common.util.BlockEntityTicker;
 import java.util.TreeSet;
 import javax.annotation.Nonnull;
@@ -52,6 +53,10 @@ public record CPacketBlockEntityListener(boolean add) implements CustomPacketPay
 
           if (recipeHolder != null) {
             id = recipeHolder.id().identifier();
+          } else if (recipeData instanceof IBrewingResolver) {
+
+            id = recipeData.getSelectedRecipeId();
+
           }
           api.getNetwork().sendRecipesListS2C(player,
               recipeData.isEmpty() ? new TreeSet<>() : recipeData.getRecipesList(),
