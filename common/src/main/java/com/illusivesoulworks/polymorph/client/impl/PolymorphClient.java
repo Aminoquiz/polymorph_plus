@@ -19,6 +19,7 @@ package com.illusivesoulworks.polymorph.client.impl;
 
 import com.illusivesoulworks.polymorph.api.client.base.IPolymorphClient;
 import com.illusivesoulworks.polymorph.api.client.base.IRecipesWidget;
+import com.illusivesoulworks.polymorph.client.recipe.widget.BrewingStandRecipesWidget;
 import com.illusivesoulworks.polymorph.client.recipe.widget.FurnaceRecipesWidget;
 import com.illusivesoulworks.polymorph.client.recipe.widget.PlayerRecipesWidget;
 import java.util.LinkedList;
@@ -27,6 +28,7 @@ import java.util.Optional;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.AbstractFurnaceMenu;
+import net.minecraft.world.inventory.BrewingStandMenu;
 import net.minecraft.world.inventory.ResultContainer;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.inventory.SmithingMenu;
@@ -49,6 +51,8 @@ public class PolymorphClient implements IPolymorphClient {
         return new PlayerRecipesWidget(containerScreen, container.slots.get(2));
       } else if (container instanceof AbstractFurnaceMenu) {
         return new FurnaceRecipesWidget(containerScreen);
+      } else if (container instanceof BrewingStandMenu) {
+        return new BrewingStandRecipesWidget(containerScreen);
       }
       return null;
     });

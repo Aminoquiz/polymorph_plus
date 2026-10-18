@@ -4,6 +4,8 @@
   "compatibilityLevel": "JAVA_16",
   "refmap": "polymorph.refmap.json",
   "mixins": [
+    "craftingcraft.MixinCustomCraftingMenu",
+    "forge.MixinBrewingRecipeRegistry",
     "craftingstation.MixinCraftingStationContainer",
     "fastbench.PolymorphMixinFastBenchUtil",
     "fastsuite.PolymorphMixinAuxRecipeManager",

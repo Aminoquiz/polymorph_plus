@@ -17,6 +17,7 @@
 
 package com.illusivesoulworks.polymorph.api.client.widget;
 
+import com.illusivesoulworks.polymorph.client.PolymorphClientConfig;
 import com.illusivesoulworks.polymorph.platform.Services;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -30,11 +31,15 @@ public class OpenSelectionButton extends ImageButton {
   private final AbstractContainerScreen<?> containerScreen;
   private int xOffset;
   private int yOffset;
+  private final int size;
 
   public OpenSelectionButton(AbstractContainerScreen<?> containerScreen, int x, int y,
                              OnPress onPress) {
     super(0, 0, 16, 16, 0, 0, 17, AbstractRecipesWidget.WIDGETS, 256, 256, onPress);
     this.containerScreen = containerScreen;
+    this.size = Math.round(16 * PolymorphClientConfig.getButtonScale());
+    this.width = this.size;
+    this.height = this.size;
     this.xOffset = x;
     this.yOffset = y;
   }
@@ -61,7 +66,22 @@ public class OpenSelectionButton extends ImageButton {
         Minecraft.getInstance().getWindow().getGuiScaledWidth() - this.width);
     this.y = clamp(Services.CLIENT_PLATFORM.getScreenTop(this.containerScreen) + this.yOffset,
         Minecraft.getInstance().getWindow().getGuiScaledHeight() - this.height);
+    if (this.size == 16) {
+      super.renderButton(poseStack, mouseX, mouseY, partialTicks);
+      return;
+    }
+    // The texture blit draws width x height texels, so it runs at 16 under a scaled pose.
+    float scale = this.size / 16.0F;
+    this.width = 16;
+    this.height = 16;
+    poseStack.pushPose();
+    poseStack.translate(this.x, this.y, 0);
+    poseStack.scale(scale, scale, 1.0F);
+    poseStack.translate(-this.x, -this.y, 0);
     super.renderButton(poseStack, mouseX, mouseY, partialTicks);
+    poseStack.popPose();
+    this.width = this.size;
+    this.height = this.size;
   }
 
   private static int clamp(int value, int max) {

@@ -36,6 +36,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BrewingStandBlockEntity;
 
 public class PolymorphFabricComponents implements BlockComponentInitializer,
     EntityComponentInitializer, ItemComponentInitializer {
@@ -76,6 +77,8 @@ public class PolymorphFabricComponents implements BlockComponentInitializer,
   public void registerBlockComponentFactories(@Nonnull BlockComponentFactoryRegistry registry) {
     registerBlockEntity(AbstractFurnaceBlockEntity.class,
         blockEntity -> new FurnaceRecipeDataComponent((AbstractFurnaceBlockEntity) blockEntity));
+    registerBlockEntity(BrewingStandBlockEntity.class,
+        blockEntity -> new BrewingStandRecipeDataComponent((BrewingStandBlockEntity) blockEntity));
 
     for (Map.Entry<Class<? extends BlockEntity>, Function<BlockEntity, AbstractBlockEntityRecipeDataComponent<?>>> entry : BLOCK_ENTITY_2_RECIPE_DATA.entrySet()) {
       registry.registerFor(entry.getKey(), BLOCK_ENTITY_RECIPE_DATA,

@@ -18,6 +18,7 @@
 package com.illusivesoulworks.polymorph.common.network.client;
 
 import com.illusivesoulworks.polymorph.api.PolymorphApi;
+import com.illusivesoulworks.polymorph.common.brewing.IBrewingStandRecipeData;
 import com.illusivesoulworks.polymorph.common.integration.AbstractCompatibilityModule;
 import com.illusivesoulworks.polymorph.common.integration.PolymorphIntegrations;
 import java.util.Optional;
@@ -50,5 +51,12 @@ public record CPacketPersistentRecipeSelection(ResourceLocation recipe) {
             PolymorphIntegrations.selectRecipe(recipeData.getOwner(), container, recipe);
           });
     });
+
+    if (!maybeRecipe.isPresent()) {
+      PolymorphApi.common().getRecipeDataFromBlockEntity(player.containerMenu)
+          .filter(recipeData -> recipeData instanceof IBrewingStandRecipeData)
+          .ifPresent(recipeData -> ((IBrewingStandRecipeData) recipeData).getBrewing()
+              .choose(packet.recipe));
+    }
   }
 }

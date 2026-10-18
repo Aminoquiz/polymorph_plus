@@ -3,11 +3,15 @@
   "package": "com.illusivesoulworks.polymorph.mixin.integration",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "craftingcraft.MixinCustomCraftingMenu",
     "quickbench.MixinCraftingMenu",
     "quickbench.MixinInventoryMenu",
     "quickbench.MixinQuickBench",
     "toms_storage.MixinCraftingTerminalBlockEntity",
     "travelersbackpack.MixinTravelersBackpackBaseScreenHandler"
+  ],
+  "client": [
+    "roughlyenoughitems.MixinInternalWidgets"
   ],
   "plugin": "com.illusivesoulworks.polymorph.mixin.IntegratedMixinPlugin",
   "minVersion": "0.8",

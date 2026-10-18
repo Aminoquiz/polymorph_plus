@@ -151,6 +151,7 @@ public class PolymorphIntegrations {
   }
 
   public enum Mod {
+    CRAFTINGCRAFT("craftingcraft", true, Loader.FABRIC, Loader.FORGE),
     CRAFTINGSTATION("craftingstation", true, Loader.FORGE),
     FASTFURNACE("fastfurnace", true, Loader.FORGE),
     FASTWORKBENCH("fastbench", true, Loader.FORGE),
@@ -159,6 +160,7 @@ public class PolymorphIntegrations {
     STORAGENETWORK("storagenetwork", true, Loader.FORGE),
     CYCLIC("cyclic", true, Loader.FORGE),
     REFINEDSTORAGE("refinedstorage", true, Loader.FORGE),
+    REI("roughlyenoughitems", true, Loader.FABRIC),
     TOMS_STORAGE("toms_storage", true, Loader.FABRIC, Loader.FORGE),
     TRAVELERSBACKPACK("travelersbackpack", true, Loader.FABRIC, Loader.FORGE);
 
