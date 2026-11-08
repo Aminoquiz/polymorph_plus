@@ -27,6 +27,7 @@ import com.illusivesoulworks.polymorph.common.integration.storagenetwork.Storage
 import com.illusivesoulworks.polymorph.common.integration.cyclic.CyclicModule;
 import com.illusivesoulworks.polymorph.common.integration.fastbench.FastBenchModule;
 import com.illusivesoulworks.polymorph.common.integration.fastfurnace.FastFurnaceModule;
+import com.illusivesoulworks.polymorph.common.integration.invcrafting.InvCraftingModule;
 import com.illusivesoulworks.polymorph.common.integration.ironfurnaces.IronFurnacesModule;
 import com.illusivesoulworks.polymorph.common.integration.betterfurnacesreforged.BetterFurnacesModule;
 import com.illusivesoulworks.polymorph.common.integration.craftingstation.CraftingStationJeiModule;
@@ -51,6 +52,7 @@ public class ForgeIntegrationPlatform implements IIntegrationPlatform {
     result.put(PolymorphIntegrations.Mod.CYCLIC.getId(), () -> CyclicModule::new);
     result.put(PolymorphIntegrations.Mod.SOPHISTICATEDCORE.getId(),
         () -> SophisticatedCoreModule::new);
+    result.put(PolymorphIntegrations.Mod.INVCRAFTING.getId(), () -> InvCraftingModule::new);
     result.put(PolymorphIntegrations.Mod.IRONFURNACES.getId(), () -> IronFurnacesModule::new);
     result.put(PolymorphIntegrations.Mod.BETTERFURNACES.getId(), () -> BetterFurnacesModule::new);
     return result;

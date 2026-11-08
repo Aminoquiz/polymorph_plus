@@ -13,8 +13,13 @@
     "cyclic.MixinContainerWorkbench",
     "refinedstorage.MixinGridNetworkNode",
     "toms_storage.MixinCraftingTerminalBlockEntity",
+    "invcrafting.MixinContainerPlayerCrafting",
     "ironfurnaces.MixinBlockIronFurnaceTileBase",
     "betterfurnacesreforged.MixinSmeltingBlockEntity"
+  ],
+  "client": [
+    "emi.MixinEmiRecipeFiller",
+    "roughlyenoughitems.MixinInternalWidgets"
   ],
   "plugin": "com.illusivesoulworks.polymorph.mixin.IntegratedMixinPlugin",
   "minVersion": "0.8",

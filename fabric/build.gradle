@@ -20,6 +20,8 @@ repositories {
 }
 
 dependencies {
+    compileOnly "dev.emi:emi-xplat-mojmap:${emi_version}"
+    testCompileOnly "dev.emi:emi-xplat-mojmap:${emi_version}"
     modCompileOnly("me.shedaniel:RoughlyEnoughItems-fabric:${rei_version}") { transitive = false }
     modCompileOnly "mezz.jei:jei-1.20.1-fabric-api:${jei_version}"
     minecraft "com.mojang:minecraft:${minecraft_version}"

@@ -83,9 +83,11 @@ public class PolymorphIntegrations {
   }
 
   public static void init() {
+    loadConfig();
+
     INTEGRATIONS.forEach((modid, supplier) -> {
 
-      if (Services.PLATFORM.isModLoaded(modid)) {
+      if (isActive(modid) && Services.PLATFORM.isModLoaded(modid)) {
         ACTIVE_INTEGRATIONS.put(modid, supplier.get().get());
       }
     });
@@ -167,7 +169,9 @@ public class PolymorphIntegrations {
     CYCLIC("cyclic", true, Loader.FORGE),
     SOPHISTICATEDCORE("sophisticatedcore", true, Loader.FORGE),
     REFINEDSTORAGE("refinedstorage", true, Loader.FORGE),
-    REI("roughlyenoughitems", true, Loader.FABRIC),
+    EMI("emi", true, Loader.FABRIC, Loader.FORGE),
+    REI("roughlyenoughitems", true, Loader.FABRIC, Loader.FORGE),
+    INVCRAFTING("invcrafting", true, Loader.FORGE),
     IRONFURNACES("ironfurnaces", true, Loader.FORGE),
     BETTERFURNACES("betterfurnacesreforged", true, Loader.FORGE, Loader.FABRIC),
     TOMS_STORAGE("toms_storage", true, Loader.FABRIC, Loader.FORGE);

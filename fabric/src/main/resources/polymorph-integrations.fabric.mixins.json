@@ -11,6 +11,7 @@
     "betterfurnacesreforged.MixinSmeltingBlockEntity"
   ],
   "client": [
+    "emi.MixinEmiRecipeFiller",
     "roughlyenoughitems.MixinInternalWidgets"
   ],
   "plugin": "com.illusivesoulworks.polymorph.mixin.IntegratedMixinPlugin",
