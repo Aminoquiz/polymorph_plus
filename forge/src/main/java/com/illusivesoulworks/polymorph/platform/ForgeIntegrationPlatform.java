@@ -29,6 +29,7 @@ import com.illusivesoulworks.polymorph.common.integration.fastbench.FastBenchMod
 import com.illusivesoulworks.polymorph.common.integration.fastfurnace.FastFurnaceModule;
 import com.illusivesoulworks.polymorph.common.integration.ironfurnaces.IronFurnacesModule;
 import com.illusivesoulworks.polymorph.common.integration.betterfurnacesreforged.BetterFurnacesModule;
+import com.illusivesoulworks.polymorph.common.integration.craftingstation.CraftingStationJeiModule;
 import com.illusivesoulworks.polymorph.platform.services.IIntegrationPlatform;
 import java.util.HashMap;
 import java.util.Map;
@@ -40,6 +41,8 @@ public class ForgeIntegrationPlatform implements IIntegrationPlatform {
   public Map<String, Supplier<Supplier<AbstractCompatibilityModule>>> createCompatibilityModules() {
     Map<String, Supplier<Supplier<AbstractCompatibilityModule>>> result = new HashMap<>();
     result.put(PolymorphIntegrations.Mod.CRAFTINGCRAFT.getId(), () -> CraftingSlotsModule::new);
+    result.put(PolymorphIntegrations.Mod.CRAFTINGSTATIONJEI.getId(),
+        () -> CraftingStationJeiModule::new);
     result.put("fastfurnace", () -> FastFurnaceModule::new);
     result.put("fastbench", () -> FastBenchModule::new);
     result.put(PolymorphIntegrations.Mod.REFINEDSTORAGE.getId(), () -> RefinedStorageModule::new);

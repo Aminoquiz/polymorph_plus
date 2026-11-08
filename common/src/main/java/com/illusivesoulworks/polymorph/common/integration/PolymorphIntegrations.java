@@ -159,6 +159,7 @@ public class PolymorphIntegrations {
   public enum Mod {
     CRAFTINGCRAFT("craftingcraft", true, Loader.FABRIC, Loader.FORGE),
     QUICKBENCH("quickbench", true, Loader.FABRIC),
+    CRAFTINGSTATIONJEI("craftingstationjei", true, Loader.FORGE),
     FASTFURNACE("fastfurnace", true, Loader.FORGE),
     FASTWORKBENCH("fastbench", true, Loader.FORGE),
     FASTSUITE("fastsuite", true, Loader.FORGE),
