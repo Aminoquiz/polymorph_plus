@@ -23,6 +23,7 @@ import com.illusivesoulworks.polymorph.common.integration.craftingslots.Crafting
 import com.illusivesoulworks.polymorph.common.integration.craftingstation.CraftingStationModule;
 import com.illusivesoulworks.polymorph.common.integration.sophisticatedcore.SophisticatedCoreModule;
 import com.illusivesoulworks.polymorph.common.integration.toms_storage.TomsStorageModule;
+import com.illusivesoulworks.polymorph.common.integration.travelersbackpack.TravelersBackpackModule;
 import com.illusivesoulworks.polymorph.platform.services.IIntegrationPlatform;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,6 +37,8 @@ public class NeoForgeIntegrationPlatform implements IIntegrationPlatform {
     modules.put(PolymorphIntegrations.Mod.CRAFTINGSLOTS.getId(), () -> CraftingSlotsModule::new);
     modules.put(PolymorphIntegrations.Mod.CRAFTINGSTATION.getId(), () -> CraftingStationModule::new);
     modules.put(PolymorphIntegrations.Mod.TOMS_STORAGE.getId(), () -> TomsStorageModule::new);
+    modules.put(PolymorphIntegrations.Mod.TRAVELERSBACKPACK.getId(),
+        () -> TravelersBackpackModule::new);
     modules.put(PolymorphIntegrations.Mod.SOPHISTICATEDCORE.getId(),
         () -> SophisticatedCoreModule::new);
     return modules;

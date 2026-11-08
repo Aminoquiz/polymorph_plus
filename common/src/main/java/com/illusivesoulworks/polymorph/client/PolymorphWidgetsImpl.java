@@ -18,6 +18,7 @@
 package com.illusivesoulworks.polymorph.client;
 
 import com.illusivesoulworks.polymorph.common.integration.sophisticatedcore.SophisticatedCoreModule;
+import com.illusivesoulworks.polymorph.common.integration.travelersbackpack.TravelersBackpackModule;
 import com.illusivesoulworks.polymorph.PolymorphConstants;
 import com.illusivesoulworks.polymorph.api.PolymorphApi;
 import com.illusivesoulworks.polymorph.api.client.PolymorphWidgets;
@@ -76,7 +77,9 @@ public class PolymorphWidgetsImpl extends PolymorphWidgets {
       Slot slot = this.findResultSlot(containerScreen);
 
       if (slot != null) {
-        widget = new PlayerRecipesWidget(containerScreen, slot);
+        widget = TravelersBackpackModule.isBackpackMenu(containerScreen.getMenu())
+            ? new TravelersBackpackRecipesWidget(containerScreen, slot)
+            : new PlayerRecipesWidget(containerScreen, slot);
       }
     }
     return widget;
