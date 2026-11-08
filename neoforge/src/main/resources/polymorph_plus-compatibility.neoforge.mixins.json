@@ -3,6 +3,7 @@
   "package": "com.illusivesoulworks.polymorph.mixin.integration",
   "compatibilityLevel": "JAVA_16",
   "mixins": [
+    "craftingstation.MixinCraftingStationMenu",
     "roughlyenoughitems.MixinInternalWidgets"
   ],
   "plugin": "com.illusivesoulworks.polymorph.mixin.IntegratedMixinPlugin",
