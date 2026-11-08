@@ -19,6 +19,7 @@ package com.illusivesoulworks.polymorph.platform;
 
 import com.illusivesoulworks.polymorph.common.integration.AbstractCompatibilityModule;
 import com.illusivesoulworks.polymorph.common.integration.PolymorphIntegrations;
+import com.illusivesoulworks.polymorph.common.integration.betterfurnacesreforged.BetterFurnacesModule;
 import com.illusivesoulworks.polymorph.common.integration.craftingslots.CraftingSlotsModule;
 import com.illusivesoulworks.polymorph.common.integration.quickbench.QuickBenchModule;
 import com.illusivesoulworks.polymorph.common.integration.toms_storage.TomsStorageModule;
@@ -35,6 +36,7 @@ public class FabricIntegrationPlatform implements IIntegrationPlatform {
     modules.put(PolymorphIntegrations.Mod.QUICKBENCH.getId(), () -> QuickBenchModule::new);
     modules.put(PolymorphIntegrations.Mod.TOMS_STORAGE.getId(), () -> TomsStorageModule::new);
     modules.put(PolymorphIntegrations.Mod.CRAFTINGSLOTS.getId(), () -> CraftingSlotsModule::new);
+    modules.put(PolymorphIntegrations.Mod.BETTERFURNACES.getId(), () -> BetterFurnacesModule::new);
     return modules;
   }
 }

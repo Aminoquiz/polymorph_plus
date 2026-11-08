@@ -31,19 +31,11 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 
 public class PolymorphIntegrations {
 
-  private static final Set<String> ACTIVATED = ConcurrentHashMap.newKeySet();
   private static final Map<String, AbstractCompatibilityModule> ACTIVE_INTEGRATIONS =
       new ConcurrentHashMap<>();
 
   private static final Map<String, Supplier<Supplier<AbstractCompatibilityModule>>> INTEGRATIONS =
       Services.INTEGRATION_PLATFORM.createCompatibilityModules();
-
-  public static void load() {
-
-    for (Mod mod : Mod.values()) {
-      ACTIVATED.add(mod.getId());
-    }
-  }
 
   public static void init() {
     INTEGRATIONS.forEach((modid, supplier) -> {
@@ -105,12 +97,7 @@ public class PolymorphIntegrations {
     return ImmutableSet.copyOf(ACTIVE_INTEGRATIONS.values());
   }
 
-  public static boolean isActive(String id) {
-    return ACTIVATED.contains(id);
-  }
-
   public static void disable(String id) {
-    ACTIVATED.remove(id);
     INTEGRATIONS.remove(id);
     AbstractCompatibilityModule module = ACTIVE_INTEGRATIONS.remove(id);
 
@@ -130,9 +117,10 @@ public class PolymorphIntegrations {
     STORAGENETWORK("storagenetwork", true, Loader.NEOFORGE),
     CYCLIC("cyclic", true, Loader.NEOFORGE),
     CRAFTINGSLOTS("craftingslots", true, Loader.FABRIC, Loader.NEOFORGE),
+    INVCRAFTING("invcrafting", true, Loader.NEOFORGE),
     CRAFTINGSTATION("craftingstation", true, Loader.NEOFORGE),
     IRONFURNACES("ironfurnaces", true, Loader.NEOFORGE),
-    BETTERFURNACES("betterfurnacesreforged", true, Loader.NEOFORGE),
+    BETTERFURNACES("betterfurnacesreforged", true, Loader.FABRIC, Loader.NEOFORGE),
     TOMS_STORAGE("toms_storage", true, Loader.FABRIC, Loader.NEOFORGE),
     SOPHISTICATEDCORE("sophisticatedcore", true, Loader.NEOFORGE);
 

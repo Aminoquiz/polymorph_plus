@@ -8,6 +8,7 @@ import com.illusivesoulworks.polymorph.common.integration.util.SlotRecipeData;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import net.minecraft.core.NonNullList;
+import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -31,8 +32,10 @@ public class BetterFurnacesModule extends AbstractCompatibilityModule {
       return;
     }
     PolymorphApi api = PolymorphApi.getInstance();
-    api.registerBlockEntity(blockEntity -> BLOCK_ENTITY.isInstance(blockEntity)
-        ? new SlotRecipeData(blockEntity, BetterFurnacesModule::getInput, false) : null);
+    // Class-keyed so Fabric attaches a Cardinal Components recipe data component to it.
+    api.registerBlockEntity(BLOCK_ENTITY.asSubclass(BlockEntity.class),
+        blockEntity -> BLOCK_ENTITY.isInstance(blockEntity)
+            ? new SlotRecipeData(blockEntity, BetterFurnacesModule::getInput, false) : null);
     // Menu slots hold a FactoryAPI handler, not the block entity.
     api.registerMenu(menu -> MENU.isInstance(menu)
         && CompatReflection.get(MENU_BLOCK_ENTITY, menu) instanceof BlockEntity be ? be : null);
@@ -50,11 +53,22 @@ public class BetterFurnacesModule extends AbstractCompatibilityModule {
     return CompatReflection.get(RECIPE_TYPE, blockEntity) instanceof RecipeType<?> type ? type : null;
   }
 
+  public static boolean isInputItem(BlockEntity blockEntity, ItemStack stack) {
+    NonNullList<ItemStack> input = getInput(blockEntity);
+    return input != null && !input.isEmpty() && ItemStack.isSameItem(stack, input.get(0));
+  }
+
   private static NonNullList<ItemStack> getInput(BlockEntity blockEntity) {
     Object inventory = CompatReflection.get(INVENTORY, blockEntity);
 
     if (inventory == null) {
       return null;
+    }
+
+    // FactoryAPI's handler is a SimpleContainer; on Fabric its getItem only exists under the
+    // intermediary name, so reflection by name would miss it.
+    if (inventory instanceof Container container) {
+      return NonNullList.of(ItemStack.EMPTY, container.getItem(0));
     }
 
     try {

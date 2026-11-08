@@ -8,6 +8,7 @@
     "storagenetwork.MixinContainerNetwork",
     "cyclic.MixinContainerWorkbench",
     "craftingslots.MixinCustomCraftingMenu",
+    "invcrafting.MixinContainerPlayerCrafting",
     "craftingstation.MixinCraftingStationBlockEntity",
     "ironfurnaces.MixinBlockIronFurnaceTileBase",
     "betterfurnacesreforged.MixinSmeltingBlockEntity",

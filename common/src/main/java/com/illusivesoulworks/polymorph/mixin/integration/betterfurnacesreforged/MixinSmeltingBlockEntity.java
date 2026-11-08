@@ -22,6 +22,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(targets = "wily.betterfurnaces.blockentity.SmeltingBlockEntity", remap = false)
 public abstract class MixinSmeltingBlockEntity {
 
+  // Other stacks (slot and auto-IO checks via hasRecipe) keep the default lookup: resolving them
+  // here would push their empty candidate list to the client and hide the button.
   // grabRecipe memoises one recipe per item in an LRU cache, which would pin the default.
   @SuppressWarnings("unchecked")
   @Inject(at = @At("HEAD"), method = "grabRecipe", cancellable = true)
@@ -31,6 +33,7 @@ public abstract class MixinSmeltingBlockEntity {
     Level level = blockEntity.getLevel();
 
     if (level == null || level.isClientSide() || stack.getItem() instanceof AirItem
+        || !BetterFurnacesModule.isInputItem(blockEntity, stack)
         || PolymorphApi.getInstance().getBlockEntityRecipeData(blockEntity) == null
         || !(BetterFurnacesModule.getRecipeType(blockEntity) instanceof RecipeType<?> type)) {
       return;
