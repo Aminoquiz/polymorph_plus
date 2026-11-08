@@ -21,6 +21,7 @@ import com.illusivesoulworks.polymorph.common.integration.AbstractCompatibilityM
 import com.illusivesoulworks.polymorph.common.integration.PolymorphIntegrations;
 import com.illusivesoulworks.polymorph.common.integration.craftingslots.CraftingSlotsModule;
 import com.illusivesoulworks.polymorph.common.integration.toms_storage.TomsStorageModule;
+import com.illusivesoulworks.polymorph.common.integration.travelersbackpack.TravelersBackpackModule;
 import com.illusivesoulworks.polymorph.platform.services.IIntegrationPlatform;
 import java.util.HashMap;
 import java.util.Map;
@@ -34,6 +35,8 @@ public class FabricIntegrationPlatform implements IIntegrationPlatform {
     Map<String, Supplier<Supplier<AbstractCompatibilityModule>>> modules = new HashMap<>();
     modules.put(PolymorphIntegrations.Mod.CRAFTINGSLOTS.getId(), () -> CraftingSlotsModule::new);
     modules.put(PolymorphIntegrations.Mod.TOMS_STORAGE.getId(), () -> TomsStorageModule::new);
+    modules.put(PolymorphIntegrations.Mod.TRAVELERSBACKPACK.getId(),
+        () -> TravelersBackpackModule::new);
     return modules;
   }
 }

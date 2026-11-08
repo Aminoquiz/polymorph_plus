@@ -24,8 +24,10 @@ import com.illusivesoulworks.polymorph.common.integration.craftingstation.Crafti
 import com.illusivesoulworks.polymorph.common.integration.fastfurnace.FastFurnaceModule;
 import com.illusivesoulworks.polymorph.common.integration.sophisticatedcore.SophisticatedCoreModule;
 import com.illusivesoulworks.polymorph.common.integration.toms_storage.TomsStorageModule;
+import com.illusivesoulworks.polymorph.common.integration.travelersbackpack.TravelersBackpackModule;
 import com.illusivesoulworks.polymorph.common.integration.storagenetwork.StorageNetworkModule;
 import com.illusivesoulworks.polymorph.common.integration.cyclic.CyclicModule;
+import com.illusivesoulworks.polymorph.common.integration.invcrafting.InvCraftingModule;
 import com.illusivesoulworks.polymorph.common.integration.ironfurnaces.IronFurnacesModule;
 import com.illusivesoulworks.polymorph.platform.services.IIntegrationPlatform;
 import java.util.HashMap;
@@ -41,8 +43,11 @@ public class NeoForgeIntegrationPlatform implements IIntegrationPlatform {
     modules.put(PolymorphIntegrations.Mod.CRAFTINGSTATION.getId(), () -> CraftingStationModule::new);
     modules.put(PolymorphIntegrations.Mod.FASTFURNACE.getId(), () -> FastFurnaceModule::new);
     modules.put(PolymorphIntegrations.Mod.TOMS_STORAGE.getId(), () -> TomsStorageModule::new);
+    modules.put(PolymorphIntegrations.Mod.TRAVELERSBACKPACK.getId(),
+        () -> TravelersBackpackModule::new);
     modules.put(PolymorphIntegrations.Mod.STORAGENETWORK.getId(), () -> StorageNetworkModule::new);
     modules.put(PolymorphIntegrations.Mod.CYCLIC.getId(), () -> CyclicModule::new);
+    modules.put(PolymorphIntegrations.Mod.INVCRAFTING.getId(), () -> InvCraftingModule::new);
     modules.put(PolymorphIntegrations.Mod.IRONFURNACES.getId(), () -> IronFurnacesModule::new);
     modules.put(PolymorphIntegrations.Mod.SOPHISTICATEDCORE.getId(),
         () -> SophisticatedCoreModule::new);
