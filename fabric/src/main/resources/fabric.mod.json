@@ -47,6 +47,6 @@
     "java": ">=17"
   },
   "breaks": {
-    "polymorph": "<1.2.0"
+    "polymorph": ["<${version}", ">${version}"]
   }
 }
