@@ -190,7 +190,7 @@ public class PlayerRecipeData extends AbstractRecipeData<Player> implements
   }
 
   @Override
-  protected int favouriteRank(ResourceLocation id) {
+  public int favouriteRank(ResourceLocation id) {
 
     if (this.useClientConfig()) {
       return PolymorphClientConfig.recipeRankOf(id.toString());
@@ -200,7 +200,7 @@ public class PlayerRecipeData extends AbstractRecipeData<Player> implements
   }
 
   @Override
-  protected int sourceRank(ResourceLocation id) {
+  public int sourceRank(ResourceLocation id) {
     int namespaceRank = this.namespaceRank(id.getNamespace());
 
     if (namespaceRank != Integer.MAX_VALUE) {

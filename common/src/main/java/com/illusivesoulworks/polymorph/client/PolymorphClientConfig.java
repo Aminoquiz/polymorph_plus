@@ -28,6 +28,7 @@ public final class PolymorphClientConfig {
   private static final String KEY_BUTTON_SCALE = "buttonScale";
   private static final String KEY_PRIORITY = "priorityNamespaces";
   private static final String KEY_PRIORITY_RECIPES = "priorityRecipes";
+  private static final String KEY_INWORLD_INDICATORS = "inWorldIndicators";
   private static final int MAX_PRIORITY_ENTRIES = 64;
   private static final int MAX_PRIORITY_RECIPES = 256;
   public static final int TUTORIAL_DONE = 6;
@@ -41,6 +42,7 @@ public final class PolymorphClientConfig {
   private static Float buttonScale;
   private static List<String> priorityNamespaces;
   private static List<String> priorityRecipes;
+  private static Boolean inWorldIndicators;
 
   private PolymorphClientConfig() {
   }
@@ -206,6 +208,14 @@ public final class PolymorphClientConfig {
     return buttonScale;
   }
 
+  /** Draws the choice icons that registered blocks show in the world. */
+  public static boolean isInWorldIndicators() {
+    if (inWorldIndicators == null) {
+      load();
+    }
+    return Boolean.TRUE.equals(inWorldIndicators);
+  }
+
   public static int getTutorialStep() {
     if (tutorialStep == null) {
       load();
@@ -231,6 +241,7 @@ public final class PolymorphClientConfig {
     buttonScale = 1.0F;
     priorityNamespaces = new ArrayList<>();
     priorityRecipes = new ArrayList<>();
+    inWorldIndicators = Boolean.TRUE;
     Path p = path();
     if (!Files.exists(p)) {
       return;
@@ -256,6 +267,9 @@ public final class PolymorphClientConfig {
         float scale = obj.get(KEY_BUTTON_SCALE).getAsFloat();
         buttonScale = Float.isNaN(scale) ? 1.0F : Math.max(0.5F, Math.min(4.0F, scale));
       }
+      if (obj.has(KEY_INWORLD_INDICATORS)) {
+        inWorldIndicators = obj.get(KEY_INWORLD_INDICATORS).getAsBoolean();
+      }
       if (obj.has(KEY_PRIORITY)) {
         priorityNamespaces =
             new ArrayList<>(RecipePriority.parse(obj.get(KEY_PRIORITY).toString()));
@@ -277,6 +291,8 @@ public final class PolymorphClientConfig {
     obj.addProperty(KEY_BUTTON_X, buttonOffsetX == null ? 0 : buttonOffsetX);
     obj.addProperty(KEY_BUTTON_Y, buttonOffsetY == null ? 0 : buttonOffsetY);
     obj.addProperty(KEY_BUTTON_SCALE, buttonScale == null ? 1.0F : buttonScale);
+    obj.addProperty(KEY_INWORLD_INDICATORS,
+        inWorldIndicators == null || Boolean.TRUE.equals(inWorldIndicators));
     JsonArray priority = new JsonArray();
 
     if (priorityNamespaces != null) {

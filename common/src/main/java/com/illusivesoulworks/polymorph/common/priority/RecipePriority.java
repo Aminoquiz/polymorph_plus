@@ -20,7 +20,7 @@ import java.util.Map;
  * Source-priority resolution for recipe conflicts.
  *
  * <p>Holds the ordered namespace list a pack author ships in
- * {@code data/polymorph_plus/priority.json}. When a conflict's candidates are covered by
+ * {@code data/polymorph/priority.json}. When a conflict's candidates are covered by
  * the list, the highest-ranked one is picked automatically and the player never has to
  * click. Kept free of Minecraft types on purpose so the same source compiles on every
  * port and the parsing can be unit-checked in isolation; the datapack plumbing lives in

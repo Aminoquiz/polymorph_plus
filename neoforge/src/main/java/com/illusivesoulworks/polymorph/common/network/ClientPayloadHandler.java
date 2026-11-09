@@ -1,6 +1,7 @@
 package com.illusivesoulworks.polymorph.common.network;
 
 import com.illusivesoulworks.polymorph.common.network.server.SPacketHighlightRecipe;
+import com.illusivesoulworks.polymorph.common.network.server.SPacketInWorldState;
 import com.illusivesoulworks.polymorph.common.network.server.SPacketPackPriority;
 import com.illusivesoulworks.polymorph.common.network.server.SPacketPlayerRecipeSync;
 import com.illusivesoulworks.polymorph.common.network.server.SPacketRecipesList;
@@ -42,6 +43,10 @@ public class ClientPayloadHandler {
 
   public void handlePacket(final SPacketPackPriority packet, final IPayloadContext ctx) {
     handleData(ctx, () -> SPacketPackPriority.handle(packet));
+  }
+
+  public void handlePacket(final SPacketInWorldState packet, final IPayloadContext ctx) {
+    handleData(ctx, () -> SPacketInWorldState.handle(packet));
   }
 
 }

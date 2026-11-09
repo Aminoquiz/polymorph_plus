@@ -12,7 +12,12 @@
     "craftingstation.MixinCraftingStationBlockEntity",
     "ironfurnaces.MixinBlockIronFurnaceTileBase",
     "betterfurnacesreforged.MixinSmeltingBlockEntity",
-    "toms_storage.MixinCraftingTerminalBlockEntity"
+    "toms_storage.MixinCraftingTerminalBlockEntity",
+    "overgeared.MixinItemUtils",
+    "overgeared.MixinHeatedItem"
+  ],
+  "client": [
+    "overgeared.MixinSmithingAnvilRecipesWidget"
   ],
   "injectors": {
     "defaultRequire": 1,

@@ -30,6 +30,7 @@ import com.illusivesoulworks.polymorph.common.integration.cyclic.CyclicModule;
 import com.illusivesoulworks.polymorph.common.integration.craftingstation.CraftingStationModule;
 import com.illusivesoulworks.polymorph.common.integration.ironfurnaces.IronFurnacesModule;
 import com.illusivesoulworks.polymorph.common.integration.betterfurnacesreforged.BetterFurnacesModule;
+import com.illusivesoulworks.polymorph.common.integration.overgeared.OvergearedModule;
 import com.illusivesoulworks.polymorph.platform.services.IIntegrationPlatform;
 import java.util.HashMap;
 import java.util.Map;
@@ -52,6 +53,7 @@ public class NeoForgeIntegrationPlatform implements IIntegrationPlatform {
     result.put(PolymorphIntegrations.Mod.BETTERFURNACES.getId(), () -> BetterFurnacesModule::new);
     result.put(PolymorphIntegrations.Mod.SOPHISTICATEDCORE.getId(),
         () -> SophisticatedCoreModule::new);
+    result.put(PolymorphIntegrations.Mod.OVERGEARED.getId(), () -> OvergearedModule::new);
     return result;
   }
 }
