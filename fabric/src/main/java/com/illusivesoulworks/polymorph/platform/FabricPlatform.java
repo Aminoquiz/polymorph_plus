@@ -22,6 +22,7 @@ import com.illusivesoulworks.polymorph.api.common.capability.IBlockEntityRecipeD
 import com.illusivesoulworks.polymorph.api.common.capability.IPlayerRecipeData;
 import com.illusivesoulworks.polymorph.common.PolymorphFabricPacketDistributor;
 import com.illusivesoulworks.polymorph.common.components.PolymorphFabricComponents;
+import com.illusivesoulworks.polymorph.common.components.WrappedRecipeDataComponent;
 import com.illusivesoulworks.polymorph.platform.services.IPlatform;
 import java.nio.file.Path;
 import java.util.Optional;
@@ -80,7 +81,10 @@ public class FabricPlatform implements IPlatform {
 
   @Override
   public IBlockEntityRecipeData getRecipeData(BlockEntity blockEntity) {
-    return PolymorphFabricComponents.BLOCK_ENTITY_RECIPE_DATA.getNullable(blockEntity);
+    IBlockEntityRecipeData data =
+        PolymorphFabricComponents.BLOCK_ENTITY_RECIPE_DATA.getNullable(blockEntity);
+    // Callers test the concrete type (CampfireRecipeData), which the component hides.
+    return data instanceof WrappedRecipeDataComponent<?> wrapped ? wrapped.recipeData : data;
   }
 
   @Override
