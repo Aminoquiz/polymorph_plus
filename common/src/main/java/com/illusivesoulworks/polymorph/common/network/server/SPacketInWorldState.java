@@ -1,5 +1,6 @@
 package com.illusivesoulworks.polymorph.common.network.server;
 
+import com.illusivesoulworks.polymorph.common.network.InWorldNetwork;
 import com.illusivesoulworks.polymorph.api.PolymorphApi;
 import com.illusivesoulworks.polymorph.api.inworld.Option;
 import com.illusivesoulworks.polymorph.client.inworld.ClientInWorldStates;
@@ -20,7 +21,7 @@ public record SPacketInWorldState(BlockPos pos, int index, ResourceLocation key,
                                   List<Option> options, int shown) implements CustomPacketPayload {
 
   public static final Type<SPacketInWorldState> TYPE =
-      new Type<>(ResourceLocation.fromNamespaceAndPath(PolymorphApi.MOD_ID, "inworld_state"));
+      new Type<>(ResourceLocation.fromNamespaceAndPath(PolymorphApi.MOD_ID, "inworld_state_" + InWorldNetwork.FORMAT));
 
   private static final StreamCodec<RegistryFriendlyByteBuf, Option> OPTION_CODEC =
       StreamCodec.composite(
