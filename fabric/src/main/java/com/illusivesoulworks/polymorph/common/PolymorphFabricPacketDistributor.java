@@ -124,6 +124,9 @@ public class PolymorphFabricPacketDistributor implements IPolymorphNetwork {
 
   @Override
   public void sendInWorldCycleC2S(BlockPos pos, int index) {
-    ClientPlayNetworking.send(new CPacketInWorldCycle(pos, index));
+
+    if (ClientPlayNetworking.canSend(CPacketInWorldCycle.TYPE)) {
+      ClientPlayNetworking.send(new CPacketInWorldCycle(pos, index));
+    }
   }
 }

@@ -125,6 +125,11 @@ public class PolymorphNeoForgePacketDistributor implements IPolymorphNetwork {
 
   @Override
   public void sendInWorldCycleC2S(BlockPos pos, int index) {
-    ClientPacketDistributor.sendToServer(new CPacketInWorldCycle(pos, index));
+    net.minecraft.client.multiplayer.ClientPacketListener connection =
+        net.minecraft.client.Minecraft.getInstance().getConnection();
+
+    if (connection != null && connection.hasChannel(CPacketInWorldCycle.TYPE)) {
+      ClientPacketDistributor.sendToServer(new CPacketInWorldCycle(pos, index));
+    }
   }
 }
