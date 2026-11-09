@@ -19,6 +19,7 @@ package com.illusivesoulworks.polymorph.common;
 
 import com.illusivesoulworks.polymorph.api.PolymorphApi;
 import com.illusivesoulworks.polymorph.common.network.client.CPacketBlockEntityListener;
+import com.illusivesoulworks.polymorph.common.network.client.CPacketInWorldCycle;
 import com.illusivesoulworks.polymorph.common.network.client.CPacketPersistentRecipeSelection;
 import com.illusivesoulworks.polymorph.common.network.client.CPacketPlayerPriority;
 import com.illusivesoulworks.polymorph.common.network.server.SPacketPackPriority;
@@ -26,6 +27,7 @@ import com.illusivesoulworks.polymorph.common.network.client.CPacketPlayerRecipe
 import com.illusivesoulworks.polymorph.common.network.client.CPacketStackRecipeSelection;
 import com.illusivesoulworks.polymorph.common.network.server.SPacketBlockEntityRecipeSync;
 import com.illusivesoulworks.polymorph.common.network.server.SPacketHighlightRecipe;
+import com.illusivesoulworks.polymorph.common.network.server.SPacketInWorldState;
 import com.illusivesoulworks.polymorph.common.network.server.SPacketPlayerRecipeSync;
 import com.illusivesoulworks.polymorph.common.network.server.SPacketRecipesList;
 import java.util.function.BiConsumer;
@@ -60,6 +62,10 @@ public class PolymorphFabricNetwork {
       new ResourceLocation(PolymorphApi.MOD_ID, "player_priority");
   public static final ResourceLocation PACK_PRIORITY =
       new ResourceLocation(PolymorphApi.MOD_ID, "pack_priority");
+  public static final ResourceLocation INWORLD_STATE =
+      new ResourceLocation(PolymorphApi.MOD_ID, "inworld_state");
+  public static final ResourceLocation INWORLD_CYCLE =
+      new ResourceLocation(PolymorphApi.MOD_ID, "inworld_cycle");
 
   public static void setup() {
     registerServerReceiver(PLAYER_PRIORITY, CPacketPlayerPriority::decode,
@@ -72,6 +78,8 @@ public class PolymorphFabricNetwork {
         CPacketStackRecipeSelection::handle);
     registerServerReceiver(BLOCK_ENTITY_LISTENER, CPacketBlockEntityListener::decode,
         CPacketBlockEntityListener::handle);
+    registerServerReceiver(INWORLD_CYCLE, CPacketInWorldCycle::decode,
+        CPacketInWorldCycle::handle);
   }
 
   public static void clientSetup() {
@@ -84,6 +92,8 @@ public class PolymorphFabricNetwork {
     registerClientReceiver(RECIPES_LIST, SPacketRecipesList::decode, SPacketRecipesList::handle);
     registerClientReceiver(BLOCK_ENTITY_SYNC, SPacketBlockEntityRecipeSync::decode,
         SPacketBlockEntityRecipeSync::handle);
+    registerClientReceiver(INWORLD_STATE, SPacketInWorldState::decode,
+        SPacketInWorldState::handle);
   }
 
   private static <M> void registerServerReceiver(ResourceLocation resourceLocation,

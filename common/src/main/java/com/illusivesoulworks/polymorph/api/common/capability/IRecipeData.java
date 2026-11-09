@@ -43,6 +43,24 @@ public interface IRecipeData<E> {
 
   void setSelectedRecipe(@Nonnull Recipe<?> recipe);
 
+  /**
+   * Defaults are no-ops so third-party implementations keep compiling.
+   */
+  default void setSelectedRecipeId(ResourceLocation id) {
+  }
+
+  default ResourceLocation getSelectedRecipeId() {
+    return null;
+  }
+
+  /**
+   * Records a deliberate pick by id, such as one made on the block in the world rather than in
+   * a menu.
+   */
+  default void chooseRecipe(ResourceLocation id) {
+    this.setSelectedRecipeId(id);
+  }
+
   @Nonnull
   SortedSet<IRecipePair> getRecipesList();
 

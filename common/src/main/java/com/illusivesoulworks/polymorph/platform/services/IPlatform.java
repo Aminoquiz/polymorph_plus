@@ -52,4 +52,6 @@ public interface IPlatform {
   Optional<? extends IStackRecipeData> getRecipeData(ItemStack stack);
 
   IPolymorphPacketDistributor getPacketDistributor();
+
+  double getBlockReach(Player player);
 }

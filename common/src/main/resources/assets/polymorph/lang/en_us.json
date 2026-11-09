@@ -2,6 +2,8 @@
   "commands.polymorph.conflicts.starting": "Searching for recipe conflicts...",
   "commands.polymorph.conflicts.success": "Found %d potential conflicts. Check logs/conflicts.log for more details.",
   "polymorph.networking.failed": "Polymorph Networking Failure: %s",
+  "polymorph.inworld.output": "Output: %s (%s)",
+  "polymorph.inworld.hint": "%s to switch",
   "polymorph_plus.tutorial.conflict": "Recipe conflict! Click the arrow to choose.",
   "polymorph_plus.tutorial.select": "Click an output to switch the recipe.",
   "polymorph_plus.tutorial.pin": "Tip: right-click the arrow to pin the panel open.",

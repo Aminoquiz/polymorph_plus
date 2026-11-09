@@ -27,4 +27,8 @@ public interface IBlockEntityRecipeData extends IRecipeData<BlockEntity> {
   void addListener(ServerPlayer player);
 
   void removeListener(ServerPlayer player);
+
+  default boolean isEmpty() {
+    return false;
+  }
 }

@@ -19,6 +19,7 @@ package com.illusivesoulworks.polymorph.common;
 
 import com.illusivesoulworks.polymorph.api.PolymorphApi;
 import com.illusivesoulworks.polymorph.common.network.client.CPacketBlockEntityListener;
+import com.illusivesoulworks.polymorph.common.network.client.CPacketInWorldCycle;
 import com.illusivesoulworks.polymorph.common.network.client.CPacketPersistentRecipeSelection;
 import com.illusivesoulworks.polymorph.common.network.client.CPacketPlayerPriority;
 import com.illusivesoulworks.polymorph.common.network.server.SPacketPackPriority;
@@ -26,6 +27,7 @@ import com.illusivesoulworks.polymorph.common.network.client.CPacketPlayerRecipe
 import com.illusivesoulworks.polymorph.common.network.client.CPacketStackRecipeSelection;
 import com.illusivesoulworks.polymorph.common.network.server.SPacketBlockEntityRecipeSync;
 import com.illusivesoulworks.polymorph.common.network.server.SPacketHighlightRecipe;
+import com.illusivesoulworks.polymorph.common.network.server.SPacketInWorldState;
 import com.illusivesoulworks.polymorph.common.network.server.SPacketPlayerRecipeSync;
 import com.illusivesoulworks.polymorph.common.network.server.SPacketRecipesList;
 import java.util.function.BiConsumer;
@@ -42,7 +44,7 @@ import net.minecraftforge.network.simple.SimpleChannel;
 
 public class PolymorphForgeNetwork {
 
-  private static final String PTC_VERSION = "polymorph_plus-1";
+  private static final String PTC_VERSION = "polymorph_plus-2";
 
   // A peer without the mod is fine; upstream Polymorph ("1") is refused.
   private static boolean accepts(String version) {
@@ -50,11 +52,25 @@ public class PolymorphForgeNetwork {
         || NetworkRegistry.ACCEPTVANILLA.equals(version);
   }
 
+  private static final String INWORLD_VERSION = "1";
+
+  // Its own channel, so a peer from before the in-world selector still connects: the main
+  // channel keeps its version and this one is allowed to be absent.
+  private static boolean acceptsInWorld(String version) {
+    return INWORLD_VERSION.equals(version) || NetworkRegistry.ABSENT.equals(version)
+        || NetworkRegistry.ACCEPTVANILLA.equals(version);
+  }
+
   private static SimpleChannel instance;
+  private static SimpleChannel inWorld;
   private static int id = 0;
 
   public static SimpleChannel get() {
     return instance;
+  }
+
+  public static SimpleChannel inWorld() {
+    return inWorld;
   }
 
   public static void setup() {
@@ -88,12 +104,29 @@ public class PolymorphForgeNetwork {
         CPacketPlayerPriority::decode, CPacketPlayerPriority::handle);
     registerS2C(SPacketPackPriority.class, SPacketPackPriority::encode,
         SPacketPackPriority::decode, SPacketPackPriority::handle);
+
+    inWorld =
+        NetworkRegistry.ChannelBuilder.named(new ResourceLocation(PolymorphApi.MOD_ID, "inworld"))
+            .networkProtocolVersion(() -> INWORLD_VERSION)
+            .clientAcceptedVersions(PolymorphForgeNetwork::acceptsInWorld)
+            .serverAcceptedVersions(PolymorphForgeNetwork::acceptsInWorld).simpleChannel();
+    registerS2C(inWorld, 0, SPacketInWorldState.class, SPacketInWorldState::encode,
+        SPacketInWorldState::decode, SPacketInWorldState::handle);
+    registerC2S(inWorld, 1, CPacketInWorldCycle.class, CPacketInWorldCycle::encode,
+        CPacketInWorldCycle::decode, CPacketInWorldCycle::handle);
   }
 
   public static <M> void registerC2S(Class<M> clazz, BiConsumer<M, FriendlyByteBuf> encoder,
                                      Function<FriendlyByteBuf, M> decoder,
                                      BiConsumer<M, ServerPlayer> handler) {
-    instance.registerMessage(id++, clazz, encoder, decoder, (message, contextSupplier) -> {
+    registerC2S(instance, id++, clazz, encoder, decoder, handler);
+  }
+
+  private static <M> void registerC2S(SimpleChannel channel, int index, Class<M> clazz,
+                                      BiConsumer<M, FriendlyByteBuf> encoder,
+                                      Function<FriendlyByteBuf, M> decoder,
+                                      BiConsumer<M, ServerPlayer> handler) {
+    channel.registerMessage(index, clazz, encoder, decoder, (message, contextSupplier) -> {
       NetworkEvent.Context context = contextSupplier.get();
       context.enqueueWork(() -> {
         ServerPlayer sender = context.getSender();
@@ -108,7 +141,13 @@ public class PolymorphForgeNetwork {
 
   public static <M> void registerS2C(Class<M> clazz, BiConsumer<M, FriendlyByteBuf> encoder,
                                      Function<FriendlyByteBuf, M> decoder, Consumer<M> handler) {
-    instance.registerMessage(id++, clazz, encoder, decoder, (message, contextSupplier) -> {
+    registerS2C(instance, id++, clazz, encoder, decoder, handler);
+  }
+
+  private static <M> void registerS2C(SimpleChannel channel, int index, Class<M> clazz,
+                                      BiConsumer<M, FriendlyByteBuf> encoder,
+                                      Function<FriendlyByteBuf, M> decoder, Consumer<M> handler) {
+    channel.registerMessage(index, clazz, encoder, decoder, (message, contextSupplier) -> {
       NetworkEvent.Context context = contextSupplier.get();
       context.enqueueWork(
           () -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> handler.accept(message)));

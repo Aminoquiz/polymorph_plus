@@ -102,4 +102,9 @@ public class ForgePlatform implements IPlatform {
   public IPolymorphPacketDistributor getPacketDistributor() {
     return PACKET_DISTRIBUTOR;
   }
+
+  @Override
+  public double getBlockReach(Player player) {
+    return player.getBlockReach();
+  }
 }

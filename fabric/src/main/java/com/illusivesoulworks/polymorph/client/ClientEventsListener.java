@@ -17,10 +17,18 @@
 
 package com.illusivesoulworks.polymorph.client;
 
+import com.illusivesoulworks.polymorph.client.inworld.ClientInWorldStates;
+import com.illusivesoulworks.polymorph.client.inworld.InWorldClient;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientChunkEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenMouseEvents;
+import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
+import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.world.InteractionResult;
 
 public class ClientEventsListener {
 
@@ -30,6 +38,17 @@ public class ClientEventsListener {
         (handler, sender, client) -> PolymorphClientEvents.syncPriority());
     ClientPlayConnectionEvents.DISCONNECT.register(
         (handler, client) -> PolymorphClientEvents.clearPackPriority());
+    ClientPlayConnectionEvents.DISCONNECT.register(
+        (handler, client) -> client.execute(ClientInWorldStates::clear));
+    ClientChunkEvents.CHUNK_UNLOAD.register(
+        (level, chunk) -> ClientInWorldStates.chunkUnloaded(chunk.getPos()));
+    WorldRenderEvents.AFTER_ENTITIES.register(context -> InWorldClient.render(
+        context.matrixStack(), Minecraft.getInstance().renderBuffers().bufferSource(),
+        context.camera()));
+    AttackBlockCallback.EVENT.register((player, level, hand, pos, direction) ->
+        level.isClientSide() && player instanceof LocalPlayer localPlayer &&
+            InWorldClient.attack(localPlayer, pos) ? InteractionResult.FAIL :
+            InteractionResult.PASS);
     ScreenEvents.AFTER_INIT.register((client, screen, scaledWidth, scaledHeight) -> {
       PolymorphClientEvents.initScreen(screen);
       ScreenEvents.afterRender(screen).register(PolymorphClientEvents::renderIfMissed);

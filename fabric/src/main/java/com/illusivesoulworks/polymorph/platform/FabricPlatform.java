@@ -100,4 +100,9 @@ public class FabricPlatform implements IPlatform {
   public IPolymorphPacketDistributor getPacketDistributor() {
     return PACKET_DISTRIBUTOR;
   }
+
+  @Override
+  public double getBlockReach(Player player) {
+    return player.isCreative() ? 5.0D : 4.5D;
+  }
 }

@@ -30,6 +30,9 @@ import com.illusivesoulworks.polymorph.common.network.server.SPacketPlayerRecipe
 import com.illusivesoulworks.polymorph.common.network.server.SPacketRecipesList;
 import com.illusivesoulworks.polymorph.common.network.client.CPacketPlayerPriority;
 import com.illusivesoulworks.polymorph.common.network.server.SPacketPackPriority;
+import com.illusivesoulworks.polymorph.api.inworld.Option;
+import com.illusivesoulworks.polymorph.common.network.client.CPacketInWorldCycle;
+import com.illusivesoulworks.polymorph.common.network.server.SPacketInWorldState;
 import java.util.List;
 import java.util.SortedSet;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -132,5 +135,27 @@ public class PolymorphFabricPacketDistributor implements IPolymorphPacketDistrib
     FriendlyByteBuf buf = PacketByteBufs.create();
     CPacketBlockEntityListener.encode(new CPacketBlockEntityListener(add), buf);
     ClientPlayNetworking.send(PolymorphFabricNetwork.BLOCK_ENTITY_LISTENER, buf);
+  }
+
+  @Override
+  public void sendInWorldStateS2C(ServerPlayer player, BlockPos pos, int index,
+                                  ResourceLocation key,
+                                  List<Option> options, int shown) {
+
+    if (ServerPlayNetworking.canSend(player, PolymorphFabricNetwork.INWORLD_STATE)) {
+      FriendlyByteBuf buf = PacketByteBufs.create();
+      SPacketInWorldState.encode(new SPacketInWorldState(pos, index, key, options, shown), buf);
+      ServerPlayNetworking.send(player, PolymorphFabricNetwork.INWORLD_STATE, buf);
+    }
+  }
+
+  @Override
+  public void sendInWorldCycleC2S(BlockPos pos, int index) {
+
+    if (ClientPlayNetworking.canSend(PolymorphFabricNetwork.INWORLD_CYCLE)) {
+      FriendlyByteBuf buf = PacketByteBufs.create();
+      CPacketInWorldCycle.encode(new CPacketInWorldCycle(pos, index), buf);
+      ClientPlayNetworking.send(PolymorphFabricNetwork.INWORLD_CYCLE, buf);
+    }
   }
 }
