@@ -48,7 +48,7 @@
     "java": ">=${java_version}"
   },
   "breaks": {
-    "polymorph": "<1.2.0",
+    "polymorph": ["<${version}", ">${version}"],
     "jei": "<${jei_version}"
   }
 }

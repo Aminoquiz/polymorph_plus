@@ -13,7 +13,7 @@ issueTrackerURL= "${issues_url}"
     description = '''${description}'''
 [[mods]]
     modId = "polymorph"
-    version = "1.2.456"
+    version = "1.2.99+1.21.1"
     displayName = "Polymorph (alias)"
     description = '''Compatibility alias provided by Polymorph+. Allows mods that depend on `polymorph` (Polymorphic Occultism, Polymorphic Extended Crafting, RS Polymorph, etc.) to load against Polymorph+.
 
@@ -40,18 +40,15 @@ Both mods inject mixins on the same vanilla menus and cannot coexist.'''
     versionRange = "${minecraft_version_range}"
     ordering = "NONE"
     side = "BOTH"
-# Incompat with upstream Polymorph (< 1.2.0). Our alias declares
-# version 1.2.456 (a distinctive marker that won't collide with any real
-# upstream release) so it falls outside this range, avoiding self-fire.
-# If upstream ever publishes >= 1.2.0 the range lets it pass without
-# triggering this incompat. When both jars coexist, FML's duplicate-mod
-# check fires before this dep is evaluated, so the user typically sees
-# the duplicate crash; this declaration remains as a safety net.
+# Incompat with upstream Polymorph: every version except our alias's own
+# 1.2.99+1.21.1 (inside upstream's 1.x+1.21.1 line so dependents' ranges
+# accept it, and never published upstream). When both jars coexist, FML's
+# duplicate-mod check usually fires first; this rule is the safety net.
 [[dependencies.${mod_id}]]
     modId = "polymorph"
     type = "incompatible"
     reason = "Polymorph+ already provides the polymorph alias. Installing both produces a duplicate mod id and double UI conflicts on the same vanilla menus. Remove one."
-    versionRange = "[0,1.2.0)"
+    versionRange = "(,1.2.99+1.21.1),(1.2.99+1.21.1,)"
     ordering = "NONE"
     side = "BOTH"
 [[dependencies.${mod_id}]]
