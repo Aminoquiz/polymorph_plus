@@ -19,15 +19,21 @@ package com.illusivesoulworks.polymorph;
 
 import com.illusivesoulworks.polymorph.api.PolymorphApi;
 import com.illusivesoulworks.polymorph.api.common.base.IPolymorphCommon;
+import com.illusivesoulworks.polymorph.api.inworld.IInWorldProvider;
+import com.illusivesoulworks.polymorph.api.inworld.PolymorphInWorld;
 import com.illusivesoulworks.polymorph.client.impl.PolymorphClient;
 import com.illusivesoulworks.polymorph.common.capability.BrewingStandRecipeData;
+import com.illusivesoulworks.polymorph.common.capability.CampfireRecipeData;
 import com.illusivesoulworks.polymorph.common.capability.FurnaceRecipeData;
 import com.illusivesoulworks.polymorph.common.integration.PolymorphIntegrations;
+import com.illusivesoulworks.polymorph.common.inworld.CampfireInWorldProvider;
 import net.minecraft.world.Container;
 import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BrewingStandBlockEntity;
+import net.minecraft.world.level.block.entity.CampfireBlockEntity;
 
 public class PolymorphCommonMod {
 
@@ -42,6 +48,8 @@ public class PolymorphCommonMod {
         return new FurnaceRecipeData((AbstractFurnaceBlockEntity) blockEntity);
       } else if (blockEntity instanceof BrewingStandBlockEntity) {
         return new BrewingStandRecipeData((BrewingStandBlockEntity) blockEntity);
+      } else if (blockEntity instanceof CampfireBlockEntity campfire) {
+        return new CampfireRecipeData(campfire);
       }
       return null;
     });
@@ -55,6 +63,9 @@ public class PolymorphCommonMod {
       }
       return null;
     });
+    IInWorldProvider campfire = new CampfireInWorldProvider();
+    PolymorphInWorld.register(Blocks.CAMPFIRE, campfire);
+    PolymorphInWorld.register(Blocks.SOUL_CAMPFIRE, campfire);
     PolymorphIntegrations.setup();
   }
 

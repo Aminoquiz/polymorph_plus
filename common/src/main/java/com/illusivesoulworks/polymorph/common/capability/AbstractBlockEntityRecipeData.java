@@ -19,6 +19,8 @@ package com.illusivesoulworks.polymorph.common.capability;
 
 import com.illusivesoulworks.polymorph.api.common.base.IRecipePair;
 import com.illusivesoulworks.polymorph.api.common.capability.IBlockEntityRecipeData;
+import com.illusivesoulworks.polymorph.api.inworld.PolymorphInWorld;
+import com.illusivesoulworks.polymorph.common.inworld.InWorldServer;
 import com.mojang.datafixers.util.Pair;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -33,6 +35,7 @@ import net.minecraft.world.Container;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
 public abstract class AbstractBlockEntityRecipeData<E extends BlockEntity>
@@ -104,12 +107,24 @@ public abstract class AbstractBlockEntityRecipeData<E extends BlockEntity>
     return new HashSet<>(this.listeners.values());
   }
 
+  @Override
+  protected void updateRecipesList(SortedSet<IRecipePair> recipesList) {
+    super.updateRecipesList(recipesList);
+    BlockEntity owner = this.getOwner();
+    Level level = owner.getLevel();
+
+    if (level != null && InWorldServer.provider(owner.getBlockState().getBlock()) != null) {
+      PolymorphInWorld.refresh(level, owner.getBlockPos());
+    }
+  }
+
   @SuppressWarnings("unchecked")
   @Override
   public E getOwner() {
     return (E) super.getOwner();
   }
 
+  @Override
   public boolean isEmpty() {
 
     for (ItemStack stack : this.getInput()) {

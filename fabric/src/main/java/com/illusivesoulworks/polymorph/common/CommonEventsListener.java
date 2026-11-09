@@ -20,7 +20,11 @@ package com.illusivesoulworks.polymorph.common;
 import com.illusivesoulworks.polymorph.api.PolymorphApi;
 import com.illusivesoulworks.polymorph.common.priority.PriorityReloadListener;
 import com.illusivesoulworks.polymorph.common.priority.RecipePriority;
+import com.illusivesoulworks.polymorph.common.inworld.InWorldServer;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerChunkEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
+import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.minecraft.resources.ResourceLocation;
@@ -29,6 +33,8 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 
 public class CommonEventsListener {
@@ -37,6 +43,19 @@ public class CommonEventsListener {
     ServerLifecycleEvents.SERVER_STARTING.register(CommonEventsListener::serverStarting);
     ServerLifecycleEvents.SERVER_STOPPED.register(CommonEventsListener::serverStopped);
     ServerTickEvents.END_WORLD_TICK.register(CommonEventsListener::levelTick);
+    ServerChunkEvents.CHUNK_UNLOAD.register(
+        (level, chunk) -> InWorldServer.chunkUnloaded(level, chunk.getPos()));
+    PlayerBlockBreakEvents.AFTER.register((level, player, pos, state, blockEntity) -> {
+
+      if (level instanceof ServerLevel serverLevel &&
+          InWorldServer.provider(state.getBlock()) != null) {
+        InWorldServer.blockBroken(serverLevel, pos);
+      }
+    });
+    AttackBlockCallback.EVENT.register((player, level, hand, pos, direction) ->
+        player instanceof ServerPlayer serverPlayer &&
+            InWorldServer.isAttackOnIndicator(serverPlayer, pos) ? InteractionResult.FAIL :
+            InteractionResult.PASS);
     ServerPlayConnectionEvents.DISCONNECT.register(CommonEventsListener::disconnect);
     ServerPlayConnectionEvents.JOIN.register(
         (handler, sender, server) -> PolymorphApi.common().getPacketDistributor()

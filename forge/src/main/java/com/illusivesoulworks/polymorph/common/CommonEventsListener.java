@@ -24,6 +24,13 @@ import com.illusivesoulworks.polymorph.api.common.capability.IRecipeData;
 import com.illusivesoulworks.polymorph.api.common.capability.IStackRecipeData;
 import com.illusivesoulworks.polymorph.common.capability.PlayerRecipeData;
 import com.illusivesoulworks.polymorph.server.PolymorphCommands;
+import com.illusivesoulworks.polymorph.common.inworld.InWorldServer;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraftforge.event.level.BlockEvent;
+import net.minecraftforge.event.level.ChunkEvent;
+import net.minecraftforge.event.level.ChunkWatchEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.minecraft.core.Direction;
@@ -102,6 +109,37 @@ public class CommonEventsListener {
   @SubscribeEvent
   public void openContainer(final PlayerContainerEvent.Open evt) {
     PolymorphCommonEvents.openContainer(evt.getEntity(), evt.getContainer());
+  }
+
+  @SubscribeEvent
+  public void chunkWatch(final ChunkWatchEvent.Watch evt) {
+    InWorldServer.chunkWatched(evt.getPlayer(), evt.getLevel(), evt.getChunk());
+  }
+
+  @SubscribeEvent
+  public void chunkUnload(final ChunkEvent.Unload evt) {
+
+    if (evt.getLevel() instanceof ServerLevel serverLevel) {
+      InWorldServer.chunkUnloaded(serverLevel, evt.getChunk().getPos());
+    }
+  }
+
+  @SubscribeEvent(priority = EventPriority.LOWEST)
+  public void blockBreak(final BlockEvent.BreakEvent evt) {
+
+    if (!evt.isCanceled() && evt.getLevel() instanceof ServerLevel serverLevel &&
+        InWorldServer.provider(evt.getState().getBlock()) != null) {
+      InWorldServer.blockBroken(serverLevel, evt.getPos());
+    }
+  }
+
+  @SubscribeEvent
+  public void leftClickBlock(final PlayerInteractEvent.LeftClickBlock evt) {
+
+    if (evt.getEntity() instanceof ServerPlayer serverPlayer &&
+        InWorldServer.isAttackOnIndicator(serverPlayer, evt.getPos())) {
+      evt.setCanceled(true);
+    }
   }
 
   @SubscribeEvent

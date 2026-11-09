@@ -29,8 +29,13 @@ import com.illusivesoulworks.polymorph.common.network.server.SPacketPlayerRecipe
 import com.illusivesoulworks.polymorph.common.network.server.SPacketRecipesList;
 import com.illusivesoulworks.polymorph.common.network.client.CPacketPlayerPriority;
 import com.illusivesoulworks.polymorph.common.network.server.SPacketPackPriority;
+import com.illusivesoulworks.polymorph.api.inworld.Option;
+import com.illusivesoulworks.polymorph.common.network.client.CPacketInWorldCycle;
+import com.illusivesoulworks.polymorph.common.network.server.SPacketInWorldState;
 import java.util.List;
 import java.util.SortedSet;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -108,5 +113,27 @@ public class PolymorphForgePacketDistributor implements IPolymorphPacketDistribu
   public void sendBlockEntityListenerC2S(boolean add) {
     PolymorphForgeNetwork.get()
         .send(PacketDistributor.SERVER.noArg(), new CPacketBlockEntityListener(add));
+  }
+
+  @Override
+  public void sendInWorldStateS2C(ServerPlayer player, BlockPos pos, int index,
+                                  ResourceLocation key,
+                                  List<Option> options, int shown) {
+
+    if (PolymorphForgeNetwork.inWorld().isRemotePresent(player.connection.connection)) {
+      PolymorphForgeNetwork.inWorld().send(PacketDistributor.PLAYER.with(() -> player),
+          new SPacketInWorldState(pos, index, key, options, shown));
+    }
+  }
+
+  @Override
+  public void sendInWorldCycleC2S(BlockPos pos, int index) {
+    ClientPacketListener connection = Minecraft.getInstance().getConnection();
+
+    if (connection != null &&
+        PolymorphForgeNetwork.inWorld().isRemotePresent(connection.getConnection())) {
+      PolymorphForgeNetwork.inWorld()
+          .send(PacketDistributor.SERVER.noArg(), new CPacketInWorldCycle(pos, index));
+    }
   }
 }

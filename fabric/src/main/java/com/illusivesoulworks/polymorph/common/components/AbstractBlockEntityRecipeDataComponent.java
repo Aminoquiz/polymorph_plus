@@ -18,13 +18,12 @@
 package com.illusivesoulworks.polymorph.common.components;
 
 import com.illusivesoulworks.polymorph.common.capability.AbstractBlockEntityRecipeData;
-import dev.onyxstudios.cca.api.v3.component.Component;
 import javax.annotation.Nonnull;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
 public abstract class AbstractBlockEntityRecipeDataComponent<M extends BlockEntity>
-    extends AbstractBlockEntityRecipeData<M> implements Component {
+    extends AbstractBlockEntityRecipeData<M> implements BlockEntityRecipeDataComponent {
 
   public AbstractBlockEntityRecipeDataComponent(M owner) {
     super(owner);

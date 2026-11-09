@@ -38,6 +38,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BrewingStandBlockEntity;
+import net.minecraft.world.level.block.entity.CampfireBlockEntity;
 
 public class PolymorphFabricComponents implements BlockComponentInitializer,
     EntityComponentInitializer, ItemComponentInitializer {
@@ -45,11 +46,11 @@ public class PolymorphFabricComponents implements BlockComponentInitializer,
   public static final ComponentKey<PlayerRecipeDataComponent> PLAYER_RECIPE_DATA =
       ComponentRegistry.getOrCreate(new ResourceLocation(PolymorphApi.MOD_ID, "player_recipe_data"),
           PlayerRecipeDataComponent.class);
-  public static final ComponentKey<AbstractBlockEntityRecipeDataComponent>
+  public static final ComponentKey<BlockEntityRecipeDataComponent>
       BLOCK_ENTITY_RECIPE_DATA =
       ComponentRegistry.getOrCreate(
           new ResourceLocation(PolymorphApi.MOD_ID, "block_entity_recipe_data"),
-          AbstractBlockEntityRecipeDataComponent.class);
+          BlockEntityRecipeDataComponent.class);
   public static final ComponentKey<AbstractStackRecipeDataComponent> STACK_RECIPE_DATA =
       ComponentRegistry.getOrCreate(new ResourceLocation(PolymorphApi.MOD_ID, "stack_recipe_data"),
           AbstractStackRecipeDataComponent.class);
@@ -57,7 +58,7 @@ public class PolymorphFabricComponents implements BlockComponentInitializer,
   private static final Map<Item, Function<ItemStack, AbstractStackRecipeDataComponent>>
       ITEM_2_RECIPE_DATA =
       new HashMap<>();
-  private static final Map<Class<? extends BlockEntity>, Function<BlockEntity, AbstractBlockEntityRecipeDataComponent<?>>>
+  private static final Map<Class<? extends BlockEntity>, Function<BlockEntity, ? extends BlockEntityRecipeDataComponent>>
       BLOCK_ENTITY_2_RECIPE_DATA = new HashMap<>();
 
   public static void setup() {
@@ -65,7 +66,7 @@ public class PolymorphFabricComponents implements BlockComponentInitializer,
   }
 
   public static void registerBlockEntity(Class<? extends BlockEntity> blockEntityClass,
-                                         Function<BlockEntity, AbstractBlockEntityRecipeDataComponent<?>> blockEntity2RecipeData) {
+                                         Function<BlockEntity, ? extends BlockEntityRecipeDataComponent> blockEntity2RecipeData) {
     BLOCK_ENTITY_2_RECIPE_DATA.put(blockEntityClass, blockEntity2RecipeData);
   }
 
@@ -80,6 +81,8 @@ public class PolymorphFabricComponents implements BlockComponentInitializer,
         blockEntity -> new FurnaceRecipeDataComponent((AbstractFurnaceBlockEntity) blockEntity));
     registerBlockEntity(BrewingStandBlockEntity.class,
         blockEntity -> new BrewingStandRecipeDataComponent((BrewingStandBlockEntity) blockEntity));
+    registerBlockEntity(CampfireBlockEntity.class,
+        blockEntity -> new CampfireRecipeDataComponent((CampfireBlockEntity) blockEntity));
 
     if (BetterFurnacesModule.BLOCK_ENTITY != null
         && BlockEntity.class.isAssignableFrom(BetterFurnacesModule.BLOCK_ENTITY)) {
@@ -87,7 +90,7 @@ public class PolymorphFabricComponents implements BlockComponentInitializer,
           blockEntity -> new SlotRecipeDataComponent(blockEntity, BetterFurnacesModule::getInput));
     }
 
-    for (Map.Entry<Class<? extends BlockEntity>, Function<BlockEntity, AbstractBlockEntityRecipeDataComponent<?>>> entry : BLOCK_ENTITY_2_RECIPE_DATA.entrySet()) {
+    for (Map.Entry<Class<? extends BlockEntity>, Function<BlockEntity, ? extends BlockEntityRecipeDataComponent>> entry : BLOCK_ENTITY_2_RECIPE_DATA.entrySet()) {
       registry.registerFor(entry.getKey(), BLOCK_ENTITY_RECIPE_DATA,
           blockEntity -> entry.getValue().apply(blockEntity));
     }

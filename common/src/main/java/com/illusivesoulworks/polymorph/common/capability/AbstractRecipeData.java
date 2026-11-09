@@ -54,6 +54,7 @@ public abstract class AbstractRecipeData<E> implements IRecipeData<E> {
 
   private Recipe<?> lastRecipe;
   private Recipe<?> selectedRecipe;
+  private ResourceLocation selectedRecipeId;
   private ResourceLocation loadedRecipe;
   // The last deliberate pick, persisted to NBT; selectedRecipe only mirrors what resolution chose.
   private ResourceLocation chosenRecipeId;
@@ -181,7 +182,7 @@ public abstract class AbstractRecipeData<E> implements IRecipeData<E> {
         sessionMatch = entry;
       }
 
-      if (chosenMatch == null && id.equals(this.chosenRecipeId)) {
+      if (chosenMatch == null && id.equals(this.getChosenRecipeId())) {
         chosenMatch = entry;
       }
       int entryFavouriteRank = this.favouriteRank(id);
@@ -203,7 +204,7 @@ public abstract class AbstractRecipeData<E> implements IRecipeData<E> {
       this.sendRecipesListToListeners(true);
       return Optional.empty();
     }
-    this.setRecipesList(newDataset);
+    this.updateRecipesList(newDataset);
     // The open menu's own click first, then the favourite, then the remembered click, then the
     // namespace and pack lists, then upstream's sorted-first default.
     result = sessionMatch != null ? sessionMatch
@@ -264,6 +265,29 @@ public abstract class AbstractRecipeData<E> implements IRecipeData<E> {
   @Override
   public void setSelectedRecipe(@Nonnull Recipe<?> recipe) {
     this.selectedRecipe = recipe;
+    this.selectedRecipeId = recipe.getId();
+  }
+
+  @Override
+  public void setSelectedRecipeId(ResourceLocation id) {
+    this.selectedRecipeId = id;
+  }
+
+  @Override
+  public ResourceLocation getSelectedRecipeId() {
+    return this.selectedRecipeId;
+  }
+
+  @Override
+  public void chooseRecipe(ResourceLocation id) {
+    this.chosenRecipeId = id;
+    this.selectedRecipeId = id;
+
+    // Dropping the held recipe sends the next lookup through full resolution, where the new
+    // pick wins over the lastRecipe shortcut.
+    if (this.selectedRecipe != null && !this.selectedRecipe.getId().equals(id)) {
+      this.selectedRecipe = null;
+    }
   }
 
   public Optional<? extends Recipe<?>> getLastRecipe() {
@@ -284,6 +308,14 @@ public abstract class AbstractRecipeData<E> implements IRecipeData<E> {
   public void setRecipesList(@Nonnull SortedSet<IRecipePair> recipesList) {
     this.recipesList.clear();
     this.recipesList.addAll(recipesList);
+  }
+
+  /**
+   * The single point where resolution replaces the candidate list, for subclasses that must
+   * react to it.
+   */
+  protected void updateRecipesList(SortedSet<IRecipePair> recipesList) {
+    this.setRecipesList(recipesList);
   }
 
   @Override
@@ -347,6 +379,7 @@ public abstract class AbstractRecipeData<E> implements IRecipeData<E> {
     if (compoundTag.contains("SelectedRecipe")) {
       this.loadedRecipe = ResourceLocation.tryParse(compoundTag.getString("SelectedRecipe"));
       this.chosenRecipeId = this.loadedRecipe;
+      this.selectedRecipeId = this.loadedRecipe;
     }
 
     if (compoundTag.contains("RecipeDataSet")) {

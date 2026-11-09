@@ -21,6 +21,7 @@ import com.illusivesoulworks.polymorph.api.PolymorphApi;
 import com.illusivesoulworks.polymorph.api.common.base.IPolymorphCommon;
 import com.illusivesoulworks.polymorph.api.common.base.IPolymorphPacketDistributor;
 import com.illusivesoulworks.polymorph.api.common.base.IRecipePair;
+import com.illusivesoulworks.polymorph.common.inworld.InWorldServer;
 import com.illusivesoulworks.polymorph.common.integration.PolymorphIntegrations;
 import com.illusivesoulworks.polymorph.common.util.BlockEntityTicker;
 import com.mojang.datafixers.util.Pair;
@@ -42,6 +43,7 @@ public class PolymorphCommonEvents {
 
   public static void playerDisconnected(ServerPlayer serverPlayer) {
     BlockEntityTicker.remove(serverPlayer);
+    InWorldServer.playerLeft(serverPlayer);
   }
 
   public static void openContainer(Player player, AbstractContainerMenu containerMenu) {

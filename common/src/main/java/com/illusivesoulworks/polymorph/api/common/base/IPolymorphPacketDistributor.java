@@ -17,6 +17,7 @@
 
 package com.illusivesoulworks.polymorph.api.common.base;
 
+import com.illusivesoulworks.polymorph.api.inworld.Option;
 import java.util.List;
 import java.util.SortedSet;
 import net.minecraft.core.BlockPos;
@@ -51,4 +52,10 @@ public interface IPolymorphPacketDistributor {
 
   /** Pushes the datapack namespace priority list so the client ranks conflicts the same way. */
   void sendPackPriorityS2C(ServerPlayer player, List<String> namespaces);
+
+  /** Does nothing when the player's client has no in-world channel. */
+  void sendInWorldStateS2C(ServerPlayer player, BlockPos pos, int index, ResourceLocation key,
+                           List<Option> options, int shown);
+
+  void sendInWorldCycleC2S(BlockPos pos, int index);
 }
