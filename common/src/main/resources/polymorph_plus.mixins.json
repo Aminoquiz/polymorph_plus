@@ -10,6 +10,7 @@
     "AccessorCrafterMenu",
     "AccessorRecipeManager",
     "MixinBrewingStandBlockEntity",
+    "MixinCampfireBlockEntity",
     "MixinCrafterMenu",
     "MixinCraftingMenu",
     "MixinLevelChunk",

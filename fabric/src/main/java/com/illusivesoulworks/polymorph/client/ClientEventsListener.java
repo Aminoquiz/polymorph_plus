@@ -17,14 +17,33 @@
 
 package com.illusivesoulworks.polymorph.client;
 
+import com.illusivesoulworks.polymorph.client.inworld.ClientInWorldStates;
+import com.illusivesoulworks.polymorph.client.inworld.InWorldClient;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientChunkEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
+import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenMouseEvents;
+import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.world.InteractionResult;
 
 public class ClientEventsListener {
 
   public static void setup() {
     ClientTickEvents.END_CLIENT_TICK.register(client -> PolymorphClientEvents.tick());
+    ClientChunkEvents.CHUNK_UNLOAD.register(
+        (level, chunk) -> ClientInWorldStates.chunkUnloaded(chunk.getPos()));
+    ClientPlayConnectionEvents.DISCONNECT.register(
+        (handler, client) -> client.execute(ClientInWorldStates::clear));
+    LevelRenderEvents.COLLECT_SUBMITS.register(context -> InWorldClient.render(
+        context.poseStack(), context.submitNodeCollector(),
+        context.levelState().cameraRenderState));
+    AttackBlockCallback.EVENT.register((player, level, hand, pos, direction) ->
+        level.isClientSide() && player instanceof LocalPlayer localPlayer &&
+            InWorldClient.attack(localPlayer, pos) ? InteractionResult.FAIL :
+            InteractionResult.PASS);
     ScreenEvents.AFTER_INIT.register((client, screen, scaledWidth, scaledHeight) -> {
       PolymorphClientEvents.initScreen(screen);
       ScreenEvents.afterExtract(screen).register(PolymorphClientEvents::renderIfMissed);
