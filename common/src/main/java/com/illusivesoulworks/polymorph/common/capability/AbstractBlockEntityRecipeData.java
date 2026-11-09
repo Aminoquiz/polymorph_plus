@@ -17,10 +17,15 @@
 
 package com.illusivesoulworks.polymorph.common.capability;
 
+import com.illusivesoulworks.polymorph.api.common.base.IRecipePair;
 import com.illusivesoulworks.polymorph.api.common.capability.IBlockEntityRecipeData;
+import com.illusivesoulworks.polymorph.api.inworld.PolymorphInWorld;
+import com.illusivesoulworks.polymorph.common.inworld.InWorldServer;
+import java.util.SortedSet;
 import java.util.TreeSet;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
 public abstract class AbstractBlockEntityRecipeData<E extends BlockEntity>
@@ -68,6 +73,17 @@ public abstract class AbstractBlockEntityRecipeData<E extends BlockEntity>
       }
     }
     return true;
+  }
+
+  @Override
+  protected void updateRecipesList(SortedSet<IRecipePair> recipesList) {
+    super.updateRecipesList(recipesList);
+    BlockEntity owner = this.getOwner();
+    Level level = owner.getLevel();
+
+    if (level != null && InWorldServer.provider(owner.getBlockState().getBlock()) != null) {
+      PolymorphInWorld.refresh(level, owner.getBlockPos());
+    }
   }
 
   @SuppressWarnings("unchecked")

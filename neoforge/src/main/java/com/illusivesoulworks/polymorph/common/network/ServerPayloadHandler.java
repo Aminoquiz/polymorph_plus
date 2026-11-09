@@ -2,6 +2,7 @@ package com.illusivesoulworks.polymorph.common.network;
 
 import com.illusivesoulworks.polymorph.common.network.client.CPacketBlockEntityListener;
 import com.illusivesoulworks.polymorph.common.network.client.CPacketPersistentRecipeSelection;
+import com.illusivesoulworks.polymorph.common.network.client.CPacketInWorldCycle;
 import com.illusivesoulworks.polymorph.common.network.client.CPacketPlayerPriority;
 import com.illusivesoulworks.polymorph.common.network.client.CPacketPlayerRecipeSelection;
 import net.minecraft.network.chat.Component;
@@ -37,6 +38,14 @@ public class ServerPayloadHandler {
     handleData(ctx, () -> {
       if (ctx.player() instanceof ServerPlayer serverPlayer) {
         CPacketPersistentRecipeSelection.handle(packet, serverPlayer);
+      }
+    });
+  }
+
+  public void handlePacket(final CPacketInWorldCycle packet, final IPayloadContext ctx) {
+    handleData(ctx, () -> {
+      if (ctx.player() instanceof ServerPlayer serverPlayer) {
+        CPacketInWorldCycle.handle(packet, serverPlayer);
       }
     });
   }

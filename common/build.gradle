@@ -89,6 +89,22 @@ def forkedFor261 = [
         'com/illusivesoulworks/polymorph/api/client/widgets/children/OutputWidget.java',
         'com/illusivesoulworks/polymorph/api/client/widgets/children/OpenSelectionButton.java',
         'com/illusivesoulworks/polymorph/api/client/widgets/children/SelectionWidget.java',
+        // In-world indicators: submit-node rendering, SavedDataType codec, ChunkPos.pack,
+        // ServerPlayer.level(), campfire placeFood/cookTick signatures
+        'com/illusivesoulworks/polymorph/client/inworld/InWorldClient.java',
+        'com/illusivesoulworks/polymorph/client/inworld/ClientInWorldStates.java',
+        'com/illusivesoulworks/polymorph/common/inworld/InWorldSavedData.java',
+        'com/illusivesoulworks/polymorph/common/inworld/InWorldServer.java',
+        'com/illusivesoulworks/polymorph/mixin/core/MixinCampfireBlockEntity.java',
+        // In-world indicators: submit-node rendering, SavedDataType codec, ChunkPos.pack,
+        // ServerPlayer.level(), campfire placeFood/cookTick signatures
+        'com/illusivesoulworks/polymorph/client/inworld/InWorldClient.java',
+        'com/illusivesoulworks/polymorph/client/inworld/ClientInWorldStates.java',
+        'com/illusivesoulworks/polymorph/common/inworld/InWorldSavedData.java',
+        'com/illusivesoulworks/polymorph/common/inworld/InWorldServer.java',
+        'com/illusivesoulworks/polymorph/mixin/core/MixinCampfireBlockEntity.java',
+        // Per-slot picks: recipe lookup through recipeAccess, Identifier ids, ListTag getters
+        'com/illusivesoulworks/polymorph/common/capability/CampfireRecipeData.java',
 ]
 
 // Integration mixins for optional mods (EMI / JEI) that we don't compile against in the

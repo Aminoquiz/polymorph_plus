@@ -19,10 +19,13 @@ package com.illusivesoulworks.polymorph.common;
 
 import com.illusivesoulworks.polymorph.api.common.base.IPolymorphNetwork;
 import com.illusivesoulworks.polymorph.api.common.base.IRecipePair;
+import com.illusivesoulworks.polymorph.api.inworld.Option;
 import com.illusivesoulworks.polymorph.common.network.client.CPacketBlockEntityListener;
+import com.illusivesoulworks.polymorph.common.network.client.CPacketInWorldCycle;
 import com.illusivesoulworks.polymorph.common.network.client.CPacketPersistentRecipeSelection;
 import com.illusivesoulworks.polymorph.common.network.client.CPacketPlayerPriority;
 import com.illusivesoulworks.polymorph.common.network.client.CPacketPlayerRecipeSelection;
+import com.illusivesoulworks.polymorph.common.network.server.SPacketInWorldState;
 import com.illusivesoulworks.polymorph.common.network.server.SPacketPlayerRecipeSync;
 import com.illusivesoulworks.polymorph.common.network.server.SPacketPackPriority;
 import com.illusivesoulworks.polymorph.common.network.server.SPacketRecipesList;
@@ -34,6 +37,7 @@ import java.util.Optional;
 import java.util.SortedSet;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.core.BlockPos;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 
@@ -107,5 +111,19 @@ public class PolymorphFabricPacketDistributor implements IPolymorphNetwork {
   @Override
   public void sendUpdatePreviewS2C(ServerPlayer player) {
     ServerPlayNetworking.send(player, SPacketUpdatePreview.INSTANCE);
+  }
+
+  @Override
+  public void sendInWorldStateS2C(ServerPlayer player, BlockPos pos, int index,
+                                  Identifier key, List<Option> options, int shown) {
+
+    if (ServerPlayNetworking.canSend(player, SPacketInWorldState.TYPE)) {
+      ServerPlayNetworking.send(player, new SPacketInWorldState(pos, index, key, options, shown));
+    }
+  }
+
+  @Override
+  public void sendInWorldCycleC2S(BlockPos pos, int index) {
+    ClientPlayNetworking.send(new CPacketInWorldCycle(pos, index));
   }
 }
