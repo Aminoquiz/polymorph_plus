@@ -14,7 +14,11 @@
     "betterfurnacesreforged.MixinSmeltingBlockEntity",
     "toms_storage.MixinCraftingTerminalBlockEntity",
     "overgeared.MixinItemUtils",
-    "overgeared.MixinHeatedItem"
+    "overgeared.MixinHeatedItem",
+    "hephaestus.MixinCastingBlockEntity",
+    "hephaestus.MixinCastingTank",
+    "hephaestus.MixinSmelteryTankContents",
+    "hephaestus.MixinFaucetBlockEntity"
   ],
   "client": [
     "overgeared.MixinSmithingAnvilRecipesWidget"

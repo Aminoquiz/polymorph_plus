@@ -123,7 +123,8 @@ public class PolymorphIntegrations {
     BETTERFURNACES("betterfurnacesreforged", true, Loader.FABRIC, Loader.NEOFORGE),
     TOMS_STORAGE("toms_storage", true, Loader.FABRIC, Loader.NEOFORGE),
     SOPHISTICATEDCORE("sophisticatedcore", true, Loader.NEOFORGE),
-    OVERGEARED("overgeared", true, Loader.NEOFORGE);
+    OVERGEARED("overgeared", true, Loader.NEOFORGE),
+    HEPHAESTUS("hephaestus", true, Loader.NEOFORGE);
 
     private final String id;
     private final boolean defaultValue;
