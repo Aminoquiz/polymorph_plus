@@ -112,7 +112,7 @@ public abstract class AbstractRecipeData<E> implements IRecipeData<E> {
         sessionMatch = entry;
       }
 
-      if (chosenMatch == null && id.equals(this.chosenRecipeId)) {
+      if (chosenMatch == null && id.equals(this.getChosenRecipeId())) {
         chosenMatch = entry;
       }
       int entryFavouriteRank = this.favouriteRank(id);

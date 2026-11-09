@@ -20,10 +20,12 @@ package com.illusivesoulworks.polymorph;
 import com.illusivesoulworks.polymorph.common.CommonEventsListener;
 import com.illusivesoulworks.polymorph.common.components.PolymorphFabricComponents;
 import com.illusivesoulworks.polymorph.common.network.client.CPacketBlockEntityListener;
+import com.illusivesoulworks.polymorph.common.network.client.CPacketInWorldCycle;
 import com.illusivesoulworks.polymorph.common.network.client.CPacketPersistentRecipeSelection;
 import com.illusivesoulworks.polymorph.common.network.client.CPacketPlayerPriority;
 import com.illusivesoulworks.polymorph.common.network.client.CPacketPlayerRecipeSelection;
 import com.illusivesoulworks.polymorph.common.network.server.SPacketHighlightRecipe;
+import com.illusivesoulworks.polymorph.common.network.server.SPacketInWorldState;
 import com.illusivesoulworks.polymorph.common.network.server.SPacketPackPriority;
 import com.illusivesoulworks.polymorph.common.network.server.SPacketPlayerRecipeSync;
 import com.illusivesoulworks.polymorph.common.network.server.SPacketRecipesList;
@@ -70,12 +72,17 @@ public class PolymorphFabricMod implements ModInitializer {
         .register(SPacketRecipesList.TYPE, SPacketRecipesList.STREAM_CODEC);
     PayloadTypeRegistry.clientboundPlay()
         .register(SPacketUpdatePreview.TYPE, SPacketUpdatePreview.STREAM_CODEC);
+    PayloadTypeRegistry.clientboundPlay()
+        .register(SPacketInWorldState.TYPE, SPacketInWorldState.STREAM_CODEC);
+    PayloadTypeRegistry.serverboundPlay()
+        .register(CPacketInWorldCycle.TYPE, CPacketInWorldCycle.STREAM_CODEC);
 
     registerServerReceiver(CPacketPlayerRecipeSelection.TYPE, CPacketPlayerRecipeSelection::handle);
     registerServerReceiver(CPacketPersistentRecipeSelection.TYPE,
         CPacketPersistentRecipeSelection::handle);
     registerServerReceiver(CPacketBlockEntityListener.TYPE, CPacketBlockEntityListener::handle);
     registerServerReceiver(CPacketPlayerPriority.TYPE, CPacketPlayerPriority::handle);
+    registerServerReceiver(CPacketInWorldCycle.TYPE, CPacketInWorldCycle::handle);
   }
 
   private static <M extends CustomPacketPayload> void registerServerReceiver(

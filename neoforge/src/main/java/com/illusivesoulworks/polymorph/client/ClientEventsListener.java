@@ -17,11 +17,17 @@
 
 package com.illusivesoulworks.polymorph.client;
 
+import com.illusivesoulworks.polymorph.client.inworld.ClientInWorldStates;
+import com.illusivesoulworks.polymorph.client.inworld.InWorldClient;
+import net.minecraft.client.player.LocalPlayer;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.ScreenEvent;
+import net.neoforged.neoforge.client.event.SubmitCustomGeometryEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import net.neoforged.neoforge.event.level.ChunkEvent;
 
 @SuppressWarnings("unused")
 public class ClientEventsListener {
@@ -34,6 +40,31 @@ public class ClientEventsListener {
   @SubscribeEvent
   public void loggingOut(ClientPlayerNetworkEvent.LoggingOut evt) {
     PolymorphClientEvents.clearPackPriority();
+    ClientInWorldStates.clear();
+  }
+
+  @SubscribeEvent
+  public void chunkUnload(ChunkEvent.Unload evt) {
+
+    if (evt.getLevel().isClientSide()) {
+      ClientInWorldStates.chunkUnloaded(evt.getChunk().getPos());
+    }
+  }
+
+  @SubscribeEvent
+  public void submitGeometry(SubmitCustomGeometryEvent evt) {
+    InWorldClient.render(evt.getPoseStack(), evt.getSubmitNodeCollector(),
+        evt.getLevelRenderState().cameraRenderState);
+  }
+
+  @SubscribeEvent
+  public void leftClickBlock(PlayerInteractEvent.LeftClickBlock evt) {
+
+    if (evt.getLevel().isClientSide() && evt.getEntity() instanceof LocalPlayer player &&
+        evt.getAction() == PlayerInteractEvent.LeftClickBlock.Action.START &&
+        InWorldClient.attack(player, evt.getPos())) {
+      evt.setCanceled(true);
+    }
   }
 
   @SubscribeEvent

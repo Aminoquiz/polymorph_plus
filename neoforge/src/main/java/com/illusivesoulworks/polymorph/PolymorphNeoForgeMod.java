@@ -27,10 +27,12 @@ import com.illusivesoulworks.polymorph.common.PolymorphNeoForgeCapabilities;
 import com.illusivesoulworks.polymorph.common.network.ClientPayloadHandler;
 import com.illusivesoulworks.polymorph.common.network.ServerPayloadHandler;
 import com.illusivesoulworks.polymorph.common.network.client.CPacketBlockEntityListener;
+import com.illusivesoulworks.polymorph.common.network.client.CPacketInWorldCycle;
 import com.illusivesoulworks.polymorph.common.network.client.CPacketPersistentRecipeSelection;
 import com.illusivesoulworks.polymorph.common.network.client.CPacketPlayerPriority;
 import com.illusivesoulworks.polymorph.common.network.client.CPacketPlayerRecipeSelection;
 import com.illusivesoulworks.polymorph.common.network.server.SPacketHighlightRecipe;
+import com.illusivesoulworks.polymorph.common.network.server.SPacketInWorldState;
 import com.illusivesoulworks.polymorph.common.network.server.SPacketPackPriority;
 import com.illusivesoulworks.polymorph.common.network.server.SPacketPlayerRecipeSync;
 import com.illusivesoulworks.polymorph.common.network.server.SPacketRecipesList;
@@ -102,5 +104,9 @@ public class PolymorphNeoForgeMod {
         ServerPayloadHandler.getInstance()::handlePacket);
     registrar.playToClient(SPacketPackPriority.TYPE, SPacketPackPriority.STREAM_CODEC,
         ClientPayloadHandler.getInstance()::handlePacket);
+    registrar.playToClient(SPacketInWorldState.TYPE, SPacketInWorldState.STREAM_CODEC,
+        ClientPayloadHandler.getInstance()::handlePacket);
+    registrar.playToServer(CPacketInWorldCycle.TYPE, CPacketInWorldCycle.STREAM_CODEC,
+        ServerPayloadHandler.getInstance()::handlePacket);
   }
 }

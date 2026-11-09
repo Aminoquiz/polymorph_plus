@@ -24,11 +24,13 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 import net.minecraft.resources.Identifier;
 import com.illusivesoulworks.polymorph.common.capability.BrewingStandRecipeData;
+import com.illusivesoulworks.polymorph.common.capability.CampfireRecipeData;
 import com.illusivesoulworks.polymorph.common.capability.CrafterRecipeData;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BrewingStandBlockEntity;
+import net.minecraft.world.level.block.entity.CampfireBlockEntity;
 import net.minecraft.world.level.block.entity.CrafterBlockEntity;
 import org.ladysnake.cca.api.v3.block.BlockComponentFactoryRegistry;
 import org.ladysnake.cca.api.v3.block.BlockComponentInitializer;
@@ -72,6 +74,9 @@ public class PolymorphFabricComponents implements BlockComponentInitializer,
     registerBlockEntity(BrewingStandBlockEntity.class,
                         blockEntity -> new WrappedRecipeDataComponent<>(
                             new BrewingStandRecipeData((BrewingStandBlockEntity) blockEntity)));
+    registerBlockEntity(CampfireBlockEntity.class,
+                        blockEntity -> new WrappedRecipeDataComponent<>(
+                            new CampfireRecipeData((CampfireBlockEntity) blockEntity)));
 
     for (Map.Entry<Class<? extends BlockEntity>, Function<BlockEntity, AbstractBlockEntityRecipeDataComponent<?>>> entry : BLOCK_ENTITY_2_RECIPE_DATA.entrySet()) {
       registry.registerFor(entry.getKey(), BLOCK_ENTITY_RECIPE_DATA,
