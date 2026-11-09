@@ -28,6 +28,10 @@ import com.illusivesoulworks.polymorph.common.network.server.SPacketPackPriority
 import com.illusivesoulworks.polymorph.common.network.server.SPacketRecipesList;
 import com.illusivesoulworks.polymorph.common.network.server.SPacketUpdatePreview;
 import com.illusivesoulworks.polymorph.PolymorphConstants;
+import com.illusivesoulworks.polymorph.api.inworld.Option;
+import com.illusivesoulworks.polymorph.common.network.client.CPacketInWorldCycle;
+import com.illusivesoulworks.polymorph.common.network.server.SPacketInWorldState;
+import net.minecraft.core.BlockPos;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -107,5 +111,20 @@ public class PolymorphNeoForgePacketDistributor implements IPolymorphNetwork {
   @Override
   public void sendUpdatePreviewS2C(ServerPlayer player) {
     PacketDistributor.sendToPlayer(player, SPacketUpdatePreview.INSTANCE);
+  }
+
+  @Override
+  public void sendInWorldStateS2C(ServerPlayer player, BlockPos pos, int index,
+                                  ResourceLocation key, List<Option> options, int shown) {
+
+    if (player.connection.hasChannel(SPacketInWorldState.TYPE)) {
+      PacketDistributor.sendToPlayer(player,
+          new SPacketInWorldState(pos, index, key, options, shown));
+    }
+  }
+
+  @Override
+  public void sendInWorldCycleC2S(BlockPos pos, int index) {
+    PacketDistributor.sendToServer(new CPacketInWorldCycle(pos, index));
   }
 }

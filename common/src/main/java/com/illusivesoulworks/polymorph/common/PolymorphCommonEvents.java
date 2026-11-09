@@ -17,6 +17,7 @@
 
 package com.illusivesoulworks.polymorph.common;
 
+import com.illusivesoulworks.polymorph.common.inworld.InWorldServer;
 import com.illusivesoulworks.polymorph.common.integration.PolymorphIntegrations;
 import com.illusivesoulworks.polymorph.common.util.BlockEntityTicker;
 import net.minecraft.server.level.ServerPlayer;
@@ -35,6 +36,7 @@ public class PolymorphCommonEvents {
 
   public static void playerDisconnected(ServerPlayer serverPlayer) {
     BlockEntityTicker.remove(serverPlayer);
+    InWorldServer.playerLeft(serverPlayer);
   }
 
   public static void openContainer(Player player, AbstractContainerMenu containerMenu) {

@@ -61,3 +61,15 @@ dependencies {
 }
 
 // Modrinth + CurseForge auto-publish dropped (manual upload via Aminoquiz).
+
+// NeoForm still pins ASM 9.5 while NeoForge 21.1.227 ships 9.8; both on the dev classpath stop runClient.
+configurations.configureEach {
+    if (state != Configuration.State.UNRESOLVED) {
+        return
+    }
+    resolutionStrategy.eachDependency {
+        if (requested.group == 'org.ow2.asm') {
+            useVersion '9.8'
+        }
+    }
+}
