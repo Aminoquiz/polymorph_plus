@@ -124,7 +124,8 @@ public class PolymorphIntegrations {
     TOMS_STORAGE("toms_storage", true, Loader.FABRIC, Loader.NEOFORGE),
     SOPHISTICATEDCORE("sophisticatedcore", true, Loader.NEOFORGE),
     OVERGEARED("overgeared", true, Loader.NEOFORGE),
-    HEPHAESTUS("hephaestus", true, Loader.NEOFORGE);
+    HEPHAESTUS("hephaestus", true, Loader.NEOFORGE),
+    BLOCKPACK("bf_blockpack", true, Loader.NEOFORGE);
 
     private final String id;
     private final boolean defaultValue;
