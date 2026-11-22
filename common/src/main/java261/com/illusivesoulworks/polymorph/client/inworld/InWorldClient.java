@@ -4,6 +4,7 @@ import com.illusivesoulworks.polymorph.api.PolymorphApi;
 import com.illusivesoulworks.polymorph.api.inworld.IInWorldProvider;
 import com.illusivesoulworks.polymorph.api.inworld.IndicatorSpot;
 import com.illusivesoulworks.polymorph.client.PolymorphClientConfig;
+import com.illusivesoulworks.polymorph.client.look.PolymorphLook;
 import com.illusivesoulworks.polymorph.common.inworld.InWorldHit;
 import com.illusivesoulworks.polymorph.common.inworld.InWorldServer;
 import com.illusivesoulworks.polymorph.common.inworld.InWorldState;
@@ -177,13 +178,14 @@ public final class InWorldClient {
     poseStack.popPose();
 
     if (hovered) {
+      int frame = PolymorphLook.ink(PolymorphLook.Ink.WORLD_FRAME, 0xFFFFFFFF);
       collector.submitCustomGeometry(poseStack, FRAME,
-          (pose, consumer) -> quad(consumer, pose, -half, -half, half, half, light));
+          (pose, consumer) -> quad(consumer, pose, -half, -half, half, half, light, frame));
     }
     // The badge tells a choice apart from an item the block is working on.
     collector.submitCustomGeometry(poseStack, BADGE,
         (pose, consumer) -> quad(consumer, pose, half * 0.125F, -half * 0.8125F,
-            half * 0.8125F, -half * 0.125F, light));
+            half * 0.8125F, -half * 0.125F, light, 0xFFFFFFFF));
     poseStack.popPose();
   }
 
@@ -203,17 +205,17 @@ public final class InWorldClient {
   }
 
   private static void quad(VertexConsumer consumer, PoseStack.Pose pose, float x0, float y0,
-                           float x1, float y1, int light) {
-    vertex(consumer, pose, x0, y0, 0.0F, 1.0F, light);
-    vertex(consumer, pose, x1, y0, 1.0F, 1.0F, light);
-    vertex(consumer, pose, x1, y1, 1.0F, 0.0F, light);
-    vertex(consumer, pose, x0, y1, 0.0F, 0.0F, light);
+                           float x1, float y1, int light, int argb) {
+    vertex(consumer, pose, x0, y0, 0.0F, 1.0F, light, argb);
+    vertex(consumer, pose, x1, y0, 1.0F, 1.0F, light, argb);
+    vertex(consumer, pose, x1, y1, 1.0F, 0.0F, light, argb);
+    vertex(consumer, pose, x0, y1, 0.0F, 0.0F, light, argb);
   }
 
   private static void vertex(VertexConsumer consumer, PoseStack.Pose pose, float x, float y,
-                             float u, float v, int light) {
+                             float u, float v, int light, int argb) {
     consumer.addVertex(pose, x, y, 0.03F)
-        .setColor(255, 255, 255, 255)
+        .setColor(argb)
         .setUv(u, v)
         .setOverlay(OverlayTexture.NO_OVERLAY)
         .setLight(light)
