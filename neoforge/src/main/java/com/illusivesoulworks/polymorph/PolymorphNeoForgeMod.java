@@ -19,6 +19,7 @@ package com.illusivesoulworks.polymorph;
 
 import com.illusivesoulworks.polymorph.api.PolymorphApi;
 import com.illusivesoulworks.polymorph.common.brewing.BrewingCandidates;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.common.brewing.IBrewingRecipe;
 import com.illusivesoulworks.polymorph.client.ClientEventsListener;
@@ -37,10 +38,13 @@ import com.illusivesoulworks.polymorph.common.network.server.SPacketPackPriority
 import com.illusivesoulworks.polymorph.common.network.server.SPacketPlayerRecipeSync;
 import com.illusivesoulworks.polymorph.common.network.server.SPacketRecipesList;
 import com.illusivesoulworks.polymorph.common.network.server.SPacketUpdatePreview;
+import com.illusivesoulworks.polymorph.client.look.PolymorphLook;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
@@ -48,7 +52,10 @@ import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 @Mod(PolymorphConstants.MOD_ID)
 public class PolymorphNeoForgeMod {
 
-  public PolymorphNeoForgeMod(IEventBus eventBus) {
+  private final ModContainer container;
+
+  public PolymorphNeoForgeMod(IEventBus eventBus, ModContainer container) {
+    this.container = container;
     PolymorphCommonMod.init();
     BrewingCandidates.extraSource = (brewing, bottle, reagent, out) -> {
 
@@ -74,6 +81,13 @@ public class PolymorphNeoForgeMod {
   private void clientSetup(final FMLClientSetupEvent evt) {
     PolymorphCommonMod.clientSetup();
     NeoForge.EVENT_BUS.register(new ClientEventsListener());
+
+    if (PolymorphLook.hasConfigScreen()) {
+      container.registerExtensionPoint(IConfigScreenFactory.class, (mod, parent) -> {
+        Screen screen = PolymorphLook.configScreen(parent);
+        return screen != null ? screen : parent;
+      });
+    }
   }
 
   private void registerPayload(final RegisterPayloadHandlersEvent evt) {
