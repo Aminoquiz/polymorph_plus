@@ -7,7 +7,9 @@
  */
 package com.illusivesoulworks.polymorph.api.client.widgets.children;
 
+import com.illusivesoulworks.polymorph.api.client.base.AbstractRecipesWidget;
 import com.illusivesoulworks.polymorph.client.PolymorphClientConfig;
+import com.illusivesoulworks.polymorph.client.look.PolymorphLook;
 import com.illusivesoulworks.polymorph.platform.Services;
 import javax.annotation.Nonnull;
 import net.minecraft.client.Minecraft;
@@ -18,7 +20,23 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 
 public class OpenSelectionButton extends ImageButton {
 
+  private static final int GLYPH_SIZE = 10;
+  /** The swap arrows of selector_button.png, rows 3 to 12, bit 9 is the leftmost pixel. */
+  private static final int[] GLYPH = {
+      0b0000000100,
+      0b0000000110,
+      0b0011111111,
+      0b0110000110,
+      0b1100000100,
+      0b0010000011,
+      0b0110000110,
+      0b1111111100,
+      0b0110000000,
+      0b0010000000,
+  };
+
   private final AbstractContainerScreen<?> containerScreen;
+  private final boolean ownSprites;
   private int xOffset;
   private int yOffset;
 
@@ -26,6 +44,7 @@ public class OpenSelectionButton extends ImageButton {
                              WidgetSprites sprites, OnPress onPress) {
     super(0, 0, size(), size(), sprites, onPress);
     this.containerScreen = containerScreen;
+    this.ownSprites = sprites == AbstractRecipesWidget.SELECTOR;
     this.xOffset = x;
     this.yOffset = y;
   }
@@ -55,7 +74,10 @@ public class OpenSelectionButton extends ImageButton {
         Minecraft.getInstance().getWindow().getGuiScaledWidth() - this.width));
     this.setY(clamp(Services.CLIENT_PLATFORM.getScreenTop(this.containerScreen) + this.yOffset,
         Minecraft.getInstance().getWindow().getGuiScaledHeight() - this.height));
-    super.extractContents(graphics, mouseX, mouseY, partialTicks);
+    if (!this.ownSprites || !PolymorphLook.selectorButton(graphics, this.getX(), this.getY(),
+        this.width, this.height, this.isHoveredOrFocused(), GLYPH, GLYPH_SIZE)) {
+      super.extractContents(graphics, mouseX, mouseY, partialTicks);
+    }
   }
 
   private static int clamp(int value, int max) {

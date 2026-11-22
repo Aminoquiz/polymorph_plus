@@ -63,6 +63,7 @@ tasks.named('jar').configure {
 
 dependencies {
     compileOnly "mezz.jei:jei-26.3-common-api:${jei_version}"
+    compileOnly("dev.dryaides:minuit-neoforge-26.3:${minuit_version}") { transitive = false }
     // JEI + REI compile references. No 26.x maven publication yet, so they come from the
     // folder local_mod_jars points at and are skipped when absent.
     def localJars = file(project.findProperty('local_mod_jars') ?: 'local-mod-jars')

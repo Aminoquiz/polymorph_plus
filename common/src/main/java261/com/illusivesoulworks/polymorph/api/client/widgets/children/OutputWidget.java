@@ -10,8 +10,10 @@
  */
 package com.illusivesoulworks.polymorph.api.client.widgets.children;
 
+import com.illusivesoulworks.polymorph.api.client.base.AbstractRecipesWidget;
 import com.illusivesoulworks.polymorph.api.common.base.IRecipePair;
 import com.illusivesoulworks.polymorph.client.MouseButtons;
+import com.illusivesoulworks.polymorph.client.look.PolymorphLook;
 import com.mojang.datafixers.util.Pair;
 import javax.annotation.Nonnull;
 import net.minecraft.client.Minecraft;
@@ -60,13 +62,21 @@ public class OutputWidget extends AbstractWidget {
     Minecraft minecraft = Minecraft.getInstance();
     WidgetSprites sprite = this.highlighted ? this.sprites.getSecond() : this.sprites.getFirst();
     Identifier texture = sprite.enabled();
+    boolean hovered = this.getX() + 25 > mouseX && this.getX() <= mouseX &&
+        this.getY() + 25 > mouseY && this.getY() <= mouseY;
 
-    if (this.getX() + 25 > mouseX && this.getX() <= mouseX &&
-        this.getY() + 25 > mouseY && this.getY() <= mouseY) {
+    if (hovered) {
       texture = sprite.enabledFocused();
     }
-    graphics.blitSprite(RenderPipelines.GUI_TEXTURED, texture, this.getX(), this.getY(),
-        this.width, this.height);
+    // An addon that passes its own sprites keeps them under a minuit theme.
+    boolean ownSprites = this.sprites.getFirst() == AbstractRecipesWidget.OUTPUT
+        && this.sprites.getSecond() == AbstractRecipesWidget.CURRENT_OUTPUT;
+
+    if (!ownSprites || !PolymorphLook.outputButton(graphics, this.getX(), this.getY(),
+        this.width, this.height, this.highlighted, hovered)) {
+      graphics.blitSprite(RenderPipelines.GUI_TEXTURED, texture, this.getX(), this.getY(),
+          this.width, this.height);
+    }
     int k = 4;
     graphics.item(this.getOutput(), this.getX() + k, this.getY() + k);
     graphics.itemDecorations(minecraft.font, this.getOutput(), this.getX() + k, this.getY() + k);
@@ -76,8 +86,9 @@ public class OutputWidget extends AbstractWidget {
       // message this replaces was drawn behind the open inventory and easy to miss.
       int sx = this.getX() + this.width - STAR_SIZE - 2;
       int sy = this.getY() + 2;
-      drawStar(graphics, sx + 1, sy + 1, STAR_SHADOW);
-      drawStar(graphics, sx, sy, STAR_COLOR);
+      drawStar(graphics, sx + 1, sy + 1,
+          PolymorphLook.ink(PolymorphLook.Ink.STAR_SHADOW, STAR_SHADOW));
+      drawStar(graphics, sx, sy, PolymorphLook.ink(PolymorphLook.Ink.STAR, STAR_COLOR));
     }
   }
 

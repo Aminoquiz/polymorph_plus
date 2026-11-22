@@ -6,6 +6,7 @@
  */
 package com.illusivesoulworks.polymorph.client;
 
+import com.illusivesoulworks.polymorph.client.look.PolymorphLook;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -154,14 +155,17 @@ public final class TutorialOverlay {
     // A tall GUI, such as Occultism's storage controller, pushes the bubble past the window edge.
     x = Math.max(0, Math.min(x, Minecraft.getInstance().getWindow().getGuiScaledWidth() - boxW));
     y = Math.max(0, Math.min(y, Minecraft.getInstance().getWindow().getGuiScaledHeight() - boxH));
-    gg.fill(x, y, x + boxW, y + boxH, BG_COLOR);
-    gg.fill(x, y, x + boxW, y + 1, BORDER_COLOR);
-    gg.fill(x, y + boxH - 1, x + boxW, y + boxH, BORDER_COLOR);
-    gg.fill(x, y, x + 1, y + boxH, BORDER_COLOR);
-    gg.fill(x + boxW - 1, y, x + boxW, y + boxH, BORDER_COLOR);
+    int face = PolymorphLook.ink(PolymorphLook.Ink.BUBBLE_FACE, BG_COLOR);
+    int edge = PolymorphLook.ink(PolymorphLook.Ink.BUBBLE_EDGE, BORDER_COLOR);
+    int ink = PolymorphLook.ink(PolymorphLook.Ink.BUBBLE_TEXT, TEXT_COLOR);
+    gg.fill(x, y, x + boxW, y + boxH, face);
+    gg.fill(x, y, x + boxW, y + 1, edge);
+    gg.fill(x, y + boxH - 1, x + boxW, y + boxH, edge);
+    gg.fill(x, y, x + 1, y + boxH, edge);
+    gg.fill(x + boxW - 1, y, x + boxW, y + boxH, edge);
     int ty = y + PADDING;
     for (FormattedCharSequence line : lines) {
-      gg.text(font, line, x + PADDING, ty, TEXT_COLOR, false);
+      gg.text(font, line, x + PADDING, ty, ink, false);
       ty += font.lineHeight;
     }
   }
