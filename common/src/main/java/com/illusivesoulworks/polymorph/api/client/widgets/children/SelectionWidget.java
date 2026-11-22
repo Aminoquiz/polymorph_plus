@@ -8,6 +8,7 @@ package com.illusivesoulworks.polymorph.api.client.widgets.children;
 
 import com.illusivesoulworks.polymorph.api.common.base.IRecipePair;
 import com.illusivesoulworks.polymorph.client.PolymorphClientConfig;
+import com.illusivesoulworks.polymorph.client.look.PolymorphLook;
 import com.illusivesoulworks.polymorph.platform.Services;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
@@ -234,8 +235,10 @@ public class SelectionWidget implements Renderable, GuiEventListener {
 
   private static void drawArrowH(GuiGraphics gg, int x, int y, boolean rightFacing,
                                  boolean enabled) {
-    gg.fill(x, y, x + ARROW_WIDTH, y + BUTTON_SIZE, ARROW_BG);
-    int fg = enabled ? ARROW_FG_ON : ARROW_FG_OFF;
+    gg.fill(x, y, x + ARROW_WIDTH, y + BUTTON_SIZE,
+        PolymorphLook.ink(PolymorphLook.Ink.ARROW_FACE, ARROW_BG));
+    int fg = enabled ? PolymorphLook.ink(PolymorphLook.Ink.ARROW_GLYPH, ARROW_FG_ON)
+        : PolymorphLook.ink(PolymorphLook.Ink.ARROW_GLYPH_OFF, ARROW_FG_OFF);
     int cy = y + BUTTON_SIZE / 2;
     int[] offsets = {-4, -3, -2, -1, 0, 1, 2, 3, 4};
     int[] tips = rightFacing ? TIPS_FORWARD : TIPS_BACK;

@@ -21,6 +21,7 @@ import com.illusivesoulworks.polymorph.api.PolymorphApi;
 import com.illusivesoulworks.polymorph.api.inworld.IInWorldProvider;
 import com.illusivesoulworks.polymorph.api.inworld.PolymorphInWorld;
 import com.illusivesoulworks.polymorph.client.PolymorphWidgetsImpl;
+import com.illusivesoulworks.polymorph.client.look.PolymorphLook;
 import com.illusivesoulworks.polymorph.common.capability.BrewingStandRecipeData;
 import com.illusivesoulworks.polymorph.common.capability.CampfireRecipeData;
 import com.illusivesoulworks.polymorph.common.capability.CrafterRecipeData;
@@ -74,6 +75,7 @@ public class PolymorphCommonMod {
 
   public static void clientSetup() {
     PolymorphWidgetsImpl.setup();
+    PolymorphLook.init();
     PolymorphIntegrations.clientSetup();
   }
 }

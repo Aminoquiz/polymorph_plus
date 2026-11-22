@@ -48,6 +48,24 @@ repositories {
         name = "Jared's maven"
         url = "https://maven.blamejared.com/"
     }
+    // dryaides_local_maven (in ~/.gradle/gradle.properties) points at an unpublished local copy.
+    def dryaidesRepos = []
+    if (findProperty('dryaides_local_maven')) {
+        dryaidesRepos << maven {
+            name = 'DryaidesLocal'
+            url = file(findProperty('dryaides_local_maven')).toURI()
+        }
+    }
+    dryaidesRepos << maven {
+        name = 'Dryaides'
+        url = 'https://maven.dryaides.com/releases'
+    }
+    exclusiveContent {
+        forRepositories(*dryaidesRepos)
+        filter {
+            includeGroup('dev.dryaides')
+        }
+    }
     maven {
         name = "REI"
         url = "https://maven.architectury.dev/"

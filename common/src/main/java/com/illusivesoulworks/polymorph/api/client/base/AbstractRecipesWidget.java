@@ -13,6 +13,7 @@ import com.illusivesoulworks.polymorph.api.client.widgets.children.SelectionWidg
 import com.illusivesoulworks.polymorph.api.common.base.IRecipePair;
 import com.illusivesoulworks.polymorph.client.PolymorphClientConfig;
 import com.illusivesoulworks.polymorph.client.TutorialOverlay;
+import com.illusivesoulworks.polymorph.client.look.PolymorphLook;
 import com.illusivesoulworks.polymorph.platform.Services;
 import com.mojang.datafixers.util.Pair;
 import java.util.List;
@@ -228,8 +229,10 @@ public abstract class AbstractRecipesWidget implements IRecipesWidget {
     if (PolymorphClientConfig.isPinSelector() && this.openButton.visible) {
       int bx = this.openButton.getX() + this.openButton.getWidth() - 16;
       int by = this.openButton.getY();
-      guiGraphics.fill(bx + 11, by, bx + 16, by + 5, 0xFF202020);
-      guiGraphics.fill(bx + 12, by + 1, bx + 15, by + 4, 0xFFFFD000);
+      guiGraphics.fill(bx + 11, by, bx + 16, by + 5,
+          PolymorphLook.ink(PolymorphLook.Ink.PIN_EDGE, 0xFF202020));
+      guiGraphics.fill(bx + 12, by + 1, bx + 15, by + 4,
+          PolymorphLook.ink(PolymorphLook.Ink.PIN_FACE, 0xFFFFD000));
     }
     TutorialOverlay.renderForOpenButton(guiGraphics, this.openButton.getX(),
         this.openButton.getY(), this.openButton.visible);

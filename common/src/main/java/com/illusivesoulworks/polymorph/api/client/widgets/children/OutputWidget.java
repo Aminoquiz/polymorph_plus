@@ -17,7 +17,9 @@
 
 package com.illusivesoulworks.polymorph.api.client.widgets.children;
 
+import com.illusivesoulworks.polymorph.api.client.base.AbstractRecipesWidget;
 import com.illusivesoulworks.polymorph.api.common.base.IRecipePair;
+import com.illusivesoulworks.polymorph.client.look.PolymorphLook;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
 import javax.annotation.Nonnull;
@@ -66,12 +68,25 @@ public class OutputWidget extends AbstractWidget {
     PoseStack poseStack = guiGraphics.pose();
     WidgetSprites sprite = this.highlighted ? this.sprites.getSecond() : this.sprites.getFirst();
     ResourceLocation texture = sprite.enabled();
+    boolean hovered = this.getX() + 25 > mouseX && this.getX() <= mouseX &&
+        this.getY() + 25 > mouseY && this.getY() <= mouseY;
 
-    if (this.getX() + 25 > mouseX && this.getX() <= mouseX &&
-        this.getY() + 25 > mouseY && this.getY() <= mouseY) {
+    if (hovered) {
       texture = sprite.enabledFocused();
     }
-    guiGraphics.blitSprite(texture, this.getX(), this.getY(), 200, this.width, this.height);
+    // An addon that passes its own sprites keeps them under a minuit theme.
+    boolean ownSprites = this.sprites.getFirst() == AbstractRecipesWidget.OUTPUT
+        && this.sprites.getSecond() == AbstractRecipesWidget.CURRENT_OUTPUT;
+    poseStack.pushPose();
+    // The same z as the sprite's blit, which takes it as an argument.
+    poseStack.translate(0, 0, 200);
+    boolean themed = ownSprites && PolymorphLook.outputButton(guiGraphics, this.getX(),
+        this.getY(), this.width, this.height, this.highlighted, hovered);
+    poseStack.popPose();
+
+    if (!themed) {
+      guiGraphics.blitSprite(texture, this.getX(), this.getY(), 200, this.width, this.height);
+    }
     int k = 4;
     poseStack.pushPose();
     // Slot items sit near z 150-170 and tooltips at 400; the selector goes between them.
@@ -88,8 +103,9 @@ public class OutputWidget extends AbstractWidget {
       int sy = this.getY() + 2;
       poseStack.pushPose();
       poseStack.translate(0, 0, 200);
-      drawStar(guiGraphics, sx + 1, sy + 1, STAR_SHADOW);
-      drawStar(guiGraphics, sx, sy, STAR_COLOR);
+      drawStar(guiGraphics, sx + 1, sy + 1,
+          PolymorphLook.ink(PolymorphLook.Ink.STAR_SHADOW, STAR_SHADOW));
+      drawStar(guiGraphics, sx, sy, PolymorphLook.ink(PolymorphLook.Ink.STAR, STAR_COLOR));
       poseStack.popPose();
     }
     poseStack.popPose();

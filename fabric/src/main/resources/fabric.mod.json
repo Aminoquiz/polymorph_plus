@@ -47,6 +47,9 @@
     "minecraft": "${minecraft_version_range_alt}",
     "java": ">=${java_version}"
   },
+  "suggests": {
+    "minuit": ">=2.2.0"
+  },
   "breaks": {
     "polymorph": ["<${version}", ">${version}"],
     "jei": "<${jei_version}"

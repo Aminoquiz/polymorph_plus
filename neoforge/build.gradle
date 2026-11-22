@@ -56,6 +56,7 @@ dependencies {
     compileOnly "dev.shadowsoffire:FastSuite:${fastsuite_version}"
     compileOnly "dev.emi:emi-xplat-mojmap:${emi_version}"
     compileOnly "mezz.jei:jei-1.21.1-common-api:${jei_version}"
+    compileOnly("dev.dryaides:minuit-neoforge-1.21.1:${minuit_version}") { transitive = false }
     compileOnly "me.shedaniel:RoughlyEnoughItems-neoforge:${rei_version}"
 //    runtimeOnly "me.shedaniel:RoughlyEnoughItems-neoforge:${rei_version}"
 }
