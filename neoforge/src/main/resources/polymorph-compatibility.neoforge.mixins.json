@@ -4,6 +4,7 @@
   "compatibilityLevel": "JAVA_16",
   "mixins": [
     "fastbench.MixinFastBenchUtil",
+    "bf_blockpack.MixinWorkbenchMenu",
     "fastsuite.MixinAuxRecipeManager",
     "roughlyenoughitems.MixinInternalWidgets"
   ],
